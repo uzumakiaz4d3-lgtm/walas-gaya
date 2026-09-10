@@ -17,7 +17,6 @@ const BASE = `http://127.0.0.1:${PORT}`;
 
 const REQUIRED = [
   "DATABASE_URL",
-  "DIRECT_URL",
   "AUTH_SECRET",
   "NEXT_PUBLIC_APP_NAME",
   "NEXT_PUBLIC_APP_URL",
@@ -25,7 +24,6 @@ const REQUIRED = [
 
 const DEFAULTS = {
   DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/walikelas?schema=public",
-  DIRECT_URL: "postgresql://postgres:postgres@localhost:5432/walikelas?schema=public",
   AUTH_SECRET: "change-this-secret-key",
   NEXT_PUBLIC_APP_NAME: "WaliKelas",
   NEXT_PUBLIC_APP_URL: "http://localhost:3000",

@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "node scripts/smoke-test.mjs",
+    "db:check": "node scripts/check-db.mjs",
     "db:seed": "node scripts/seed-db.mjs"
   },
   "keywords": [],
