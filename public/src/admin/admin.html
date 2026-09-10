@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<script>
+  (function () {
+    var role = localStorage.getItem("userRole");
+    if (role !== "admin") {
+      var parts = location.pathname.split("/").filter(Boolean);
+      var top = parts[parts.length - 1] === "admin.html";
+      var up = top ? "../" : "../../";
+      var dest = role ? up + "dashboard/dashboard.html" : up + "login.html";
+      location.replace(dest);
+    }
+  })();
+</script>
+  <!-- role-guard -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ringkasan Sekolah — Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <link href="../assets/styles.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: {
+        primary: '#1A3A5C', secondary: '#2A7A6B', accent: '#E89D3F',
+        neutral: '#F5F6F8', danger: '#C23B22', info: '#2B6CB0'
+      }}}
+    }
+  </script>
+</head>
+<body class="bg-neutral min-h-screen">
+
+  <!-- Sidebar md+ -->
+  <aside class="hidden">
+    <div class="flex items-center gap-3 px-6 py-5 border-b border-white/10">
+      <div class="w-10 h-10 rounded-full bg-accent text-primary flex items-center justify-center font-bold text-lg">W</div>
+      <div><div class="font-bold text-lg leading-tight">WaliKelas</div><div class="text-xs text-white/50">Admin Sekolah</div></div>
+    </div>
+    <div class="px-6 pt-4 pb-2 text-[10px] uppercase tracking-widest text-white/40">Admin sekolah</div>
+    <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+      <a href="admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-tachometer-alt w-5 text-center text-xs"></i> Dashboard</a>
+      <a href="admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm bg-white/10 font-semibold border-l-4 border-accent"><i class="fas fa-chart-pie w-5 text-center text-xs"></i> Ringkasan</a>
+      <a href="walas/walas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-chalkboard-teacher w-5 text-center text-xs"></i> Wali Kelas</a>
+      <a href="kelas/kelas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-school w-5 text-center text-xs"></i> Kelas</a>
+      <a href="monitoring/monitoring.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-eye w-5 text-center text-xs"></i> Monitoring</a>
+      <a href="pengguna/pengguna.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-users w-5 text-center text-xs"></i> Pengguna</a>
+      <a href="audit/audit.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-clipboard-list w-5 text-center text-xs"></i> Audit Log</a>
+    </nav>
+    <div class="px-6 py-4 text-[11px] text-white/40 border-t border-white/10">Mode: Admin · Read-only monitoring</div>
+  </aside>
+
+  <!-- Main -->
+  <div class="pb-24 min-h-screen">
+    <!-- Mobile header -->
+    <header class="md:hidden sticky top-0 z-30 bg-primary text-white px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-accent text-primary flex items-center justify-center font-bold text-sm">W</div>
+        <span class="font-bold">WaliKelas</span>
+      </div>
+      <button onclick="toggleDrawer()" class="p-2 rounded-lg hover:bg-white/10"><i class="fas fa-bars"></i></button>
+    </header>
+
+    <main class="p-4 md:p-8 max-w-7xl mx-auto">
+      <h1 class="text-2xl font-bold text-primary mb-6">Ringkasan Sekolah</h1>
+
+      <!-- Stat cards -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-primary">
+          <div class="text-xs text-gray-500 mb-1">Wali Kelas</div>
+          <div class="text-2xl font-bold text-primary">6</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-secondary">
+          <div class="text-xs text-gray-500 mb-1">Kelas</div>
+          <div class="text-2xl font-bold text-secondary">4</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-info">
+          <div class="text-xs text-gray-500 mb-1">Siswa</div>
+          <div class="text-2xl font-bold text-info">128</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-secondary">
+          <div class="text-xs text-gray-500 mb-1">Kehadiran Rata</div>
+          <div class="text-2xl font-bold text-secondary">89%</div>
+        </div>
+      </div>
+
+      <!-- Daftar Kelas -->
+      <div class="bg-white rounded-xl shadow-sm mb-8">
+        <div class="px-6 py-4 border-b border-gray-100"><h2 class="font-bold text-primary">Daftar Kelas</h2></div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-neutral text-gray-500 text-xs uppercase"><tr>
+              <th class="text-left px-6 py-3">Kelas</th><th class="text-left px-6 py-3">Walas</th><th class="text-left px-6 py-3">Siswa</th><th class="text-left px-6 py-3">Rata-rata</th>
+            </tr></thead>
+            <tbody class="divide-y divide-gray-50">
+              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium"><a href="../dashboard/dashboard.html?kelas=7A" class="text-primary hover:text-accent hover:underline">7A</a></td><td class="px-6 py-3">Ahmad Fauzan</td><td class="px-6 py-3">32</td><td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">87.5%</span></td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium"><a href="../dashboard/dashboard.html?kelas=7B" class="text-primary hover:text-accent hover:underline">7B</a></td><td class="px-6 py-3">Siti Aminah</td><td class="px-6 py-3">30</td><td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">91.2%</span></td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium"><a href="../dashboard/dashboard.html?kelas=8A" class="text-primary hover:text-accent hover:underline">8A</a></td><td class="px-6 py-3">Budi Santoso</td><td class="px-6 py-3">34</td><td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-yellow-100 text-yellow-700">85.3%</span></td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium"><a href="../dashboard/dashboard.html?kelas=8B" class="text-primary hover:text-accent hover:underline">8B</a></td><td class="px-6 py-3">Dewi Lestari</td><td class="px-6 py-3">32</td><td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">88.9%</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <!-- Aktivitas Terbaru -->
+        <div class="bg-white rounded-xl shadow-sm">
+          <div class="px-6 py-4 border-b border-gray-100"><h2 class="font-bold text-primary">Aktivitas Terbaru</h2></div>
+          <ul class="divide-y divide-gray-50">
+            <li class="px-6 py-3 flex items-start gap-3"><span class="mt-0.5 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-check text-green-600 text-xs"></i></span><div><div class="text-sm font-medium">Ahmad Fauzan mengirim laporan</div><div class="text-xs text-gray-400">10 Sep 2026 · 08:32</div></div></li>
+            <li class="px-6 py-3 flex items-start gap-3"><span class="mt-0.5 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-edit text-blue-600 text-xs"></i></span><div><div class="text-sm font-medium">Siti Aminah memperbarui absensi 7B</div><div class="text-xs text-gray-400">10 Sep 2026 · 07:15</div></div></li>
+            <li class="px-6 py-3 flex items-start gap-3"><span class="mt-0.5 w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-exclamation-triangle text-yellow-600 text-xs"></i></span><div><div class="text-sm font-medium">Peringatan: 3 siswa alpa di 8A</div><div class="text-xs text-gray-400">09 Sep 2026 · 14:00</div></div></li>
+            <li class="px-6 py-3 flex items-start gap-3"><span class="mt-0.5 w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-user-plus text-purple-600 text-xs"></i></span><div><div class="text-sm font-medium">Admin menambah pengguna baru</div><div class="text-xs text-gray-400">09 Sep 2026 · 10:45</div></div></li>
+          </ul>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-xl shadow-sm">
+          <div class="px-6 py-4 border-b border-gray-100"><h2 class="font-bold text-primary">Aksi Cepat</h2></div>
+          <div class="p-6 space-y-3">
+            <a href="walas/walas.html" class="flex items-center gap-4 p-4 rounded-xl border border-gray-200 hover:border-accent hover:bg-accent/5 transition group">
+              <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center"><i class="fas fa-chalkboard-teacher text-primary"></i></div>
+              <div class="flex-1"><div class="font-semibold text-primary group-hover:text-accent transition">Kelola Walas</div><div class="text-xs text-gray-400">Manajemen wali kelas & rombel</div></div>
+              <i class="fas fa-chevron-right text-gray-300 group-hover:text-accent transition"></i>
+            </a>
+            <a href="monitoring/monitoring.html" class="flex items-center gap-4 p-4 rounded-xl border border-gray-200 hover:border-secondary hover:bg-secondary/5 transition group">
+              <div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center"><i class="fas fa-eye text-secondary"></i></div>
+              <div class="flex-1"><div class="font-semibold text-primary group-hover:text-secondary transition">Buka Monitoring</div><div class="text-xs text-gray-400">Pantau kegiatan seluruh kelas</div></div>
+              <i class="fas fa-chevron-right text-gray-300 group-hover:text-secondary transition"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Bottom nav mobile -->
+  <nav class="fixed bottom-0 inset-x-0 z-40 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+    <div class="flex items-center justify-around py-2">
+      <a href="admin.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-gray-400 hover:text-primary"><i class="fas fa-tachometer-alt text-lg"></i><span class="text-[10px]">Beranda</span></a>
+      <a href="admin.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-accent"><i class="fas fa-chart-pie text-lg"></i><span class="text-[10px] font-semibold">Ringkasan</span></a>
+      <a href="monitoring/monitoring.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-gray-400 hover:text-primary"><i class="fas fa-eye text-lg"></i><span class="text-[10px]">Monitor</span></a>
+      <button onclick="toggleDrawer()" class="flex flex-col items-center gap-0.5 px-3 py-1 text-gray-400 hover:text-primary"><i class="fas fa-bars text-lg"></i><span class="text-[10px]">Menu</span></button>
+    </div>
+  </nav>
+
+  <!-- Drawer overlay -->
+  <div id="drawer-overlay" class="hidden fixed inset-0 z-50 bg-black/50" onclick="toggleDrawer()"></div>
+  <!-- Drawer -->
+  <div id="drawer" class="fixed top-0 left-0 h-full w-72 bg-primary z-50 transform -translate-x-full transition-transform duration-300 shadow-2xl">
+    <div class="flex items-center gap-3 px-6 py-5 border-b border-white/10">
+      <div class="w-10 h-10 rounded-full bg-accent text-primary flex items-center justify-center font-bold text-lg">W</div>
+      <div><div class="font-bold text-lg text-white leading-tight">WaliKelas</div><div class="text-xs text-white/50">Admin Sekolah</div></div>
+    </div>
+    <div class="px-6 pt-4 pb-2 text-[10px] uppercase tracking-widest text-white/40">Admin sekolah</div>
+    <nav class="px-3 py-2 space-y-1">
+      <a href="admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-tachometer-alt w-5 text-center text-xs"></i> Dashboard</a>
+      <a href="admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm bg-white/10 font-semibold text-white"><i class="fas fa-chart-pie w-5 text-center text-xs"></i> Ringkasan</a>
+      <a href="walas/walas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-chalkboard-teacher w-5 text-center text-xs"></i> Wali Kelas</a>
+      <a href="kelas/kelas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-school w-5 text-center text-xs"></i> Kelas</a>
+      <a href="monitoring/monitoring.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-eye w-5 text-center text-xs"></i> Monitoring</a>
+      <a href="pengguna/pengguna.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-users w-5 text-center text-xs"></i> Pengguna</a>
+      <a href="audit/audit.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-clipboard-list w-5 text-center text-xs"></i> Audit Log</a>
+    </nav>
+    <div class="absolute bottom-0 inset-x-0 px-6 py-4 border-t border-white/10">
+      <button class="logout-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10 hover:text-white"><i class="fas fa-sign-out-alt w-5 text-center text-xs"></i> Keluar</button>
+      <p class="mt-2 text-[11px] text-white/40">Mode: Admin &middot; Read-only monitoring</p>
+    </div>
+  </div>
+
+  <script src="../assets/app.js"></script>
+  <script>
+    function toggleDrawer() {
+      const d = document.getElementById('drawer');
+      const o = document.getElementById('drawer-overlay');
+      const open = !d.classList.contains('translate-x-0');
+      d.classList.toggle('translate-x-0', open);
+      d.classList.toggle('-translate-x-full', !open);
+      o.classList.toggle('hidden', !open);
+    }
+  </script>
+</body>
+</html>

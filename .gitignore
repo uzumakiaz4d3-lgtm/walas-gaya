@@ -1,0 +1,28 @@
+# dependensi
+node_modules/
+
+# build hasil
+.next/
+out/
+dist/
+build/
+
+# environment — jangan commit secret (.env.example tetap dikirim)
+.env
+.env.*
+!.env.example
+
+# prisma (opsional, klien terpisah)
+prisma/
+
+# log & temp
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+temp/
+tmp/
+
+# editor / os
+.vscode/
+.idea/

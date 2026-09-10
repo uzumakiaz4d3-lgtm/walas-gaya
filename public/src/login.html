@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk — WaliKelas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1A3A5C',
+            secondary: '#2A7A6B',
+            accent: '#E89D3F',
+            neutral: '#F5F6F8'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-neutral text-gray-800 min-h-screen">
+
+  <main class="min-h-screen flex items-center justify-center px-4">
+    <div class="w-full max-w-md">
+      <div class="flex flex-col items-center mb-6">
+        <span class="flex items-center justify-center w-14 h-14 rounded-full bg-accent text-primary font-bold text-2xl shadow-sm">W</span>
+        <h1 class="text-2xl font-extrabold text-primary text-center mt-3">WaliKelas</h1>
+        <p class="text-center text-gray-500 text-sm mt-1">Sistem Administrasi Wali Kelas</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
+        <div id="err" class="hidden bg-red-50 border border-red-300 text-red-700 rounded-lg p-3 mb-5 text-sm text-center"></div>
+
+        <form id="loginForm" class="space-y-4">
+          <div>
+            <label for="email" class="block text-sm font-semibold text-gray-700 mb-1.5">Email</label>
+            <input
+              id="email"
+              type="email"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition placeholder:text-gray-400"
+              placeholder="nama@sekolah.id"
+              autocomplete="email"
+              required
+            >
+          </div>
+          <div>
+            <label for="password" class="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
+            <input
+              id="password"
+              type="password"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition placeholder:text-gray-400"
+              placeholder="Masukkan password"
+              autocomplete="current-password"
+              required
+            >
+          </div>
+          <button type="submit" id="btnLogin" class="btn btn-primary w-full">
+            <i class="fa-solid fa-right-to-bracket"></i> Masuk
+          </button>
+        </form>
+      </div>
+
+      <div class="mt-5 bg-neutral border border-gray-200 rounded-xl p-4 text-xs text-gray-500 space-y-1">
+        <p class="font-semibold text-gray-700 mb-1.5">Akun Demo:</p>
+        <p><span class="inline-block w-24 font-medium text-primary">Admin</span>admin@sekolah.id / wali123</p>
+        <p><span class="inline-block w-24 font-medium text-primary">Wali Kelas</span>ahmad@walikelas.sch.id / wali123</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+      var form = document.getElementById("loginForm");
+      var errEl = document.getElementById("err");
+      var btn = document.getElementById("btnLogin");
+      var busy = false;
+
+      function showErr(msg) {
+        errEl.textContent = msg;
+        errEl.classList.remove("hidden");
+      }
+
+      function resetBtn() {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Masuk';
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (busy) return;
+        busy = true;
+        errEl.classList.add("hidden");
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Masuk...';
+
+        var email = document.getElementById("email").value.trim();
+        var password = document.getElementById("password").value;
+
+        fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email, password: password })
+        })
+          .then(function (res) {
+            return res.json().catch(function () {
+              return { success: false, error: "Respon server tidak valid" };
+            });
+          })
+          .then(function (result) {
+            if (result.success) {
+              localStorage.setItem("userRole", result.user.role);
+              localStorage.setItem("userName", result.user.name);
+              if (result.user.kelas) localStorage.setItem("userKelas", result.user.kelas);
+              localStorage.setItem("loggedIn", "true");
+              window.location.href = result.redirect || "/src/dashboard/dashboard.html";
+              return;
+            }
+            showErr(result.error || "Login gagal");
+            resetBtn();
+            busy = false;
+          })
+          .catch(function () {
+            showErr(
+              location.protocol === "file:"
+                ? "Jalankan aplikasi via server terlebih dahulu"
+                : "Gagal terhubung ke server"
+            );
+            resetBtn();
+            busy = false;
+          });
+      });
+    })();
+  </script>
+</body>
+</html>

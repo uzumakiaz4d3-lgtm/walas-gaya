@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengaturan — WaliKelas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1A3A5C',
+            secondary: '#2A7A6B',
+            accent: '#E89D3F',
+            neutral: '#F5F6F8',
+            danger: '#C23B22',
+            info: '#2B6CB0'
+          }
+        }
+      }
+    }
+  </script>
+  <script src="../assets/app.js" defer></script>
+</head>
+<body class="bg-neutral text-gray-800 min-h-screen">
+<!-- Topbar (desktop) -->
+  <header id="topbar" class="hidden md:flex fixed top-0 left-0 right-0 z-30 h-16 bg-white border-b border-gray-200 md:pl-72">
+    <div class="flex items-center pl-4 pr-2">
+      <button id="btn-show-sidebar" style="display:none" class="w-10 h-10 rounded-lg bg-neutral text-primary hover:bg-neutral/70 items-center justify-center transition mr-2" title="Buka sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <span id="tp-avatar" class="flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-white text-sm font-bold uppercase"></span>
+      <div class="ml-3 min-w-0">
+        <span id="tp-name" class="block text-sm font-semibold text-primary leading-tight truncate max-w-[170px]"></span>
+        <span id="tp-role" class="block text-xs text-gray-400 leading-tight"></span>
+      </div>
+    </div>
+    <div class="flex-1 flex items-center justify-center min-w-0 px-4">
+      <h1 id="pageTitleTop" class="text-base md:text-lg font-bold text-primary text-center truncate"></h1>
+    </div>
+    <div class="flex items-center pr-6">
+      <time data-today class="text-sm text-gray-500"></time>
+    </div>
+  </header>
+
+  <!-- Sidebar (desktop) -->
+  <aside class="hidden md:flex flex-col fixed inset-y-0 left-0 w-72 bg-primary text-white z-40">
+    <div class="flex items-center gap-3 px-6 h-16 border-b border-white/10">
+      <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent text-primary font-bold text-lg">W</span>
+      <div>
+        <span class="block font-semibold text-sm leading-tight">WaliKelas</span>
+        <span class="block text-xs text-white/60">Wali Kelas</span>
+      </div>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+      <a href="../dashboard/dashboard.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-gauge-high w-5 text-center"></i> Dashboard
+      </a>
+      <a href="../siswa/siswa.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-users w-5 text-center"></i> Data Siswa
+      </a>
+      <a href="../absensi/absensi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-clipboard-check w-5 text-center"></i> Absensi
+      </a>
+      <a href="../administrasi/administrasi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Administrasi
+      </a>
+      <a href="../pembinaan/pembinaan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-graduation-cap w-5 text-center"></i> Pembinaan
+      </a>
+      <a href="../komunikasi/komunikasi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-comments w-5 text-center"></i> Komunikasi
+      </a>
+      <a href="../laporan/laporan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
+      </a>
+      <a href="../pengaturan/pengaturan.html" class="navlink active flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
+        <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
+      </a>
+    </nav>
+
+    <div class="px-4 py-4 border-t border-white/10 space-y-3">
+      <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
+        <span class="text-white/90 font-medium">Kelas 7A</span> · 2026/2027 Ganjil · 32 siswa aktif
+      </div>
+      <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
+        <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
+      </button>
+    </div>
+  </aside>
+
+  <!-- Bottom Nav (mobile) -->
+  <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-30 flex items-center justify-around px-2 py-2">
+    <a href="../dashboard/dashboard.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-gauge-high text-lg"></i> Beranda
+    </a>
+    <a href="../absensi/absensi.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-clipboard-check text-lg"></i> Absensi
+    </a>
+    <a href="../siswa/siswa.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-users text-lg"></i> Siswa
+    </a>
+    <a href="../komunikasi/komunikasi.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-comments text-lg"></i> Pesan
+    </a>
+    <button data-open-drawer class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-bars text-lg"></i> Menu
+    </button>
+  </nav>
+
+  <!-- Drawer -->
+  <div id="drawer" class="fixed inset-0 z-50 hidden">
+    <div data-close-drawer class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-y-0 left-0 w-72 bg-primary text-white shadow-xl flex flex-col transform transition-transform">
+      <div class="flex items-center justify-between px-6 h-16 border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent text-primary font-bold text-lg">W</span>
+          <div>
+            <span class="block font-semibold text-sm leading-tight">WaliKelas</span>
+            <span class="block text-xs text-white/60">Wali Kelas</span>
+          </div>
+        </div>
+        <button data-close-drawer class="text-white/60 hover:text-white transition">
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+      </div>
+
+      <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+        <a href="../dashboard/dashboard.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-gauge-high w-5 text-center"></i> Dashboard
+        </a>
+        <a href="../siswa/siswa.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-users w-5 text-center"></i> Data Siswa
+        </a>
+        <a href="../absensi/absensi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-clipboard-check w-5 text-center"></i> Absensi
+        </a>
+        <a href="../administrasi/administrasi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Administrasi
+        </a>
+        <a href="../pembinaan/pembinaan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-graduation-cap w-5 text-center"></i> Pembinaan
+        </a>
+        <a href="../komunikasi/komunikasi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-comments w-5 text-center"></i> Komunikasi
+        </a>
+        <a href="../laporan/laporan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
+        </a>
+        <a href="../pengaturan/pengaturan.html" class="navlink active flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
+          <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
+        </a>
+      </nav>
+
+      <div class="px-4 py-4 border-t border-white/10 space-y-3">
+        <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
+          <span class="text-white/90 font-medium">Kelas 7A</span> · 2026/2027 Ganjil · 32 siswa aktif
+        </div>
+        <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
+          <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="p-4 pb-28 md:px-8 md:pb-8 md:pl-72 md:pt-24">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
+      <h1 class="page-title text-xl md:text-2xl font-bold text-primary md:hidden">Pengaturan</h1>
+      <button onclick="saveSettings()" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition">
+        <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan Semua
+      </button>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-xs text-gray-500 mb-1">Data Tersimpan</p>
+        <p class="text-2xl font-bold text-secondary">100%</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-xs text-gray-500 mb-1">Backup Terakhir</p>
+        <p class="text-2xl font-bold text-primary">8 Sep</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-xs text-gray-500 mb-1">Pengguna Aktif</p>
+        <p class="text-2xl font-bold text-accent">3</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-xs text-gray-500 mb-1">Log Hari Ini</p>
+        <p class="text-2xl font-bold text-info">24</p>
+      </div>
+    </div>
+
+    <!-- Profil & Sekolah -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 mb-6">
+      <h2 class="text-sm font-semibold text-gray-600 mb-3"><i class="fa-solid fa-school mr-2 text-gray-400"></i>Profil & Sekolah</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Nama Sekolah</label>
+          <input id="inp-sekolah" type="text" value="SMP Negeri 1 Contoh" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/40">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Kepala Sekolah</label>
+          <input id="inp-kepala" type="text" value="Dr. Bambang Sutrisno, M.Pd" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/40">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">NPSN</label>
+          <input id="inp-npsn" type="text" value="2026287890" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/40">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Tahun Ajaran</label>
+          <select id="sel-tahun" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/40">
+            <option selected>2026/2027</option>
+            <option>2025/2026</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kelola Sistem -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5">
+      <h2 class="text-sm font-semibold text-gray-600 mb-3"><i class="fa-solid fa-sliders mr-2 text-gray-400"></i>Kelola Sistem</h2>
+      <div class="grid grid-cols-2 lg:grid-cols-2 gap-3">
+        <button onclick="backupSettings()" class="flex flex-col items-center justify-center gap-2 p-4 bg-neutral rounded-xl hover:bg-secondary/5 transition text-center">
+          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-secondary/10 text-secondary text-lg"><i class="fa-solid fa-cloud-arrow-up"></i></span>
+          <span class="text-xs font-medium text-gray-700">Backup / Export</span>
+        </button>
+        <button onclick="openTemaModal()" class="relative flex flex-col items-center justify-center gap-2 p-4 bg-neutral rounded-xl hover:bg-accent/5 transition text-center">
+          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent/10 text-accent text-lg"><i class="fa-solid fa-palette"></i></span>
+          <span class="text-xs font-medium text-gray-700">Tema & Tampilan</span>
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Modal: Tema & Tampilan -->
+  <div id="tema-modal" class="modal">
+    <div data-close-tema class="absolute inset-0 bg-black/40"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 mb-20 md:mb-0">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="text-lg font-bold text-primary">Tema & Tampilan</h2>
+        <button data-close-tema class="text-gray-400 hover:text-gray-600 transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      <p class="text-xs text-gray-400 mb-4">Pilih tema sesuai selera. Perubahan langsung diterapkan di seluruh halaman.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <button data-theme-opt="normal" class="theme-card text-left bg-neutral rounded-xl border-2 border-transparent p-3 transition hover:border-secondary/60">
+          <span class="flex h-16 rounded-lg overflow-hidden border border-gray-200">
+            <span class="w-1/3 bg-primary"></span>
+            <span class="flex-1 bg-white"></span>
+          </span>
+          <span class="block mt-2 text-sm font-semibold text-gray-800">Normal</span>
+          <span class="block text-[11px] text-gray-400">Tampilan bawaan</span>
+        </button>
+        <button data-theme-opt="dark" class="theme-card text-left bg-neutral rounded-xl border-2 border-transparent p-3 transition hover:border-secondary/60">
+          <span class="flex h-16 rounded-lg overflow-hidden border border-gray-200">
+            <span class="w-1/3 bg-primary"></span>
+            <span class="flex-1 bg-neutral"></span>
+          </span>
+          <span class="block mt-2 text-sm font-semibold text-gray-800">Gelap</span>
+          <span class="block text-[11px] text-gray-400">Dark mode yang elegan</span>
+        </button>
+        <button data-theme-opt="fullcolor" class="theme-card text-left bg-neutral rounded-xl border-2 border-transparent p-3 transition hover:border-secondary/60">
+          <span class="flex h-16 rounded-xl overflow-hidden border border-gray-200">
+            <span class="flex-1 bg-primary"></span>
+            <span class="flex-1 bg-secondary"></span>
+            <span class="flex-1 bg-accent"></span>
+          </span>
+          <span class="block mt-2 text-sm font-semibold text-gray-800">Full Color</span>
+          <span class="block text-[11px] text-gray-400">Palet penuh warna</span>
+        </button>
+      </div>
+      <button onclick="document.getElementById('tema-modal').classList.remove('show')" class="mt-4 w-full bg-secondary text-white text-sm font-medium py-2.5 rounded-lg hover:bg-secondary/90 transition">
+        Selesai
+      </button>
+    </div>
+  </div>
+
+<script>
+    function readSettings() {
+      return {
+        sekolah: document.getElementById("inp-sekolah").value.trim(),
+        kepala: document.getElementById("inp-kepala").value.trim(),
+        npsn: document.getElementById("inp-npsn").value.trim(),
+        tahun: document.getElementById("sel-tahun").value,
+        tersimpan: new Date().toLocaleString("id-ID")
+      };
+    }
+    function saveSettings() {
+      var s = readSettings();
+      localStorage.setItem("wkSettings", JSON.stringify(s));
+      if (typeof WKToast === "function") WKToast("Pengaturan tersimpan");
+    }
+    function backupSettings() {
+      var s = readSettings();
+      localStorage.setItem("wkSettings", JSON.stringify(s));
+      var blob = new Blob([JSON.stringify(s, null, 2)], { type: "application/json" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "backup-pengaturan-walikelas.json";
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 400);
+      if (typeof WKToast === "function") WKToast("Backup diunduh");
+    }
+    function openTemaModal() {
+      var m = document.getElementById("tema-modal");
+      if (m) m.classList.add("show");
+      renderThemeState();
+    }
+    function renderThemeState() {
+      var cur = "normal";
+      try {
+        var v = localStorage.getItem("wkTheme");
+        if (["normal", "dark", "fullcolor"].indexOf(v) !== -1) cur = v;
+      } catch (e) {}
+      document.querySelectorAll("[data-theme-opt]").forEach(function (b) {
+        var on = b.getAttribute("data-theme-opt") === cur;
+        b.classList.toggle("border-secondary", on);
+        b.classList.toggle("border-transparent", !on);
+        b.classList.toggle("shadow-sm", on);
+      });
+    }
+    document.querySelectorAll("[data-theme-opt]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var t = b.getAttribute("data-theme-opt");
+        if (typeof applyTheme === "function") applyTheme(t, true);
+        renderThemeState();
+        if (typeof WKToast === "function") {
+          var label = { normal: "Normal", dark: "Gelap", fullcolor: "Full Color" }[t] || t;
+          WKToast("Tema " + label + " aktif");
+        }
+      });
+    });
+    document.querySelectorAll("[data-close-tema]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        var m = document.getElementById("tema-modal");
+        if (m) m.classList.remove("show");
+      });
+    });
+    (function () {
+      try {
+        var s = JSON.parse(localStorage.getItem("wkSettings") || "null");
+        if (s) {
+          document.getElementById("inp-sekolah").value = s.sekolah || "SMP Negeri 1 Contoh";
+          document.getElementById("inp-kepala").value = s.kepala || "Dr. Bambang Sutrisno, M.Pd";
+          document.getElementById("inp-npsn").value = s.npsn || "2026287890";
+          if (s.tahun) document.getElementById("sel-tahun").value = s.tahun;
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<script>
+  (function () {
+    var role = localStorage.getItem("userRole");
+    if (role !== "admin") {
+      var parts = location.pathname.split("/").filter(Boolean);
+      var top = parts[parts.length - 1] === "admin.html";
+      var up = top ? "../" : "../../";
+      var dest = role ? up + "dashboard/dashboard.html" : up + "login.html";
+      location.replace(dest);
+    }
+  })();
+</script>
+  <!-- role-guard -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengguna — Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <link href="../../assets/styles.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: {
+        primary: '#1A3A5C', secondary: '#2A7A6B', accent: '#E89D3F',
+        neutral: '#F5F6F8', danger: '#C23B22', info: '#2B6CB0'
+      }}}
+    }
+  </script>
+</head>
+<body class="bg-neutral min-h-screen">
+
+  <!-- Sidebar md+ -->
+  <aside class="hidden">
+    <div class="flex items-center gap-3 px-6 py-5 border-b border-white/10">
+      <div class="w-10 h-10 rounded-full bg-accent text-primary flex items-center justify-center font-bold text-lg">W</div>
+      <div><div class="font-bold text-lg leading-tight">WaliKelas</div><div class="text-xs text-white/50">Admin Sekolah</div></div>
+    </div>
+    <div class="px-6 pt-4 pb-2 text-[10px] uppercase tracking-widest text-white/40">Admin sekolah</div>
+    <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+      <a href="../../admin/admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-tachometer-alt w-5 text-center text-xs"></i> Dashboard</a>
+      <a href="../admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-chart-pie w-5 text-center text-xs"></i> Ringkasan</a>
+      <a href="../walas/walas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-chalkboard-teacher w-5 text-center text-xs"></i> Wali Kelas</a>
+      <a href="../kelas/kelas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-school w-5 text-center text-xs"></i> Kelas</a>
+      <a href="../monitoring/monitoring.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-eye w-5 text-center text-xs"></i> Monitoring</a>
+      <a href="pengguna.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm bg-white/10 font-semibold border-l-4 border-accent"><i class="fas fa-users w-5 text-center text-xs"></i> Pengguna</a>
+      <a href="../audit/audit.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-clipboard-list w-5 text-center text-xs"></i> Audit Log</a>
+    </nav>
+    <div class="px-6 py-4 text-[11px] text-white/40 border-t border-white/10">Mode: Admin &middot; Read-only monitoring</div>
+  </aside>
+
+  <!-- Main -->
+  <div class="pb-24 min-h-screen">
+    <header class="md:hidden sticky top-0 z-30 bg-primary text-white px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-accent text-primary flex items-center justify-center font-bold text-sm">W</div>
+        <span class="font-bold">WaliKelas</span>
+      </div>
+      <button onclick="toggleDrawer()" class="p-2 rounded-lg hover:bg-white/10"><i class="fas fa-bars"></i></button>
+    </header>
+
+    <main class="p-4 md:p-8 max-w-7xl mx-auto">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <h1 class="text-2xl font-bold text-primary">Pengguna & Hak Akses</h1>
+        <button onclick="openModal()" class="inline-flex items-center gap-2 bg-accent hover:bg-accent/90 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition"><i class="fas fa-plus"></i> Tambah Pengguna</button>
+      </div>
+
+      <!-- Search -->
+      <div class="mb-4">
+        <div class="relative max-w-sm">
+          <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+          <input id="qp" type="text" placeholder="Cari pengguna..." oninput="renderTable()" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table id="tbl-p" class="w-full text-sm">
+            <thead class="bg-neutral text-gray-500 text-xs uppercase"><tr>
+              <th class="text-left px-6 py-3">Nama</th><th class="text-left px-6 py-3">Email</th><th class="text-left px-6 py-3">Kelas</th><th class="text-left px-6 py-3">Peran</th><th class="text-left px-6 py-3">Status</th><th class="text-left px-6 py-3">Aksi</th>
+            </tr></thead>
+            <tbody id="tp-b" class="divide-y divide-gray-50"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Tambah/Edit Pengguna -->
+  <div id="modal-pengguna" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 id="m-title" class="font-bold text-primary">Tambah Pengguna</h3>
+        <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+      </div>
+      <form onsubmit="saveUser(event)" class="p-6 space-y-4">
+        <input type="hidden" id="p-id">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+          <input id="p-nama" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <input id="p-email" type="email" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent" placeholder="nama@sekolah.id">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Password <span id="p-pass-hint" class="text-xs text-gray-400 font-normal"></span></label>
+          <input id="p-password" type="password" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent" placeholder="Minimal 6 karakter">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Peran</label>
+          <select id="p-peran" required onchange="toggleKelasField()" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+            <option value="wali_kelas">Wali Kelas</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div id="p-kelasWrap">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
+          <select id="p-kelas" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+            <option value="7A">7A</option><option value="7B">7B</option><option value="8A">8A</option><option value="8B">8B</option>
+          </select>
+        </div>
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" onclick="closeModal()" class="px-4 py-2.5 rounded-xl text-sm text-gray-500 hover:bg-gray-100">Batal</button>
+          <button type="submit" class="px-6 py-2.5 rounded-xl bg-accent text-white text-sm font-semibold hover:bg-accent/90 transition">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bottom nav -->
+  <nav class="fixed bottom-0 inset-x-0 z-40 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+    <div class="flex items-center justify-around py-2">
+      <a href="../../admin/admin.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-gray-400 hover:text-primary"><i class="fas fa-tachometer-alt text-lg"></i><span class="text-[10px]">Beranda</span></a>
+      <a href="../admin.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-gray-400 hover:text-primary"><i class="fas fa-chart-pie text-lg"></i><span class="text-[10px]">Ringkasan</span></a>
+      <a href="../monitoring/monitoring.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-gray-400 hover:text-primary"><i class="fas fa-eye text-lg"></i><span class="text-[10px]">Monitor</span></a>
+      <button onclick="toggleDrawer()" class="flex flex-col items-center gap-0.5 px-3 py-1 text-gray-400 hover:text-primary"><i class="fas fa-bars text-lg"></i><span class="text-[10px]">Menu</span></button>
+    </div>
+  </nav>
+
+  <!-- Drawer -->
+  <div id="drawer-overlay" class="hidden fixed inset-0 z-50 bg-black/50" onclick="toggleDrawer()"></div>
+  <div id="drawer" class="fixed top-0 left-0 h-full w-72 bg-primary z-50 transform -translate-x-full transition-transform duration-300 shadow-2xl">
+    <div class="flex items-center gap-3 px-6 py-5 border-b border-white/10">
+      <div class="w-10 h-10 rounded-full bg-accent text-primary flex items-center justify-center font-bold text-lg">W</div>
+      <div><div class="font-bold text-lg text-white leading-tight">WaliKelas</div><div class="text-xs text-white/50">Admin Sekolah</div></div>
+    </div>
+    <div class="px-6 pt-4 pb-2 text-[10px] uppercase tracking-widest text-white/40">Admin sekolah</div>
+    <nav class="px-3 py-2 space-y-1">
+      <a href="../../admin/admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-tachometer-alt w-5 text-center text-xs"></i> Dashboard</a>
+      <a href="../admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-chart-pie w-5 text-center text-xs"></i> Ringkasan</a>
+      <a href="../walas/walas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-chalkboard-teacher w-5 text-center text-xs"></i> Wali Kelas</a>
+      <a href="../kelas/kelas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-school w-5 text-center text-xs"></i> Kelas</a>
+      <a href="../monitoring/monitoring.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-eye w-5 text-center text-xs"></i> Monitoring</a>
+      <a href="pengguna.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm bg-white/10 font-semibold text-white"><i class="fas fa-users w-5 text-center text-xs"></i> Pengguna</a>
+      <a href="../audit/audit.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-clipboard-list w-5 text-center text-xs"></i> Audit Log</a>
+    </nav>
+    <div class="absolute bottom-0 inset-x-0 px-6 py-4 border-t border-white/10">
+      <button class="logout-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10 hover:text-white"><i class="fas fa-sign-out-alt w-5 text-center text-xs"></i> Keluar</button>
+      <p class="mt-2 text-[11px] text-white/40">Mode: Admin &middot; Read-only monitoring</p>
+    </div>
+  </div>
+
+  <script src="../../assets/app.js"></script>
+  <script>
+    var USERS = [];
+    var q = "";
+
+    function api(headers, method, url, body) {
+      return fetch(url, {
+        method: method || "GET",
+        headers: Object.assign({ "Content-Type": "application/json", "x-user-role": "admin" }, headers || {}),
+        body: body ? JSON.stringify(body) : undefined
+      }).then(function (r) { return r.json(); });
+    }
+
+    function loadUsers() {
+      return api(null, "GET", "/api/users").then(function (res) {
+        if (!res.success) throw new Error(res.error || "Gagal memuat pengguna");
+        USERS = res.users || [];
+        renderTable();
+      });
+    }
+
+    function renderTable() {
+      var qlow = document.getElementById("qp").value.toLowerCase();
+      var list = USERS.filter(function (u) {
+        return (u.name + " " + u.email + " " + (u.kelas || "")).toLowerCase().indexOf(qlow) !== -1;
+      });
+      var tb = document.getElementById("tp-b");
+      if (!list.length) {
+        tb.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center text-gray-400 text-sm">Belum ada pengguna</td></tr>';
+        return;
+      }
+      tb.innerHTML = list.map(function (u) {
+        var roleBadge = u.role === "admin"
+          ? '<span class="px-2 py-0.5 rounded-full text-xs bg-purple-100 text-purple-700">Admin</span>'
+          : '<span class="px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-700">Wali Kelas</span>';
+        var statusBadge = u.status === "aktif"
+          ? '<span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">Aktif</span>'
+          : '<span class="px-2 py-0.5 rounded-full text-xs bg-gray-200 text-gray-600">Nonaktif</span>';
+        var del = u.role === "admin"
+          ? '<span class="text-xs text-gray-300 cursor-not-allowed"><i class="fas fa-trash mr-1"></i>Hapus</span>'
+          : '<button onclick="delUser(\'' + u.id + '\')" class="text-danger hover:text-danger/80 text-xs"><i class="fas fa-trash mr-1"></i>Hapus</button>';
+        return '<tr class="hover:bg-gray-50">'
+          + '<td class="px-6 py-3 font-medium">' + u.name + "</td>"
+          + '<td class="px-6 py-3 text-gray-500">' + u.email + "</td>"
+          + '<td class="px-6 py-3 text-gray-500">' + (u.kelas || "-") + "</td>"
+          + '<td class="px-6 py-3">' + roleBadge + "</td>"
+          + '<td class="px-6 py-3">' + statusBadge + "</td>"
+          + '<td class="px-6 py-3"><div class="flex items-center gap-3">'
+          + '<button onclick="editUser(\'' + u.id + '\')" class="text-info hover:text-info/80 text-xs"><i class="fas fa-pen mr-1"></i>Edit</button>'
+          + '<button onclick="resetUser(\'' + u.id + '\',\'' + u.name.replace(/'/g, "") + '\')" class="text-gray-500 hover:text-gray-700 text-xs"><i class="fas fa-undo mr-1"></i>Reset</button>'
+          + del
+          + "</div></td></tr>";
+      }).join("");
+    }
+
+    function openModal() {
+      document.getElementById("m-title").textContent = "Tambah Pengguna";
+      document.getElementById("p-id").value = "";
+      document.getElementById("p-nama").value = "";
+      document.getElementById("p-email").value = "";
+      document.getElementById("p-password").value = "";
+      document.getElementById("p-password").required = true;
+      document.getElementById("p-pass-hint").textContent = "";
+      document.getElementById("p-peran").value = "wali_kelas";
+      toggleKelasField();
+      document.getElementById("modal-pengguna").classList.remove("hidden");
+    }
+
+    function editUser(id) {
+      var u = USERS.find(function (x) { return x.id === id; });
+      if (!u) return;
+      document.getElementById("m-title").textContent = "Edit Pengguna";
+      document.getElementById("p-id").value = u.id;
+      document.getElementById("p-nama").value = u.name;
+      document.getElementById("p-email").value = u.email;
+      document.getElementById("p-password").value = "";
+      document.getElementById("p-password").required = false;
+      document.getElementById("p-pass-hint").textContent = "(kosongkan jika tidak diganti)";
+      document.getElementById("p-peran").value = u.role;
+      document.getElementById("p-kelas").value = u.kelas || "7A";
+      toggleKelasField();
+      document.getElementById("modal-pengguna").classList.remove("hidden");
+    }
+
+    function closeModal() {
+      document.getElementById("modal-pengguna").classList.add("hidden");
+    }
+
+    function toggleKelasField() {
+      var isW = document.getElementById("p-peran").value === "wali_kelas";
+      document.getElementById("p-kelasWrap").classList.toggle("hidden", !isW);
+    }
+
+    function saveUser(e) {
+      e.preventDefault();
+      var id = document.getElementById("p-id").value;
+      var payload = {
+        name: document.getElementById("p-nama").value.trim(),
+        email: document.getElementById("p-email").value.trim(),
+        password: document.getElementById("p-password").value,
+        role: document.getElementById("p-peran").value,
+        kelas: document.getElementById("p-peran").value === "wali_kelas" ? document.getElementById("p-kelas").value : null
+      };
+      var req = id
+        ? api(null, "PUT", "/api/users/" + encodeURIComponent(id), payload)
+        : api(null, "POST", "/api/users", payload);
+      req.then(function (res) {
+        if (!res.success) { toast(res.error || "Gagal menyimpan"); return; }
+        toast(id ? "Pengguna diperbarui" : "Pengguna berhasil ditambah");
+        closeModal();
+        loadUsers();
+      }).catch(function () { toast("Gagal terhubung ke server"); });
+    }
+
+    function resetUser(id, name) {
+      if (!confirm("Reset password akun " + name + " ke wali123?")) return;
+      api(null, "POST", "/api/users/" + encodeURIComponent(id))
+        .then(function (res) {
+          toast(res.success ? "Password direset ke wali123" : (res.error || "Gagal reset"));
+        })
+        .catch(function () { toast("Gagal terhubung ke server"); });
+    }
+
+    function delUser(id) {
+      if (!confirm("Hapus akun ini? Tindakan tidak dapat dibatalkan.")) return;
+      api(null, "DELETE", "/api/users/" + encodeURIComponent(id))
+        .then(function (res) {
+          if (!res.success) { toast(res.error || "Gagal menghapus"); return; }
+          toast("Akun dihapus");
+          loadUsers();
+        })
+        .catch(function () { toast("Gagal terhubung ke server"); });
+    }
+
+    function toast(msg) {
+      var t = document.createElement("div");
+      t.className = "fixed top-4 right-4 z-[60] bg-primary text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium";
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(function () { t.remove(); }, 2500);
+    }
+
+    function toggleDrawer() {
+      const d = document.getElementById('drawer');
+      const o = document.getElementById('drawer-overlay');
+      const open = !d.classList.contains('translate-x-0');
+      d.classList.toggle('translate-x-0', open);
+      d.classList.toggle('-translate-x-full', !open);
+      o.classList.toggle('hidden', !open);
+    }
+
+    loadUsers();
+  </script>
+</body>
+</html>

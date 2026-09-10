@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laporan Wali Kelas — WaliKelas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1A3A5C',
+            secondary: '#2A7A6B',
+            accent: '#E89D3F',
+            neutral: '#F5F6F8',
+            danger: '#C23B22',
+            info: '#2B6CB0'
+          }
+        }
+      }
+    }
+  </script>
+  <script src="../assets/app.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
+</head>
+<body class="bg-neutral text-gray-800 min-h-screen">
+<!-- Topbar (desktop) -->
+  <header id="topbar" class="hidden md:flex fixed top-0 left-0 right-0 z-30 h-16 bg-white border-b border-gray-200 md:pl-72">
+    <div class="flex items-center pl-4 pr-2">
+      <button id="btn-show-sidebar" style="display:none" class="w-10 h-10 rounded-lg bg-neutral text-primary hover:bg-neutral/70 items-center justify-center transition mr-2" title="Buka sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <span id="tp-avatar" class="flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-white text-sm font-bold uppercase"></span>
+      <div class="ml-3 min-w-0">
+        <span id="tp-name" class="block text-sm font-semibold text-primary leading-tight truncate max-w-[170px]"></span>
+        <span id="tp-role" class="block text-xs text-gray-400 leading-tight"></span>
+      </div>
+    </div>
+    <div class="flex-1 flex items-center justify-center min-w-0 px-4">
+      <h1 id="pageTitleTop" class="text-base md:text-lg font-bold text-primary text-center truncate"></h1>
+    </div>
+    <div class="flex items-center pr-6">
+      <time data-today class="text-sm text-gray-500"></time>
+    </div>
+  </header>
+
+  <!-- Sidebar (desktop) -->
+  <aside class="hidden md:flex flex-col fixed inset-y-0 left-0 w-72 bg-primary text-white z-40">
+    <div class="flex items-center gap-3 px-6 h-16 border-b border-white/10">
+      <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent text-primary font-bold text-lg">W</span>
+      <div>
+        <span class="block font-semibold text-sm leading-tight">WaliKelas</span>
+        <span class="block text-xs text-white/60">Wali Kelas</span>
+      </div>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+      <a href="../dashboard/dashboard.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-gauge-high w-5 text-center"></i> Dashboard
+      </a>
+      <a href="../siswa/siswa.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-users w-5 text-center"></i> Data Siswa
+      </a>
+      <a href="../absensi/absensi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-clipboard-check w-5 text-center"></i> Absensi
+      </a>
+      <a href="../administrasi/administrasi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Administrasi
+      </a>
+      <a href="../pembinaan/pembinaan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-graduation-cap w-5 text-center"></i> Pembinaan
+      </a>
+      <a href="../komunikasi/komunikasi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-comments w-5 text-center"></i> Komunikasi
+      </a>
+      <a href="../laporan/laporan.html" class="navlink active flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
+        <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
+      </a>
+      <a href="../pengaturan/pengaturan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
+      </a>
+    </nav>
+
+    <div class="px-4 py-4 border-t border-white/10 space-y-3">
+      <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
+        <span class="text-white/90 font-medium">Kelas 7A</span> · 2026/2027 Ganjil · 32 siswa aktif
+      </div>
+      <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
+        <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
+      </button>
+    </div>
+  </aside>
+
+  <!-- Bottom Nav (mobile) -->
+  <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-30 flex items-center justify-around px-2 py-2">
+    <a href="../dashboard/dashboard.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-gauge-high text-lg"></i> Beranda
+    </a>
+    <a href="../absensi/absensi.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-clipboard-check text-lg"></i> Absensi
+    </a>
+    <a href="../siswa/siswa.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-users text-lg"></i> Siswa
+    </a>
+    <a href="../komunikasi/komunikasi.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-comments text-lg"></i> Pesan
+    </a>
+    <button data-open-drawer class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-bars text-lg"></i> Menu
+    </button>
+  </nav>
+
+  <!-- Drawer -->
+  <div id="drawer" class="fixed inset-0 z-50 hidden">
+    <div data-close-drawer class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-y-0 left-0 w-72 bg-primary text-white shadow-xl flex flex-col transform transition-transform">
+      <div class="flex items-center justify-between px-6 h-16 border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent text-primary font-bold text-lg">W</span>
+          <div>
+            <span class="block font-semibold text-sm leading-tight">WaliKelas</span>
+            <span class="block text-xs text-white/60">Wali Kelas</span>
+          </div>
+        </div>
+        <button data-close-drawer class="text-white/60 hover:text-white transition">
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+      </div>
+
+      <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+        <a href="../dashboard/dashboard.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-gauge-high w-5 text-center"></i> Dashboard
+        </a>
+        <a href="../siswa/siswa.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-users w-5 text-center"></i> Data Siswa
+        </a>
+        <a href="../absensi/absensi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-clipboard-check w-5 text-center"></i> Absensi
+        </a>
+        <a href="../administrasi/administrasi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Administrasi
+        </a>
+        <a href="../pembinaan/pembinaan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-graduation-cap w-5 text-center"></i> Pembinaan
+        </a>
+        <a href="../komunikasi/komunikasi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-comments w-5 text-center"></i> Komunikasi
+        </a>
+        <a href="../laporan/laporan.html" class="navlink active flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
+          <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
+        </a>
+        <a href="../pengaturan/pengaturan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
+        </a>
+      </nav>
+
+      <div class="px-4 py-4 border-t border-white/10 space-y-3">
+        <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
+          <span class="text-white/90 font-medium">Kelas 7A</span> · 2026/2027 Ganjil · 32 siswa aktif
+        </div>
+        <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
+          <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="p-4 pb-28 md:px-8 md:pb-8 md:pl-72 md:pt-24">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
+      <h1 class="page-title text-xl md:text-2xl font-bold text-primary md:hidden">Laporan</h1>
+      <div class="flex items-center gap-2">
+        <button onclick="exportLaporanCsv()" class="inline-flex items-center gap-2 px-4 py-2 bg-secondary/10 hover:bg-secondary/20 text-secondary text-sm font-medium rounded-lg transition">
+          <i class="fa-solid fa-file-excel text-xs"></i> Excel
+        </button>
+        <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition">
+          <i class="fa-solid fa-print text-xs"></i> Cetak / PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-xs text-gray-500 mb-1">Hadir Rata-rata</p>
+        <p class="text-2xl font-bold text-secondary">91%</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-xs text-gray-500 mb-1">Izin/Sakit</p>
+        <p class="text-2xl font-bold text-accent">23</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-xs text-gray-500 mb-1">Alpa/Telat</p>
+        <p class="text-2xl font-bold text-danger">15</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-xs text-gray-500 mb-1">Prestasi</p>
+        <p class="text-2xl font-bold text-info">6</p>
+      </div>
+    </div>
+
+    <!-- Report Type Cards -->
+    <div class="grid md:grid-cols-3 gap-3 md:gap-4 mb-6">
+      <div class="bg-white rounded-xl shadow-sm p-4 md:p-5">
+        <span class="flex items-center justify-center w-10 h-10 rounded-full bg-secondary/10 text-secondary mb-3">
+          <i class="fa-solid fa-file-pdf"></i>
+        </span>
+        <h4 class="text-sm font-semibold text-gray-800 mb-1">Rekap Absensi</h4>
+        <p class="text-xs text-gray-500 mb-4">Rekapitulasi kehadiran seluruh siswa</p>
+        <button onclick="exportRekapAbsensi()" class="w-full bg-secondary hover:bg-secondary/90 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+          <i class="fa-solid fa-download mr-1"></i> Unduh XLS
+        </button>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4 md:p-5">
+        <span class="flex items-center justify-center w-10 h-10 rounded-full bg-info/10 text-info mb-3">
+          <i class="fa-solid fa-file-lines"></i>
+        </span>
+        <h4 class="text-sm font-semibold text-gray-800 mb-1">Laporan Semester</h4>
+        <p class="text-xs text-gray-500 mb-4">Laporan lengkap akhir semester</p>
+        <button onclick="window.print()" class="w-full bg-info hover:bg-info/90 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+          <i class="fa-solid fa-print mr-1"></i> Cetak Sekarang
+        </button>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4 md:p-5">
+        <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent/10 text-accent mb-3">
+          <i class="fa-solid fa-trophy"></i>
+        </span>
+        <h4 class="text-sm font-semibold text-gray-800 mb-1">Prestasi & Ekskul</h4>
+        <p id="ekskul-count" class="text-xs text-gray-500 mb-4">Data pencapaian dan ekstrakurikuler</p>
+        <button onclick="exportEkskul()" class="w-full bg-accent hover:bg-accent/90 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+          <i class="fa-solid fa-file-export mr-1"></i> Ekspor
+        </button>
+      </div>
+    </div>
+
+    <!-- Pratinjau Semester Ganjil -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-sm font-semibold text-gray-600"><i class="fa-solid fa-table mr-2 text-gray-400"></i>Pratinjau Semester Ganjil</h2>
+        <div class="flex items-center gap-2">
+          <button onclick="exportLaporanCsv()" class="bg-secondary/10 hover:bg-secondary/20 text-secondary text-xs font-medium px-3 py-1.5 rounded-lg transition">
+            <i class="fa-solid fa-file-excel mr-1"></i> Excel
+          </button>
+          <button onclick="window.print()" class="bg-primary/10 hover:bg-primary/20 text-primary text-xs font-medium px-3 py-1.5 rounded-lg transition">
+            <i class="fa-solid fa-print mr-1"></i> Cetak / PDF
+          </button>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table id="tbl-laporan" class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-gray-100">
+              <th class="text-left py-3 px-4 text-xs font-semibold text-gray-400 uppercase">Indikator</th>
+              <th class="text-center py-3 px-4 text-xs font-semibold text-gray-400 uppercase">Jumlah</th>
+              <th class="text-left py-3 px-4 text-xs font-semibold text-gray-400 uppercase">Keterangan</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-laporan">
+            <tr><td colspan="3" class="py-6 text-center text-gray-400 text-sm">Memuat data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+<script>
+    function currentKelas() {
+      var p = new URLSearchParams(location.search);
+      var k = p.get("kelas");
+      if (k) return k;
+      var n = localStorage.getItem("userName");
+      var m = { "Ahmad Fauzan":"7A", "Siti Aminah":"7B", "Budi Santoso":"8A", "Dewi Lestari":"8B" };
+      return (n && m[n]) ? m[n] : (localStorage.getItem("userKelas") || "7A");
+    }
+    function loadAbsensiAll() {
+      try { return JSON.parse(localStorage.getItem("absensi_" + currentKelas())) || {}; } catch(e){ return {}; }
+    }
+    function loadEkskul() {
+      try { return JSON.parse(localStorage.getItem("admData_" + currentKelas())) || {}; } catch(e){ return {}; }
+    }
+
+    /* ===== Agregasi rekap dari semua tanggal yang tersimpan ===== */
+    function buildRekap() {
+      var all = loadAbsensiAll();
+      var dates = Object.keys(all).sort();
+      var studentNames = [];
+      var nameSet = {};
+      var totalH = 0, totalS = 0, totalI = 0, totalA = 0, totalD = 0, totalT = 0, totalRec = 0;
+      var perStudent = {};
+
+      dates.forEach(function(date) {
+        all[date].forEach(function(r) {
+          totalRec++;
+          if (["H","S","I","A","D","T"].indexOf(r.status) !== -1) {
+            var c = { H:0, S:0, I:0, A:0, D:0, T:0 };
+            c[r.status] = 1;
+            totalH += c.H; totalS += c.S; totalI += c.I; totalA += c.A; totalD += c.D; totalT += c.T;
+          }
+          if (!nameSet[r.nama]) {
+            nameSet[r.nama] = true;
+            studentNames.push(r.nama);
+            perStudent[r.nama] = { H:0, S:0, I:0, A:0, D:0, T:0, days: 0 };
+          }
+          var ps = perStudent[r.nama];
+          if (ps.hasOwnProperty(r.status)) ps[r.status]++;
+          ps.days++;
+        });
+      });
+
+      var totalDays = dates.length;
+      var totalStudents = studentNames.length;
+      var avgHadirPct = totalRec ? Math.round((totalH + totalT) / totalRec * 1000) / 10 : 0;
+
+      return {
+        dates: dates,
+        studentNames: studentNames,
+        totalDays: totalDays,
+        totalStudents: totalStudents,
+        totalRec: totalRec,
+        totalH: totalH, totalS: totalS, totalI: totalI,
+        totalA: totalA, totalD: totalD, totalT: totalT,
+        avgHadirPct: avgHadirPct,
+        perStudent: perStudent,
+        all: all
+      };
+    }
+
+    /* ===== Render #tbl-laporan dari data real ===== */
+    function renderLaporanTable() {
+      var r = buildRekap();
+      var tbody = document.getElementById("tbody-laporan");
+      if (!tbody) return;
+      var kelas = currentKelas();
+      var rows = [
+        ["Total Siswa", r.totalStudents, "Aktif di kelas " + kelas],
+        ["Total Hari Ter-catat", r.totalDays, "Tanggal yang sudah disimpan absensinya"],
+        ["Rata-rata Hadir", r.avgHadirPct + "%", r.avgHadirPct >= 85 ? "Di atas target sekolah (85%)" : "Di bawah target sekolah (85%)"],
+        ["Total Hadir", r.totalH + r.totalT, "Termasuk terlambat"],
+        ["Total Sakit", r.totalS, "Izin sakit"],
+        ["Total Izin", r.totalI, "Izin resmi"],
+        ["Total Alpa", r.totalA, "Perlu tindak lanjut pembinaan"],
+        ["Total Dinas", r.totalD, "Dinas sekolah"]
+      ];
+      tbody.innerHTML = rows.map(function(row, i) {
+        var colorCls = ["text-primary","text-primary","text-secondary","text-secondary","text-yellow-600","text-accent","text-red-500","text-purple-600"][i] || "text-primary";
+        return '<tr class="border-b border-gray-50">' +
+          '<td class="py-3 px-4 font-medium text-gray-700">' + row[0] + '</td>' +
+          '<td class="py-3 px-4 text-center font-bold ' + colorCls + '">' + row[1] + '</td>' +
+          '<td class="py-3 px-4 text-gray-500">' + row[2] + '</td></tr>';
+      }).join("");
+      if (!r.totalDays) {
+        tbody.innerHTML = '<tr><td colspan="3" class="py-8 text-center text-gray-400 text-sm">Belum ada data absensi. Silakan isi absensi di halaman Absensi terlebih dahulu.</td></tr>';
+      }
+      /* update stat cards */
+      var el = function(id){ return document.getElementById(id); };
+      if(el("ekskul-count")){
+        var eks = (loadEkskul().ekskul || []);
+        el("ekskul-count").textContent = eks.length ? eks.length + " data ekskul — Kelas " + kelas : "Data pencapaian dan ekstrakurikuler";
+      }
+    }
+
+    /* ===== Export Rekap Absensi — Multi-sheet XLS ===== */
+    function exportRekapAbsensi() {
+      var r = buildRekap();
+      if (!r.totalDays) {
+        if (typeof WKToast === "function") WKToast("Belum ada data absensi");
+        return;
+      }
+      var kelas = currentKelas();
+
+      /* --- Sheet 1: Harian (log per tanggal per siswa) --- */
+      var harian = [["Tanggal", "Nama Siswa", "Status", "Keterangan"]];
+      r.dates.forEach(function(date) {
+        (r.all[date] || []).forEach(function(rec) {
+          var statusLabel = { H:"Hadir", S:"Sakit", I:"Izin", A:"Alpa", D:"Dinas", T:"Terlambat" }[rec.status] || rec.status;
+          harian.push([date, rec.nama, statusLabel, rec.ket || ""]);
+        });
+      });
+
+      /* --- Sheet 2: Rekap Per Siswa (bulan/semester) --- */
+      var persiswa = [["Nama Siswa", "Hadir", "Sakit", "Izin", "Alpa", "Dinas", "Terlambat", "Total Hari", "Persentase Hadir"]];
+      r.studentNames.forEach(function(nama) {
+        var ps = r.perStudent[nama];
+        var hadir = ps.H + ps.T;
+        var pct = ps.days ? Math.round(hadir / ps.days * 1000) / 10 : 0;
+        persiswa.push([nama, ps.H, ps.S, ps.I, ps.A, ps.D, ps.T, ps.days, pct + "%"]);
+      });
+
+      /* --- Sheet 3: Ringkasan Kelas --- */
+      var ringkasan = [
+        ["Ringkasan Absensi Kelas " + kelas],
+        [""],
+        ["Total Hari Ter-catat", r.totalDays],
+        ["Total Siswa", r.totalStudents],
+        ["Total Record", r.totalRec],
+        [""],
+        ["Kategori", "Jumlah", "Persentase"],
+        ["Hadir", r.totalH + r.totalT, r.totalRec ? Math.round((r.totalH + r.totalT) / r.totalRec * 1000) / 10 + "%" : "0%"],
+        ["Sakit", r.totalS, r.totalRec ? Math.round(r.totalS / r.totalRec * 1000) / 10 + "%" : "0%"],
+        ["Izin", r.totalI, r.totalRec ? Math.round(r.totalI / r.totalRec * 1000) / 10 + "%" : "0%"],
+        ["Alpa", r.totalA, r.totalRec ? Math.round(r.totalA / r.totalRec * 1000) / 10 + "%" : "0%"],
+        ["Dinas", r.totalD, r.totalRec ? Math.round(r.totalD / r.totalRec * 1000) / 10 + "%" : "0%"],
+        ["Terlambat", r.totalT, r.totalRec ? Math.round(r.totalT / r.totalRec * 1000) / 10 + "%" : "0%"],
+        [""],
+        ["Rata-rata Hadir", r.avgHadirPct + "%"]
+      ];
+
+      var ws1 = XLSX.utils.aoa_to_sheet(harian);
+      var ws2 = XLSX.utils.aoa_to_sheet(persiswa);
+      var ws3 = XLSX.utils.aoa_to_sheet(ringkasan);
+      var wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws1, "Harian");
+      XLSX.utils.book_append_sheet(wb, ws2, "Rekap Siswa");
+      XLSX.utils.book_append_sheet(wb, ws3, "Ringkasan");
+      XLSX.writeFile(wb, "rekap_absensi_" + kelas + ".xls");
+      if (typeof WKToast === "function") WKToast("Rekap absensi " + kelas + " diekspor (" + r.totalDays + " hari, " + r.totalStudents + " siswa)");
+    }
+
+    /* ===== Export Ekskul ===== */
+    function exportEkskul() {
+      var rows = (loadEkskul().ekskul || []).map(function(x){
+        var i = x.indexOf(":");
+        var siswa = i >= 0 ? x.slice(0,i).trim() : x.trim();
+        var rest  = i >= 0 ? x.slice(i+1).trim() : "";
+        var j = rest.indexOf(" — ");
+        return [siswa, j>=0?rest.slice(0,j).trim():rest, j>=0?rest.slice(j+3).trim():""];
+      });
+      if (!rows.length){ if(typeof WKToast==="function") WKToast("Belum ada data ekskul"); return; }
+      var aoa = [["Nama Siswa","Ekskul","Jabatan"]].concat(rows);
+      var ws  = XLSX.utils.aoa_to_sheet(aoa);
+      var wb  = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Ekskul");
+      XLSX.writeFile(wb, "data_ekskul_" + currentKelas() + ".xls");
+      if(typeof WKToast==="function") WKToast(rows.length + " data ekskul diekspor");
+    }
+
+    /* ===== Export Laporan CSV ===== */
+    function exportLaporanCsv() {
+      var tbl = document.getElementById("tbl-laporan");
+      var tbody = tbl ? tbl.querySelector("tbody") : null;
+      var lines = [];
+      if (tbody) {
+        var header = tbl.querySelector("thead tr");
+        if (header) {
+          lines.push(Array.prototype.map.call(header.querySelectorAll("th,td"), function (h) { return h.textContent.trim(); }).join(","));
+        }
+        tbody.querySelectorAll("tr").forEach(function (r) {
+          lines.push(Array.prototype.map.call(r.querySelectorAll("td"), function (c) { return c.textContent.trim(); }).join(","));
+        });
+      }
+      var blob = new Blob(["\ufeff" + lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "laporan_semester_ganjil.csv";
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 400);
+      if (typeof WKToast === "function") WKToast("Laporan diekspor");
+    }
+
+    /* ===== Init ===== */
+    renderLaporanTable();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrasi Kelas 7A — WaliKelas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1A3A5C',
+            secondary: '#2A7A6B',
+            accent: '#E89D3F',
+            neutral: '#F5F6F8',
+            danger: '#C23B22',
+            info: '#2B6CB0'
+          }
+        }
+      }
+    }
+  </script>
+  <script src="../assets/app.js" defer></script>
+</head>
+<body class="bg-neutral text-gray-800 min-h-screen">
+<!-- Topbar (desktop) -->
+  <header id="topbar" class="hidden md:flex fixed top-0 left-0 right-0 z-30 h-16 bg-white border-b border-gray-200 md:pl-72">
+    <div class="flex items-center pl-4 pr-2">
+      <button id="btn-show-sidebar" style="display:none" class="w-10 h-10 rounded-lg bg-neutral text-primary hover:bg-neutral/70 items-center justify-center transition mr-2" title="Buka sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <span id="tp-avatar" class="flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-white text-sm font-bold uppercase"></span>
+      <div class="ml-3 min-w-0">
+        <span id="tp-name" class="block text-sm font-semibold text-primary leading-tight truncate max-w-[170px]"></span>
+        <span id="tp-role" class="block text-xs text-gray-400 leading-tight"></span>
+      </div>
+    </div>
+    <div class="flex-1 flex items-center justify-center min-w-0 px-4">
+      <h1 id="pageTitleTop" class="text-base md:text-lg font-bold text-primary text-center truncate"></h1>
+    </div>
+    <div class="flex items-center pr-6">
+      <time data-today class="text-sm text-gray-500"></time>
+    </div>
+  </header>
+
+  <!-- Sidebar (desktop) -->
+  <aside class="hidden md:flex flex-col fixed inset-y-0 left-0 w-72 bg-primary text-white z-40">
+    <div class="flex items-center gap-3 px-6 h-16 border-b border-white/10">
+      <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent text-primary font-bold text-lg">W</span>
+      <div>
+        <span class="block font-semibold text-sm leading-tight">WaliKelas</span>
+        <span class="block text-xs text-white/60">Wali Kelas</span>
+      </div>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+      <a href="../dashboard/dashboard.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-gauge-high w-5 text-center"></i> Dashboard
+      </a>
+      <a href="../siswa/siswa.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-users w-5 text-center"></i> Data Siswa
+      </a>
+      <a href="../absensi/absensi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-clipboard-check w-5 text-center"></i> Absensi
+      </a>
+      <a href="../administrasi/administrasi.html" class="navlink active flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
+        <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Administrasi
+      </a>
+      <a href="../pembinaan/pembinaan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-graduation-cap w-5 text-center"></i> Pembinaan
+      </a>
+      <a href="../komunikasi/komunikasi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-comments w-5 text-center"></i> Komunikasi
+      </a>
+      <a href="../laporan/laporan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
+      </a>
+      <a href="../pengaturan/pengaturan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
+      </a>
+    </nav>
+
+    <div class="px-4 py-4 border-t border-white/10 space-y-3">
+      <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
+        <span id="kelas-label-drawer" class="text-white/90 font-medium">Kelas 7A</span> · 2026/2027 Ganjil · 32 siswa aktif
+      </div>
+      <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
+        <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
+      </button>
+    </div>
+  </aside>
+
+  <!-- Bottom Nav (mobile) -->
+  <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-30 flex items-center justify-around px-2 py-2">
+    <a href="../dashboard/dashboard.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-gauge-high text-lg"></i> Beranda
+    </a>
+    <a href="../absensi/absensi.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-clipboard-check text-lg"></i> Absensi
+    </a>
+    <a href="../siswa/siswa.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-users text-lg"></i> Siswa
+    </a>
+    <a href="../komunikasi/komunikasi.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-comments text-lg"></i> Pesan
+    </a>
+    <button data-open-drawer class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-bars text-lg"></i> Menu
+    </button>
+  </nav>
+
+  <!-- Drawer -->
+  <div id="drawer" class="fixed inset-0 z-50 hidden">
+    <div data-close-drawer class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-y-0 left-0 w-72 bg-primary text-white shadow-xl flex flex-col transform transition-transform">
+      <div class="flex items-center justify-between px-6 h-16 border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent text-primary font-bold text-lg">W</span>
+          <div>
+            <span class="block font-semibold text-sm leading-tight">WaliKelas</span>
+            <span class="block text-xs text-white/60">Wali Kelas</span>
+          </div>
+        </div>
+        <button data-close-drawer class="text-white/60 hover:text-white transition">
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+      </div>
+
+      <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+        <a href="../dashboard/dashboard.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-gauge-high w-5 text-center"></i> Dashboard
+        </a>
+        <a href="../siswa/siswa.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-users w-5 text-center"></i> Data Siswa
+        </a>
+        <a href="../absensi/absensi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-clipboard-check w-5 text-center"></i> Absensi
+        </a>
+        <a href="../administrasi/administrasi.html" class="navlink active flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
+          <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Administrasi
+        </a>
+        <a href="../pembinaan/pembinaan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-graduation-cap w-5 text-center"></i> Pembinaan
+        </a>
+        <a href="../komunikasi/komunikasi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-comments w-5 text-center"></i> Komunikasi
+        </a>
+        <a href="../laporan/laporan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
+        </a>
+        <a href="../pengaturan/pengaturan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
+        </a>
+      </nav>
+
+      <div class="px-4 py-4 border-t border-white/10 space-y-3">
+        <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
+<span id="kelas-label-side" class="text-white/90 font-medium">Kelas 7A</span> · 2026/2027 Ganjil · 32 siswa aktif
+        </div>
+        <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
+          <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="p-4 pb-28 md:px-8 md:pb-8 md:pl-72 md:pt-24">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
+      <h1 class="page-title text-xl md:text-2xl font-bold text-primary md:hidden">Administrasi Kelas</h1>
+      <div class="flex items-center gap-2">
+        <button onclick="exportAdministrasi()" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition">
+          <i class="fa-solid fa-download text-xs"></i> Export
+        </button>
+        <button data-open-modal="agenda-modal" class="inline-flex items-center gap-2 px-4 py-2 bg-accent text-white text-sm font-medium rounded-lg hover:bg-accent/90 transition">
+          <i class="fa-solid fa-plus text-xs"></i> + Agenda
+        </button>
+      </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <div class="flex items-center gap-3">
+          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
+            <i class="fa-solid fa-users-gear"></i>
+          </span>
+          <div>
+            <p class="text-xs text-gray-500">Pengurus Kelas</p>
+            <p class="text-2xl font-bold text-primary">6</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <div class="flex items-center gap-3">
+          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent/10 text-accent">
+            <i class="fa-solid fa-calendar-days"></i>
+          </span>
+          <div>
+            <p class="text-xs text-gray-500">Agenda Dekat</p>
+            <p class="text-2xl font-bold text-accent">3</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <div class="flex items-center gap-3">
+          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-secondary/10 text-secondary">
+            <i class="fa-solid fa-box-open"></i>
+          </span>
+          <div>
+            <p class="text-xs text-gray-500">Inventaris Baik</p>
+            <p class="text-2xl font-bold text-secondary">28</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <div class="flex items-center gap-3">
+          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-info/10 text-info">
+            <i class="fa-solid fa-file-lines"></i>
+          </span>
+          <div>
+            <p class="text-xs text-gray-500">Dokumen</p>
+            <p class="text-2xl font-bold text-info">12</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Identitas Kelas 7A -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 mb-6">
+      <h2 id="identitas-kelas" class="text-sm font-semibold text-gray-600 mb-3">Identitas Kelas 7A</h2>
+      <dl class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-3">
+        <div class="flex items-start gap-2">
+          <dt class="text-xs text-gray-400 min-w-[110px]">Sekolah</dt>
+          <dd class="text-sm font-medium text-gray-800">SMP Negeri 1 Contoh</dd>
+        </div>
+        <div class="flex items-start gap-2">
+          <dt class="text-xs text-gray-400 min-w-[110px]">Tahun/Semester</dt>
+          <dd class="text-sm font-medium text-gray-800">2026/2027 Ganjil</dd>
+        </div>
+        <div class="flex items-start gap-2">
+          <dt class="text-xs text-gray-400 min-w-[110px]">Wali Kelas</dt>
+          <dd class="text-sm font-medium text-gray-800">Ahmad Fauzan</dd>
+        </div>
+        <div class="flex items-start gap-2">
+          <dt class="text-xs text-gray-400 min-w-[110px]">Siswa</dt>
+          <dd class="text-sm font-medium text-gray-800">32 orang</dd>
+        </div>
+        <div class="flex items-start gap-2">
+          <dt class="text-xs text-gray-400 min-w-[110px]">NPSN</dt>
+          <dd class="text-sm font-medium text-gray-800">2026287890</dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Module Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
+      <button onclick="openAdmModal('struktur')" class="bg-white rounded-xl shadow-sm p-4 text-left hover:shadow-md transition group">
+        <span class="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary mb-3 group-hover:bg-primary group-hover:text-white transition">
+          <i class="fa-solid fa-sitemap"></i>
+        </span>
+        <p class="text-sm font-semibold text-gray-800">Struktur Kelas</p>
+        <p class="text-xs text-gray-400 mt-1">Susunan pengurus kelas</p>
+      </button>
+      <button onclick="openAdmModal('jadwal')" class="bg-white rounded-xl shadow-sm p-4 text-left hover:shadow-md transition group">
+        <span class="flex items-center justify-center w-10 h-10 rounded-full bg-secondary/10 text-secondary mb-3 group-hover:bg-secondary group-hover:text-white transition">
+          <i class="fa-solid fa-calendar-days"></i>
+        </span>
+        <p class="text-sm font-semibold text-gray-800">Jadwal Pelajaran</p>
+        <p class="text-xs text-gray-400 mt-1">Jadwal kelas mingguan</p>
+      </button>
+      <button onclick="openAdmModal('piket')" class="bg-white rounded-xl shadow-sm p-4 text-left hover:shadow-md transition group">
+        <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent/10 text-accent mb-3 group-hover:bg-accent group-hover:text-white transition">
+          <i class="fa-solid fa-broom"></i>
+        </span>
+        <p class="text-sm font-semibold text-gray-800">Jadwal Piket</p>
+        <p class="text-xs text-gray-400 mt-1">Roster piket bersih kelas</p>
+      </button>
+      <button onclick="openAdmModal('inventaris')" class="bg-white rounded-xl shadow-sm p-4 text-left hover:shadow-md transition group">
+        <span class="flex items-center justify-center w-10 h-10 rounded-full bg-info/10 text-info mb-3 group-hover:bg-info group-hover:text-white transition">
+          <i class="fa-solid fa-box-open"></i>
+        </span>
+        <p class="text-sm font-semibold text-gray-800">Inventaris</p>
+        <p class="text-xs text-gray-400 mt-1">Barang inventaris kelas</p>
+      </button>
+      <button onclick="openAdmModal('ekskul')" class="bg-white rounded-xl shadow-sm p-4 text-left hover:shadow-md transition group">
+        <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent/10 text-accent mb-3 group-hover:bg-accent group-hover:text-white transition">
+          <i class="fa-solid fa-futbol"></i>
+        </span>
+        <p class="text-sm font-semibold text-gray-800">Ekstrakurikuler</p>
+        <p class="text-xs text-gray-400 mt-1">Kegiatan ekskul siswa</p>
+      </button>
+    </div>
+
+    <!-- Agenda Terdekat -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 mb-6 overflow-x-auto">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-sm font-semibold text-gray-600">Agenda Terdekat</h2>
+      </div>
+      <table class="w-full text-sm min-w-[480px]">
+        <thead>
+          <tr class="text-left text-xs text-gray-400 border-b border-gray-100">
+            <th class="pb-2 font-medium">Tanggal</th>
+            <th class="pb-2 font-medium">Kegiatan</th>
+            <th class="pb-2 font-medium text-center">Status</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-agenda" class="divide-y divide-gray-50">
+          <tr>
+            <td class="py-2.5 text-gray-600">11 Sep 2026</td>
+            <td class="py-2.5 font-medium text-gray-800">Rapat Komite Kelas</td>
+            <td class="py-2.5 text-center">
+              <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/15 text-accent">Besok</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="py-2.5 text-gray-600">15 Sep 2026</td>
+            <td class="py-2.5 font-medium text-gray-800">Ulangan Tengah Semester</td>
+            <td class="py-2.5 text-center">
+              <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/15 text-secondary">Terjadwal</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="py-2.5 text-gray-600">20 Sep 2026</td>
+            <td class="py-2.5 font-medium text-gray-800">Kunjungan Orang Tua</td>
+            <td class="py-2.5 text-center">
+              <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/15 text-primary">Siap</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- Modal: Tambah Agenda -->
+  <div id="agenda-modal" class="modal">
+    <div data-close-modal class="absolute inset-0 bg-black/40"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-bold text-primary">Tambah Agenda</h2>
+        <button data-close-modal class="text-gray-400 hover:text-gray-600 transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      <form id="form-agenda" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Kegiatan</label>
+          <input id="ag-t" type="text" required placeholder="Nama kegiatan..." class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/40">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Tanggal</label>
+          <input id="ag-d" type="date" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/40">
+        </div>
+        <button type="submit" class="w-full bg-secondary text-white font-medium text-sm py-2.5 rounded-lg hover:bg-secondary/90 transition">
+          Simpan
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Detail Modul Administrasi -->
+  <div id="adm-modal" class="modal">
+    <div class="box">
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="adm-title" class="font-bold text-primary text-lg">Detail</h3>
+        <button data-close-modal class="text-gray-400 hover:text-gray-600 transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div id="adm-body" class="space-y-3 text-sm"></div>
+      <datalist id="ekskul-datalist">
+        <option value="Pramuka">
+        <option value="Paskibra">
+        <option value="Futsal">
+        <option value="Basket">
+        <option value="Voli">
+        <option value="Badminton">
+        <option value="Seni Tari">
+        <option value="Seni Musik">
+        <option value="PMR">
+        <option value="KIR">
+        <option value="Rohis">
+        <option value="Pranata Komputer">
+        <option value="Kriya">
+        <option value="Teater">
+      </datalist>
+      <div class="flex items-center justify-between gap-2 pt-4 mt-4 border-t border-gray-100">
+        <button id="adm-add" class="hidden px-3 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition">
+          <i class="fa-solid fa-plus mr-1"></i>Tambah Baris
+        </button>
+        <div class="flex items-center gap-2 ml-auto">
+          <button id="adm-cancel" class="hidden px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-700 border border-gray-200 transition">Batal</button>
+          <button id="adm-save" class="hidden px-5 py-2 rounded-lg bg-secondary text-white text-sm font-medium hover:bg-secondary/90 transition">Simpan</button>
+          <button id="adm-edit" class="px-5 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition"><i class="fa-solid fa-pen mr-1"></i>Edit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var ADM_SEED = {
+      struktur: ["Ketua Kelas: Andi Pratama", "Wakil: Rina Marlina", "Sekretaris: Maya Putri", "Bendahara: Fajar Nugroho", "Seksi Kebersihan: Budi Santoso", "Seksi Kestari: Dewi Lestari"],
+      jadwal: ["Senin: Matematika, IPA, Bhs. Indonesia, BK", "Selasa: PPKn, IPS, Bhs. Inggris, Seni", "Rabu: PAI, Penjaskes, Matematika, Informatika", "Kamis: IPA, Bhs. Indonesia, IPS, Prakarya", "Jumat: Bhs. Inggris, PPKn, Mulok, Agama"],
+      piket: ["Senin: Andi Pratama", "Senin: Rina Marlina", "Selasa: Maya Putri", "Selasa: Fajar Nugroho", "Rabu: Ahmad Fauzan", "Rabu: Budi Santoso", "Kamis: Siti Aminah", "Kamis: Dewi Lestari"],
+      inventaris: ["Meja/Kursi: 32 set — Baik", "Papan tulis: 2 unit — Baik", "LCD Proyektor: 1 unit — Baik", "Lemari kelas: 2 unit — Baik", "Kipas angin: 3 unit — Perlu servis"],
+      ekskul: ["Andi Pratama: Pramuka", "Maya Putri: Seni Tari — Ketua", "Fajar Nugroho: Futsal", "Rina Marlina: Pramuka"]
+    };
+    var ADM_TITLES = { struktur: "Struktur Kelas", jadwal: "Jadwal Pelajaran", piket: "Jadwal Piket", inventaris: "Inventaris Kelas", ekskul: "Ekstrakurikuler" };
+    var EXSKUL_LIST = ["Pramuka", "Paskibra", "Futsal", "Basket", "Voli", "Badminton", "Seni Tari", "Seni Musik", "PMR", "KIR", "Rohis"];
+    var STUDENT_NAMES = ["Ahmad Fauzan", "Siti Aminah", "Budi Santoso", "Dewi Lestari", "Rina Marlina", "Andi Pratama", "Maya Putri", "Fajar Nugroho"];
+
+    function isStudentKey(key) {
+      return key === "struktur" || key === "piket";
+    }
+    function isEkskulKey(key) {
+      return key === "ekskul";
+    }
+    function parseEkskul(item) {
+      var i = item.indexOf(":");
+      var siswa = i >= 0 ? item.slice(0, i).trim() : "";
+      var rest = i >= 0 ? item.slice(i + 1).trim() : item.trim();
+      var j = rest.indexOf(" — ");
+      var ekskul = j >= 0 ? rest.slice(0, j).trim() : rest;
+      var jabatan = j >= 0 ? rest.slice(j + 3).trim() : "";
+      return { siswa: siswa, ekskul: ekskul, jabatan: jabatan };
+    }
+    function parseLabelWho(item) {
+      var i = item.indexOf(":");
+      var label = i >= 0 ? item.slice(0, i).trim() : "";
+      var who = i >= 0 ? item.slice(i + 1).trim() : item.trim();
+      return { label: label, who: who.split(",")[0].trim() };
+    }
+    function studentOptions(sel) {
+      var names = STUDENT_NAMES.slice();
+      if (sel && names.indexOf(sel) === -1) names.unshift(sel);
+      return '<option value="">— pilih siswa —</option>' + names.map(function (n) {
+        return '<option value="' + escHtml(n) + '"' + (n === sel ? " selected" : "") + ">" + escHtml(n) + "</option>";
+      }).join("");
+    }
+    function admRowHtml(x) {
+      if (isEkskulKey(admKey)) {
+        var e = parseEkskul(x);
+        return '<div class="flex items-center gap-2">' +
+          '<select class="adm-row-siswa w-40 border border-gray-200 rounded-lg px-2 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-secondary/40">' + studentOptions(e.siswa) + "</select>" +
+          '<input class="adm-row-ekskul flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/40" list="ekskul-datalist" value="' + escHtml(e.ekskul) + '" placeholder="Nama ekskul">' +
+          '<input class="adm-row-jab w-40 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/40" value="' + escHtml(e.jabatan) + '" placeholder="Jabatan (ops.)">' +
+          '<button type="button" data-del-row class="w-8 h-8 rounded-lg text-danger hover:bg-danger/10 transition"><i class="fa-solid fa-trash-can text-sm"></i></button></div>';
+      }
+      if (isStudentKey(admKey)) {
+        var p = parseLabelWho(x);
+        return '<div class="flex items-center gap-2">' +
+          '<input class="adm-row-label flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/40" value="' + escHtml(p.label) + '" placeholder="Jabatan/Hari">' +
+          '<select class="adm-row-siswa flex-1 border border-gray-200 rounded-lg px-2 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-secondary/40">' + studentOptions(p.who) + "</select>" +
+          '<button type="button" data-del-row class="w-8 h-8 rounded-lg text-danger hover:bg-danger/10 transition"><i class="fa-solid fa-trash-can text-sm"></i></button></div>';
+      }
+      return '<div class="flex items-center gap-2">' +
+        '<input class="adm-row-edit flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/40" value="' + escHtml(x) + '">' +
+        '<button type="button" data-del-row class="w-8 h-8 rounded-lg text-danger hover:bg-danger/10 transition"><i class="fa-solid fa-trash-can text-sm"></i></button></div>';
+    }
+
+    function escHtml(s) {
+      return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+    function currentKelas() {
+      var p = new URLSearchParams(location.search).get("kelas");
+      if (p) return p;
+      var s = localStorage.getItem("userKelas");
+      if (s) return s;
+      var map = { "Ahmad Fauzan": "7A", "Siti Aminah": "7B", "Budi Santoso": "8A", "Dewi Lestari": "8B" };
+      var name = localStorage.getItem("userName") || "";
+      return map[name] || "7A";
+    }
+    function loadAdm() {
+      var stored = {};
+      try { stored = JSON.parse(localStorage.getItem("admData_" + currentKelas()) || "{}") || {}; } catch (e) {}
+      var out = {};
+      Object.keys(ADM_SEED).forEach(function (key) {
+        out[key] = Array.isArray(stored[key]) && stored[key].length ? stored[key] : ADM_SEED[key].slice();
+      });
+      return out;
+    }
+    function saveAdm(data) {
+      var cur = loadAdm();
+      var merged = {};
+      Object.keys(ADM_SEED).forEach(function (key) {
+        merged[key] = Object.prototype.hasOwnProperty.call(data, key) ? data[key] : cur[key];
+      });
+      localStorage.setItem("admData_" + currentKelas(), JSON.stringify(merged));
+    }
+
+    var admKey = null;
+    function renderAdm(mode) {
+      var data = loadAdm();
+      var body = document.getElementById("adm-body");
+      var items = data[admKey] || [];
+      var html = "";
+      if (mode === "edit") {
+        html = items.map(admRowHtml).join("");
+      } else {
+        html = items.map(function (x) {
+          return '<div class="flex items-start gap-3 p-3 bg-neutral rounded-xl"><i class="fa-solid fa-circle-check text-primary mt-0.5"></i><span class="text-gray-700">' + escHtml(x) + "</span></div>";
+        }).join("") || '<p class="text-sm text-gray-400">Belum ada data. Klik Edit untuk mengisi.</p>';
+      }
+      body.innerHTML = html;
+      document.getElementById("adm-edit").classList.toggle("hidden", mode === "edit");
+      document.getElementById("adm-add").classList.toggle("hidden", mode !== "edit");
+      document.getElementById("adm-save").classList.toggle("hidden", mode !== "edit");
+      document.getElementById("adm-cancel").classList.toggle("hidden", mode !== "edit");
+    }
+    function openAdmModal(key) {
+      admKey = key;
+      document.getElementById("adm-title").textContent = ADM_TITLES[key] + " " + currentKelas();
+      renderAdm("view");
+      document.getElementById("adm-modal").classList.add("show");
+    }
+
+    function exportAdministrasi() {
+      var lines = ["Tanggal,Kegiatan,Status"];
+      document.querySelectorAll("#tbody-agenda tr").forEach(function (r) {
+        var c = r.querySelectorAll("td");
+        lines.push(c[0].textContent.trim() + "," + c[1].textContent.trim() + "," + c[2].textContent.trim());
+      });
+      downloadCsv("administrasi_kelas.csv", lines.join("\n"));
+      if (typeof WKToast === "function") WKToast("Data administrasi diekspor");
+    }
+
+    function downloadCsv(name, text) {
+      var blob = new Blob(["\ufeff" + text], { type: "text/csv;charset=utf-8;" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 400);
+    }
+
+    (function () {
+      var add = document.getElementById("adm-add");
+      var save = document.getElementById("adm-save");
+      var cancel = document.getElementById("adm-cancel");
+      var edit = document.getElementById("adm-edit");
+      function doAdd() {
+        var body = document.getElementById("adm-body");
+        var div = document.createElement("div");
+        div.className = "flex items-center gap-2";
+        div.innerHTML = isEkskulKey(admKey)
+          ? '<select class="adm-row-siswa w-40 border border-gray-200 rounded-lg px-2 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-secondary/40">' + studentOptions("") + '</select>' +
+            '<input class="adm-row-ekskul flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/40" list="ekskul-datalist" value="" placeholder="Nama ekskul">' +
+            '<input class="adm-row-jab w-40 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/40" value="" placeholder="Jabatan (ops.)">' +
+            '<button type="button" data-del-row class="w-8 h-8 rounded-lg text-danger hover:bg-danger/10 transition"><i class="fa-solid fa-trash-can text-sm"></i></button>'
+          : isStudentKey(admKey)
+            ? '<input class="adm-row-label flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/40" value="" placeholder="Jabatan/Hari">' +
+              '<select class="adm-row-siswa flex-1 border border-gray-200 rounded-lg px-2 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-secondary/40">' + studentOptions("") + "</select>" +
+              '<button type="button" data-del-row class="w-8 h-8 rounded-lg text-danger hover:bg-danger/10 transition"><i class="fa-solid fa-trash-can text-sm"></i></button>'
+            : '<input class="adm-row-edit flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/40" value="">' +
+              '<button type="button" data-del-row class="w-8 h-8 rounded-lg text-danger hover:bg-danger/10 transition"><i class="fa-solid fa-trash-can text-sm"></i></button>';
+        body.appendChild(div);
+        var focus = div.querySelector("input, select");
+        if (focus) focus.focus();
+      }
+      if (add) add.addEventListener("click", doAdd);
+      if (cancel) cancel.addEventListener("click", function () { renderAdm("view"); });
+      if (edit) edit.addEventListener("click", function () { renderAdm("edit"); });
+      if (save) save.addEventListener("click", function () {
+        var vals = [];
+        document.querySelectorAll("#adm-body > div").forEach(function (row) {
+          if (isEkskulKey(admKey)) {
+            var si = row.querySelector(".adm-row-siswa");
+            var ex = row.querySelector(".adm-row-ekskul");
+            var jb = row.querySelector(".adm-row-jab");
+            if (!si || !si.value || !ex || !ex.value.trim()) return;
+            vals.push(si.value + ": " + ex.value.trim() + (jb && jb.value.trim() ? " — " + jb.value.trim() : ""));
+          } else if (isStudentKey(admKey)) {
+            var li = row.querySelector(".adm-row-label");
+            var sl = row.querySelector(".adm-row-siswa");
+            if (!li || !sl || !sl.value) return;
+            vals.push((li.value.trim() || "Jabatan") + ": " + sl.value);
+          } else {
+            var inp = row.querySelector(".adm-row-edit");
+            if (inp && inp.value.trim()) vals.push(inp.value.trim());
+          }
+        });
+        var data = loadAdm();
+        data[admKey] = vals;
+        saveAdm(data);
+        renderAdm("view");
+        if (typeof WKToast === "function") WKToast(ADM_TITLES[admKey] + " tersimpan");
+      });
+      var bodyEl = document.getElementById("adm-body");
+      if (bodyEl) bodyEl.addEventListener("click", function (e) {
+        var btn = e.target.closest("[data-del-row]");
+        if (btn) btn.parentElement.remove();
+      });
+    })();
+
+    (function () {
+      var kls = currentKelas();
+      document.querySelectorAll("#kelas-label-side, #kelas-label-drawer").forEach(function (el) {
+        el.textContent = "Kelas " + kls;
+      });
+      var idt = document.getElementById("identitas-kelas");
+      if (idt) idt.textContent = "Identitas Kelas " + kls;
+    })();
+
+    (function () {
+      var form = document.getElementById("form-agenda");
+      if (!form) return;
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var t = document.getElementById("ag-t");
+        var d = document.getElementById("ag-d");
+        if (!t.value.trim()) return;
+        var dateTxt = d.value ? new Date(d.value + "T00:00:00").toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }) : "Tanpa tanggal";
+        var count = document.querySelectorAll("#tbody-agenda tr").length;
+        var badge = count % 2 === 0 ? "Terjadwal" : "Siap";
+        var badgeCls = count % 2 === 0
+          ? "bg-secondary/15 text-secondary"
+          : "bg-primary/15 text-primary";
+        var tr = document.createElement("tr");
+        tr.innerHTML =
+          '<td class="py-2.5 text-gray-600">' + dateTxt + "</td>" +
+          '<td class="py-2.5 font-medium text-gray-800">' + t.value.trim() + "</td>" +
+          '<td class="py-2.5 text-center"><span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ' + badgeCls + '">' + badge + "</span></td>";
+        document.getElementById("tbody-agenda").appendChild(tr);
+        form.reset();
+        document.getElementById("agenda-modal").classList.remove("show");
+        if (typeof WKToast === "function") WKToast("Agenda berhasil ditambahkan");
+      });
+    })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+{
+  "users": [
+    {
+      "id": "u-admin",
+      "email": "admin@sekolah.id",
+      "passwordHash": "383c036235f56046dd9a7abd59d3349465581267c2c5555b36f03f7d24afdc6b",
+      "name": "Admin Sekolah",
+      "role": "admin",
+      "kelas": null,
+      "status": "aktif"
+    },
+    {
+      "id": "u-1",
+      "email": "ahmad@walikelas.sch.id",
+      "passwordHash": "383c036235f56046dd9a7abd59d3349465581267c2c5555b36f03f7d24afdc6b",
+      "name": "Ahmad Fauzan",
+      "role": "wali_kelas",
+      "kelas": "7A",
+      "status": "aktif"
+    },
+    {
+      "id": "u-2",
+      "email": "siti@walikelas.sch.id",
+      "passwordHash": "383c036235f56046dd9a7abd59d3349465581267c2c5555b36f03f7d24afdc6b",
+      "name": "Siti Aminah",
+      "role": "wali_kelas",
+      "kelas": "7B",
+      "status": "aktif"
+    },
+    {
+      "id": "u-3",
+      "email": "budi@walikelas.sch.id",
+      "passwordHash": "383c036235f56046dd9a7abd59d3349465581267c2c5555b36f03f7d24afdc6b",
+      "name": "Budi Santoso",
+      "role": "wali_kelas",
+      "kelas": "8A",
+      "status": "aktif"
+    },
+    {
+      "id": "u-4",
+      "email": "dewi@walikelas.sch.id",
+      "passwordHash": "383c036235f56046dd9a7abd59d3349465581267c2c5555b36f03f7d24afdc6b",
+      "name": "Dewi Lestari",
+      "role": "wali_kelas",
+      "kelas": "8B",
+      "status": "aktif"
+    }
+  ]
+}

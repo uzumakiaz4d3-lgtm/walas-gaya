@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<script>
+  (function () {
+    var role = localStorage.getItem("userRole");
+    if (role !== "admin") {
+      var parts = location.pathname.split("/").filter(Boolean);
+      var top = parts[parts.length - 1] === "admin.html";
+      var up = top ? "../" : "../../";
+      var dest = role ? up + "dashboard/dashboard.html" : up + "login.html";
+      location.replace(dest);
+    }
+  })();
+</script>
+  <!-- role-guard -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wali Kelas — Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <link href="../../assets/styles.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: {
+        primary: '#1A3A5C', secondary: '#2A7A6B', accent: '#E89D3F',
+        neutral: '#F5F6F8', danger: '#C23B22', info: '#2B6CB0'
+      }}}
+    }
+  </script>
+</head>
+<body class="bg-neutral min-h-screen">
+
+  <!-- Sidebar md+ -->
+  <aside class="hidden">
+    <div class="flex items-center gap-3 px-6 py-5 border-b border-white/10">
+      <div class="w-10 h-10 rounded-full bg-accent text-primary flex items-center justify-center font-bold text-lg">W</div>
+      <div><div class="font-bold text-lg leading-tight">WaliKelas</div><div class="text-xs text-white/50">Admin Sekolah</div></div>
+    </div>
+    <div class="px-6 pt-4 pb-2 text-[10px] uppercase tracking-widest text-white/40">Admin sekolah</div>
+    <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+      <a href="../../admin/admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-tachometer-alt w-5 text-center text-xs"></i> Dashboard</a>
+      <a href="../admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-chart-pie w-5 text-center text-xs"></i> Ringkasan</a>
+      <a href="walas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm bg-white/10 font-semibold border-l-4 border-accent"><i class="fas fa-chalkboard-teacher w-5 text-center text-xs"></i> Wali Kelas</a>
+      <a href="../kelas/kelas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-school w-5 text-center text-xs"></i> Kelas</a>
+      <a href="../monitoring/monitoring.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-eye w-5 text-center text-xs"></i> Monitoring</a>
+      <a href="../pengguna/pengguna.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-users w-5 text-center text-xs"></i> Pengguna</a>
+      <a href="../audit/audit.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-clipboard-list w-5 text-center text-xs"></i> Audit Log</a>
+    </nav>
+    <div class="px-6 py-4 text-[11px] text-white/40 border-t border-white/10">Mode: Admin · Read-only monitoring</div>
+  </aside>
+
+  <!-- Main -->
+  <div class="pb-24 min-h-screen">
+    <header class="md:hidden sticky top-0 z-30 bg-primary text-white px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-accent text-primary flex items-center justify-center font-bold text-sm">W</div>
+        <span class="font-bold">WaliKelas</span>
+      </div>
+      <button onclick="toggleDrawer()" class="p-2 rounded-lg hover:bg-white/10"><i class="fas fa-bars"></i></button>
+    </header>
+
+    <main class="p-4 md:p-8 max-w-7xl mx-auto">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <h1 class="text-2xl font-bold text-primary">Wali Kelas</h1>
+        <button onclick="document.getElementById('modal-walas').classList.remove('hidden')" class="inline-flex items-center gap-2 bg-accent hover:bg-accent/90 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition"><i class="fas fa-plus"></i> Tambah Walas</button>
+      </div>
+
+      <!-- Search -->
+      <div class="mb-4">
+        <div class="relative max-w-sm">
+          <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+          <input id="qw" type="text" placeholder="Cari walas atau rombel..." oninput="filterWalas()" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table id="tbl-walas" class="w-full text-sm">
+            <thead class="bg-neutral text-gray-500 text-xs uppercase"><tr>
+              <th class="text-left px-6 py-3">Walas</th><th class="text-left px-6 py-3">Rombel</th><th class="text-left px-6 py-3">Siswa</th><th class="text-left px-6 py-3">Status</th><th class="text-left px-6 py-3">Aksi</th>
+            </tr></thead>
+            <tbody class="divide-y divide-gray-50">
+              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium">Ahmad Fauzan</td><td class="px-6 py-3">7A</td><td class="px-6 py-3">32</td><td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">Aktif</span></td><td class="px-6 py-3"><button onclick="toast('Petakan Ahmad Fauzan → 7A')" class="text-info hover:text-info/80 text-xs mr-2"><i class="fas fa-project-diagram mr-1"></i>Petakan</button><button onclick="toast('Reset akun Ahmad Fauzan')" class="text-danger hover:text-danger/80 text-xs"><i class="fas fa-undo mr-1"></i>Reset</button></td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium">Siti Aminah</td><td class="px-6 py-3">7B</td><td class="px-6 py-3">30</td><td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">Aktif</span></td><td class="px-6 py-3"><button onclick="toast('Petakan Siti Aminah → 7B')" class="text-info hover:text-info/80 text-xs mr-2"><i class="fas fa-project-diagram mr-1"></i>Petakan</button><button onclick="toast('Reset akun Siti Aminah')" class="text-danger hover:text-danger/80 text-xs"><i class="fas fa-undo mr-1"></i>Reset</button></td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium">Budi Santoso</td><td class="px-6 py-3">8A</td><td class="px-6 py-3">34</td><td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">Aktif</span></td><td class="px-6 py-3"><button onclick="toast('Petakan Budi Santoso → 8A')" class="text-info hover:text-info/80 text-xs mr-2"><i class="fas fa-project-diagram mr-1"></i>Petakan</button><button onclick="toast('Reset akun Budi Santoso')" class="text-danger hover:text-danger/80 text-xs"><i class="fas fa-undo mr-1"></i>Reset</button></td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium">Dewi Lestari</td><td class="px-6 py-3">8B</td><td class="px-6 py-3">32</td><td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">Aktif</span></td><td class="px-6 py-3"><button onclick="toast('Petakan Dewi Lestari → 8B')" class="text-info hover:text-info/80 text-xs mr-2"><i class="fas fa-project-diagram mr-1"></i>Petakan</button><button onclick="toast('Reset akun Dewi Lestari')" class="text-danger hover:text-danger/80 text-xs"><i class="fas fa-undo mr-1"></i>Reset</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Tambah Walas -->
+  <div id="modal-walas" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="font-bold text-primary">Tambah Wali Kelas</h3>
+        <button onclick="document.getElementById('modal-walas').classList.add('hidden')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+      </div>
+      <form onsubmit="event.preventDefault(); toast('Walas berhasil ditambah'); document.getElementById('modal-walas').classList.add('hidden');" class="p-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+          <input id="w-nama" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <input id="w-mail" type="email" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Rombel</label>
+          <select id="w-rombel" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+            <option value="">Pilih rombel</option><option>7A</option><option>7B</option><option>8A</option><option>8B</option>
+          </select>
+        </div>
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" onclick="document.getElementById('modal-walas').classList.add('hidden')" class="px-4 py-2.5 rounded-xl text-sm text-gray-500 hover:bg-gray-100">Batal</button>
+          <button type="submit" class="px-6 py-2.5 rounded-xl bg-accent text-white text-sm font-semibold hover:bg-accent/90 transition">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bottom nav -->
+  <nav class="fixed bottom-0 inset-x-0 z-40 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+    <div class="flex items-center justify-around py-2">
+      <a href="../../admin/admin.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-gray-400 hover:text-primary"><i class="fas fa-tachometer-alt text-lg"></i><span class="text-[10px]">Beranda</span></a>
+      <a href="../admin.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-gray-400 hover:text-primary"><i class="fas fa-chart-pie text-lg"></i><span class="text-[10px]">Ringkasan</span></a>
+      <a href="../monitoring/monitoring.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-gray-400 hover:text-primary"><i class="fas fa-eye text-lg"></i><span class="text-[10px]">Monitor</span></a>
+      <button onclick="toggleDrawer()" class="flex flex-col items-center gap-0.5 px-3 py-1 text-gray-400 hover:text-primary"><i class="fas fa-bars text-lg"></i><span class="text-[10px]">Menu</span></button>
+    </div>
+  </nav>
+
+  <!-- Drawer -->
+  <div id="drawer-overlay" class="hidden fixed inset-0 z-50 bg-black/50" onclick="toggleDrawer()"></div>
+  <div id="drawer" class="fixed top-0 left-0 h-full w-72 bg-primary z-50 transform -translate-x-full transition-transform duration-300 shadow-2xl">
+    <div class="flex items-center gap-3 px-6 py-5 border-b border-white/10">
+      <div class="w-10 h-10 rounded-full bg-accent text-primary flex items-center justify-center font-bold text-lg">W</div>
+      <div><div class="font-bold text-lg text-white leading-tight">WaliKelas</div><div class="text-xs text-white/50">Admin Sekolah</div></div>
+    </div>
+    <div class="px-6 pt-4 pb-2 text-[10px] uppercase tracking-widest text-white/40">Admin sekolah</div>
+    <nav class="px-3 py-2 space-y-1">
+      <a href="../../admin/admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-tachometer-alt w-5 text-center text-xs"></i> Dashboard</a>
+      <a href="../admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-chart-pie w-5 text-center text-xs"></i> Ringkasan</a>
+      <a href="walas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm bg-white/10 font-semibold text-white"><i class="fas fa-chalkboard-teacher w-5 text-center text-xs"></i> Wali Kelas</a>
+      <a href="../kelas/kelas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-school w-5 text-center text-xs"></i> Kelas</a>
+      <a href="../monitoring/monitoring.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-eye w-5 text-center text-xs"></i> Monitoring</a>
+      <a href="../pengguna/pengguna.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-users w-5 text-center text-xs"></i> Pengguna</a>
+      <a href="../audit/audit.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-clipboard-list w-5 text-center text-xs"></i> Audit Log</a>
+    </nav>
+    <div class="absolute bottom-0 inset-x-0 px-6 py-4 border-t border-white/10">
+      <button class="logout-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10 hover:text-white"><i class="fas fa-sign-out-alt w-5 text-center text-xs"></i> Keluar</button>
+      <p class="mt-2 text-[11px] text-white/40">Mode: Admin &middot; Read-only monitoring</p>
+    </div>
+  </div>
+
+  <script src="../../assets/app.js"></script>
+  <script>
+    function toggleDrawer() {
+      const d = document.getElementById('drawer');
+      const o = document.getElementById('drawer-overlay');
+      const open = !d.classList.contains('translate-x-0');
+      d.classList.toggle('translate-x-0', open);
+      d.classList.toggle('-translate-x-full', !open);
+      o.classList.toggle('hidden', !open);
+    }
+    function toast(msg) {
+      const t = document.createElement('div');
+      t.className = 'fixed top-4 right-4 z-[60] bg-primary text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium animate-[fadeIn_.2s]';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2500);
+    }
+    function filterWalas() {
+      const q = document.getElementById('qw').value.toLowerCase();
+      document.querySelectorAll('#tbl-walas tbody tr').forEach(r => {
+        r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

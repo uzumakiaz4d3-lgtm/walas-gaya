@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Absensi Kelas 7A — WaliKelas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1A3A5C',
+            secondary: '#2A7A6B',
+            accent: '#E89D3F',
+            neutral: '#F5F6F8'
+          }
+        }
+      }
+    }
+  </script>
+  <script src="../assets/app.js" defer></script>
+</head>
+<body class="bg-neutral text-gray-800 min-h-screen">
+<!-- Topbar (desktop) -->
+  <header id="topbar" class="hidden md:flex fixed top-0 left-0 right-0 z-30 h-16 bg-white border-b border-gray-200 md:pl-72">
+    <div class="flex items-center pl-4 pr-2">
+      <button id="btn-show-sidebar" style="display:none" class="w-10 h-10 rounded-lg bg-neutral text-primary hover:bg-neutral/70 items-center justify-center transition mr-2" title="Buka sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <span id="tp-avatar" class="flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-white text-sm font-bold uppercase"></span>
+      <div class="ml-3 min-w-0">
+        <span id="tp-name" class="block text-sm font-semibold text-primary leading-tight truncate max-w-[170px]"></span>
+        <span id="tp-role" class="block text-xs text-gray-400 leading-tight"></span>
+      </div>
+    </div>
+    <div class="flex-1 flex items-center justify-center min-w-0 px-4">
+      <h1 id="pageTitleTop" class="text-base md:text-lg font-bold text-primary text-center truncate"></h1>
+    </div>
+    <div class="flex items-center pr-6">
+      <time data-today class="text-sm text-gray-500"></time>
+    </div>
+  </header>
+
+  <!-- Sidebar (desktop) -->
+  <aside class="hidden md:flex flex-col fixed inset-y-0 left-0 w-72 bg-primary text-white z-40">
+    <div class="flex items-center gap-3 px-6 h-16 border-b border-white/10">
+      <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent text-primary font-bold text-lg">W</span>
+      <div>
+        <span class="block font-semibold text-sm leading-tight">WaliKelas</span>
+        <span class="block text-xs text-white/60">Wali Kelas</span>
+      </div>
+    </div>
+    <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+      <a href="../dashboard/dashboard.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-gauge-high w-5 text-center"></i> Dashboard
+      </a>
+      <a href="../siswa/siswa.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-users w-5 text-center"></i> Data Siswa
+      </a>
+      <a href="../absensi/absensi.html" class="navlink active flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
+        <i class="fa-solid fa-clipboard-check w-5 text-center"></i> Absensi
+      </a>
+      <a href="../administrasi/administrasi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Administrasi
+      </a>
+      <a href="../pembinaan/pembinaan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-graduation-cap w-5 text-center"></i> Pembinaan
+      </a>
+      <a href="../komunikasi/komunikasi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-comments w-5 text-center"></i> Komunikasi
+      </a>
+      <a href="../laporan/laporan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
+      </a>
+      <a href="../pengaturan/pengaturan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
+      </a>
+    </nav>
+    <div class="px-4 py-4 border-t border-white/10 space-y-3">
+      <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
+        <span class="text-white/90 font-medium" id="kelas-label-side">Kelas 7A</span> · 2026/2027 Ganjil · 8 siswa aktif
+      </div>
+      <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
+        <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
+      </button>
+    </div>
+  </aside>
+
+  <!-- Bottom Nav (mobile) -->
+  <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-30 flex items-center justify-around px-2 py-2">
+    <a href="../dashboard/dashboard.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-gauge-high text-lg"></i> Beranda
+    </a>
+    <a href="../absensi/absensi.html" class="flex flex-col items-center gap-0.5 text-primary text-xs font-medium">
+      <i class="fa-solid fa-clipboard-check text-lg"></i> Absensi
+    </a>
+    <a href="../siswa/siswa.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-users text-lg"></i> Siswa
+    </a>
+    <a href="../komunikasi/komunikasi.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-comments text-lg"></i> Pesan
+    </a>
+    <button data-open-drawer class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-bars text-lg"></i> Menu
+    </button>
+  </nav>
+
+  <!-- Drawer -->
+  <div id="drawer" class="fixed inset-0 z-50 hidden">
+    <div data-close-drawer class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-y-0 left-0 w-72 bg-primary text-white shadow-xl flex flex-col transform transition-transform">
+      <div class="flex items-center justify-between px-6 h-16 border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent text-primary font-bold text-lg">W</span>
+          <div>
+            <span class="block font-semibold text-sm leading-tight">WaliKelas</span>
+            <span class="block text-xs text-white/60">Wali Kelas</span>
+          </div>
+        </div>
+        <button data-close-drawer class="text-white/60 hover:text-white transition">
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+      </div>
+      <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+        <a href="../dashboard/dashboard.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-gauge-high w-5 text-center"></i> Dashboard
+        </a>
+        <a href="../siswa/siswa.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-users w-5 text-center"></i> Data Siswa
+        </a>
+        <a href="../absensi/absensi.html" class="navlink active flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
+          <i class="fa-solid fa-clipboard-check w-5 text-center"></i> Absensi
+        </a>
+        <a href="../administrasi/administrasi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Administrasi
+        </a>
+        <a href="../pembinaan/pembinaan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-graduation-cap w-5 text-center"></i> Pembinaan
+        </a>
+        <a href="../komunikasi/komunikasi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-comments w-5 text-center"></i> Komunikasi
+        </a>
+        <a href="../laporan/laporan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
+        </a>
+        <a href="../pengaturan/pengaturan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
+        </a>
+      </nav>
+      <div class="px-4 py-4 border-t border-white/10 space-y-3">
+        <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
+          <span class="text-white/90 font-medium" id="kelas-label-drawer">Kelas 7A</span> · 2026/2027 Ganjil · 8 siswa aktif
+        </div>
+        <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
+          <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="p-4 pb-28 md:px-8 md:pb-8 md:pl-72 md:pt-24">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
+      <h1 class="page-title text-xl md:text-2xl font-bold text-primary md:hidden">Absensi Hari Ini</h1>
+      <div class="flex items-center gap-2">
+        <input id="absen-date" type="date" class="border border-gray-200 rounded-lg px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-secondary/40">
+      </div>
+    </div>
+
+    <!-- Live Counter Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 mb-6">
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-xs text-gray-500 mb-1">Hadir</p>
+        <p class="text-2xl font-bold text-secondary" id="c-hadir">28</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-xs text-gray-500 mb-1">Izin</p>
+        <p class="text-2xl font-bold text-[#2B6CB0]" id="c-izin">1</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-xs text-gray-500 mb-1">Alpa</p>
+        <p class="text-2xl font-bold text-[#C23B22]" id="c-alpa">3</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-xs text-gray-500 mb-1">Terlambat</p>
+        <p class="text-2xl font-bold text-accent" id="c-terlambat">1</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-xs text-gray-500 mb-1">Persentase</p>
+        <p class="text-2xl font-bold text-primary" id="c-persen">87.5%</p>
+        <p class="text-[10px] text-gray-400 mt-0.5">dari 32 siswa</p>
+      </div>
+    </div>
+
+    <!-- Search + All Hadir (desktop) -->
+    <div class="flex flex-col sm:flex-row gap-3 mb-4">
+      <div class="relative flex-1">
+        <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+        <input id="qa" data-search-input="#tbl-absen" type="text" placeholder="Cari nama siswa..." class="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-secondary/40">
+      </div>
+      <button id="btn-all-hadir" class="hidden md:flex px-4 py-2 rounded-lg text-sm font-medium bg-secondary text-white hover:bg-secondary/90 transition items-center gap-2">
+        <i class="fa-solid fa-check-double"></i> Semua Hadir
+      </button>
+    </div>
+
+    <!-- Mobile: Semua Hadir -->
+    <button id="btn-all-hadir-top" class="md:hidden w-full mb-4 px-4 py-2.5 rounded-lg text-sm font-medium bg-secondary text-white hover:bg-secondary/90 transition flex items-center justify-center gap-2">
+      <i class="fa-solid fa-check-double"></i> Semua Hadir
+    </button>
+
+    <!-- Legenda Status -->
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mb-4 text-[11px] text-gray-500">
+      <span class="flex items-center gap-1"><span class="inline-block w-2 h-2 rounded-full bg-green-500"></span> Hadir</span>
+      <span class="flex items-center gap-1"><span class="inline-block w-2 h-2 rounded-full bg-yellow-400"></span> Sakit</span>
+      <span class="flex items-center gap-1"><span class="inline-block w-2 h-2 rounded-full bg-blue-500"></span> Izin</span>
+      <span class="flex items-center gap-1"><span class="inline-block w-2 h-2 rounded-full bg-red-500"></span> Alpa</span>
+      <span class="flex items-center gap-1"><span class="inline-block w-2 h-2 rounded-full bg-purple-500"></span> Dinas</span>
+      <span class="flex items-center gap-1"><span class="inline-block w-2 h-2 rounded-full bg-amber-500"></span> Terlambat</span>
+    </div>
+
+    <!-- Attendance Table -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+      <div class="overflow-x-auto">
+        <table id="tbl-absen" data-att-managed class="w-full text-sm min-w-[640px]">
+          <thead>
+            <tr class="text-left text-xs text-gray-400 border-b border-gray-100 bg-gray-50/50">
+              <th class="px-4 py-3 font-medium">No</th>
+              <th class="px-4 py-3 font-medium">Nama</th>
+              <th class="px-4 py-3 font-medium">Status</th>
+              <th class="px-4 py-3 font-medium">Keterangan</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            <tr>
+              <td class="px-4 py-3 text-gray-400">1</td>
+              <td class="px-4 py-3 font-medium text-gray-700">Ahmad Fauzan</td>
+              <td class="px-4 py-3">
+  <div class="att-select inline-flex rounded-lg bg-neutral p-0.5 gap-0.5 shadow-sm" data-att="H">
+    <button data-val="H" class="att-opt">H</button>
+    <button data-val="S" class="att-opt">S</button>
+    <button data-val="I" class="att-opt">I</button>
+    <button data-val="A" class="att-opt">A</button>
+    <button data-val="D" class="att-opt">D</button>
+    <button data-val="T" class="att-opt">T</button>
+  </div>
+</td>
+              <td class="px-4 py-3"><input type="text" placeholder="Opsional" class="w-full max-w-[180px] border border-gray-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-secondary/40"></td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 text-gray-400">2</td>
+              <td class="px-4 py-3 font-medium text-gray-700">Siti Aminah</td>
+              <td class="px-4 py-3">
+  <div class="att-select inline-flex rounded-lg bg-neutral p-0.5 gap-0.5 shadow-sm" data-att="H">
+    <button data-val="H" class="att-opt">H</button>
+    <button data-val="S" class="att-opt">S</button>
+    <button data-val="I" class="att-opt">I</button>
+    <button data-val="A" class="att-opt">A</button>
+    <button data-val="D" class="att-opt">D</button>
+    <button data-val="T" class="att-opt">T</button>
+  </div>
+</td>
+              <td class="px-4 py-3"><input type="text" placeholder="Opsional" class="w-full max-w-[180px] border border-gray-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-secondary/40"></td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 text-gray-400">3</td>
+              <td class="px-4 py-3 font-medium text-gray-700">Budi Santoso</td>
+              <td class="px-4 py-3">
+  <div class="att-select inline-flex rounded-lg bg-neutral p-0.5 gap-0.5 shadow-sm" data-att="I">
+    <button data-val="H" class="att-opt">H</button>
+    <button data-val="S" class="att-opt">S</button>
+    <button data-val="I" class="att-opt">I</button>
+    <button data-val="A" class="att-opt">A</button>
+    <button data-val="D" class="att-opt">D</button>
+    <button data-val="T" class="att-opt">T</button>
+  </div>
+</td>
+              <td class="px-4 py-3"><input type="text" placeholder="Opsional" value="Sakit flu" class="w-full max-w-[180px] border border-gray-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-secondary/40"></td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 text-gray-400">4</td>
+              <td class="px-4 py-3 font-medium text-gray-700">Dewi Lestari</td>
+              <td class="px-4 py-3">
+  <div class="att-select inline-flex rounded-lg bg-neutral p-0.5 gap-0.5 shadow-sm" data-att="H">
+    <button data-val="H" class="att-opt">H</button>
+    <button data-val="S" class="att-opt">S</button>
+    <button data-val="I" class="att-opt">I</button>
+    <button data-val="A" class="att-opt">A</button>
+    <button data-val="D" class="att-opt">D</button>
+    <button data-val="T" class="att-opt">T</button>
+  </div>
+</td>
+              <td class="px-4 py-3"><input type="text" placeholder="Opsional" class="w-full max-w-[180px] border border-gray-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-secondary/40"></td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 text-gray-400">5</td>
+              <td class="px-4 py-3 font-medium text-gray-700">Rina Marlina</td>
+              <td class="px-4 py-3">
+  <div class="att-select inline-flex rounded-lg bg-neutral p-0.5 gap-0.5 shadow-sm" data-att="H">
+    <button data-val="H" class="att-opt">H</button>
+    <button data-val="S" class="att-opt">S</button>
+    <button data-val="I" class="att-opt">I</button>
+    <button data-val="A" class="att-opt">A</button>
+    <button data-val="D" class="att-opt">D</button>
+    <button data-val="T" class="att-opt">T</button>
+  </div>
+</td>
+              <td class="px-4 py-3"><input type="text" placeholder="Opsional" class="w-full max-w-[180px] border border-gray-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-secondary/40"></td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 text-gray-400">6</td>
+              <td class="px-4 py-3 font-medium text-gray-700">Andi Pratama</td>
+              <td class="px-4 py-3">
+  <div class="att-select inline-flex rounded-lg bg-neutral p-0.5 gap-0.5 shadow-sm" data-att="A">
+    <button data-val="H" class="att-opt">H</button>
+    <button data-val="S" class="att-opt">S</button>
+    <button data-val="I" class="att-opt">I</button>
+    <button data-val="A" class="att-opt">A</button>
+    <button data-val="D" class="att-opt">D</button>
+    <button data-val="T" class="att-opt">T</button>
+  </div>
+</td>
+              <td class="px-4 py-3"><input type="text" placeholder="Opsional" class="w-full max-w-[180px] border border-gray-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-secondary/40"></td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 text-gray-400">7</td>
+              <td class="px-4 py-3 font-medium text-gray-700">Maya Putri</td>
+              <td class="px-4 py-3">
+  <div class="att-select inline-flex rounded-lg bg-neutral p-0.5 gap-0.5 shadow-sm" data-att="T">
+    <button data-val="H" class="att-opt">H</button>
+    <button data-val="S" class="att-opt">S</button>
+    <button data-val="I" class="att-opt">I</button>
+    <button data-val="A" class="att-opt">A</button>
+    <button data-val="D" class="att-opt">D</button>
+    <button data-val="T" class="att-opt">T</button>
+  </div>
+</td>
+              <td class="px-4 py-3"><input type="text" placeholder="Opsional" value="Terlambat 15 menit" class="w-full max-w-[180px] border border-gray-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-secondary/40"></td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 text-gray-400">8</td>
+              <td class="px-4 py-3 font-medium text-gray-700">Fajar Nugroho</td>
+              <td class="px-4 py-3">
+  <div class="att-select inline-flex rounded-lg bg-neutral p-0.5 gap-0.5 shadow-sm" data-att="H">
+    <button data-val="H" class="att-opt">H</button>
+    <button data-val="S" class="att-opt">S</button>
+    <button data-val="I" class="att-opt">I</button>
+    <button data-val="A" class="att-opt">A</button>
+    <button data-val="D" class="att-opt">D</button>
+    <button data-val="T" class="att-opt">T</button>
+  </div>
+</td>
+              <td class="px-4 py-3"><input type="text" placeholder="Opsional" class="w-full max-w-[180px] border border-gray-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-secondary/40"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="px-4 py-3 border-t border-gray-100 text-xs text-gray-400">
+        Menampilkan 8 dari 32 siswa
+      </div>
+    </div>
+
+    <!-- Save Button (bottom sticky mobile) -->
+    <div class="md:hidden fixed bottom-16 left-0 right-0 px-4 py-2 bg-white border-t border-gray-200 z-20">
+      <button id="btn-save-absen-mobile" class="w-full py-2.5 rounded-lg text-sm font-medium bg-primary text-white hover:bg-primary/90 transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-floppy-disk"></i> Simpan Absensi · 32 Siswa
+      </button>
+    </div>
+
+    <!-- Save Button (desktop) -->
+    <div class="hidden md:flex justify-end gap-2">
+      <button id="btn-save-absen" class="px-6 py-2.5 rounded-lg text-sm font-medium bg-primary text-white hover:bg-primary/90 transition flex items-center gap-2">
+        <i class="fa-solid fa-floppy-disk"></i> Simpan Absensi
+      </button>
+    </div>
+
+  </main>
+
+  <script>
+  /* ===== HELPERS ===== */
+  function currentKelas() {
+    var p = new URLSearchParams(location.search);
+    var k = p.get("kelas");
+    if (k) return k;
+    var n = localStorage.getItem("userName");
+    var m = { "Ahmad Fauzan":"7A", "Siti Aminah":"7B", "Budi Santoso":"8A", "Dewi Lestari":"8B" };
+    return (n && m[n]) ? m[n] : (localStorage.getItem("userKelas") || "7A");
+  }
+  function todayStr() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+  function loadAbsenAll() {
+    try { return JSON.parse(localStorage.getItem("absensi_" + currentKelas())) || {}; } catch(e){ return {}; }
+  }
+  function saveAbsenAll(obj) {
+    localStorage.setItem("absensi_" + currentKelas(), JSON.stringify(obj));
+  }
+  function chosenDate() {
+    var el = document.getElementById("absen-date");
+    return el ? el.value : todayStr();
+  }
+
+  /* ===== STATUS SELECT (list mendatar H S I A D T) ===== */
+  var ATT_FILL = {
+    H: "bg-green-500 text-white border-green-500",
+    S: "bg-yellow-400 text-white border-yellow-400",
+    I: "bg-blue-500 text-white border-blue-500",
+    A: "bg-red-500 text-white border-red-500",
+    D: "bg-purple-500 text-white border-purple-500",
+    T: "bg-amber-500 text-white border-amber-500"
+  };
+  var ATT_OPT_BASE = 'att-opt flex-1 min-w-[34px] rounded-md py-1.5 px-2 text-xs font-bold border transition';
+  function renderSelectRow(grp){
+    var cur = grp.getAttribute('data-att');
+    grp.querySelectorAll('.att-opt').forEach(function(opt){
+      var on = opt.getAttribute('data-val') === cur;
+      opt.className = on
+        ? ATT_OPT_BASE + ' ' + (ATT_FILL[cur] || ATT_FILL.H)
+        : ATT_OPT_BASE + ' border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-200/60';
+    });
+  }
+  function renderAllSelects(){
+    document.querySelectorAll('.att-select').forEach(function(grp){ renderSelectRow(grp); });
+  }
+  (function(){
+    document.addEventListener('click', function(e){
+      var opt = e.target.closest('.att-opt');
+      if(!opt) return;
+      var grp = opt.closest('.att-select');
+      if(!grp) return;
+      grp.setAttribute('data-att', opt.getAttribute('data-val'));
+      renderSelectRow(grp);
+      recount();
+    });
+  })();
+
+  /* ===== SEARCH ===== */
+  (function(){
+    var qa = document.getElementById('qa');
+    if(!qa) return;
+    qa.addEventListener('input', function(){
+      var term = this.value.toLowerCase();
+      document.querySelectorAll('#tbl-absen tbody tr').forEach(function(tr){
+        var cells = tr.querySelectorAll('td');
+        var nama = (cells[1] && cells[1].textContent) || '';
+        tr.style.display = nama.toLowerCase().indexOf(term) !== -1 ? '' : 'none';
+      });
+    });
+  })();
+
+  /* ===== RECOUNT ===== */
+  function recount(){
+    var counters = { H:0, S:0, I:0, A:0, D:0, T:0 };
+    document.querySelectorAll('[data-att]').forEach(function(btn){
+      var s = btn.getAttribute('data-att');
+      if(counters.hasOwnProperty(s)) counters[s]++;
+    });
+    var total = document.querySelectorAll('[data-att]').length;
+    var hadir = counters.H + counters.T;
+    var persen = total ? Math.round(hadir / total * 1000) / 10 : 0;
+    var el = function(id){ return document.getElementById(id); };
+    if(el('c-hadir'))     el('c-hadir').textContent     = counters.H + counters.T;
+    if(el('c-izin'))      el('c-izin').textContent      = counters.I;
+    if(el('c-alpa'))      el('c-alpa').textContent      = counters.A;
+    if(el('c-terlambat')) el('c-terlambat').textContent = counters.T;
+    if(el('c-persen'))    el('c-persen').textContent     = persen + '%';
+  }
+
+  /* ===== ALL HADIR ===== */
+  (function(){
+    function setAllHadir(){
+      document.querySelectorAll('.att-select').forEach(function(grp){
+        grp.setAttribute('data-att', 'H');
+        renderSelectRow(grp);
+      });
+      recount();
+      if(typeof WKToast === 'function') WKToast('Semua siswa ditandai hadir');
+    }
+    var btnAll = document.getElementById('btn-all-hadir');
+    var btnAllTop = document.getElementById('btn-all-hadir-top');
+    if(btnAll) btnAll.addEventListener('click', setAllHadir);
+    if(btnAllTop) btnAllTop.addEventListener('click', setAllHadir);
+  })();
+
+  /* ===== SAVE (persist per date) ===== */
+  (function(){
+    function save(){
+      var records = [];
+      document.querySelectorAll('#tbl-absen tbody tr').forEach(function(tr){
+        var cells = tr.querySelectorAll('td');
+        var btn = tr.querySelector('[data-att]');
+        var input = tr.querySelector('input');
+        records.push({
+          nama: cells[1] ? cells[1].textContent.trim() : '',
+          status: btn ? btn.getAttribute('data-att') : 'H',
+          ket: input ? input.value.trim() : ''
+        });
+      });
+      var all = loadAbsenAll();
+      all[chosenDate()] = records;
+      saveAbsenAll(all);
+      if(typeof WKToast === 'function') WKToast('Absensi tersimpan (' + records.length + ' siswa, ' + chosenDate() + ')');
+      else alert('Absensi tersimpan (' + records.length + ' siswa)');
+    }
+    var btnSave = document.getElementById('btn-save-absen');
+    var btnSaveMob = document.getElementById('btn-save-absen-mobile');
+    if(btnSave) btnSave.addEventListener('click', save);
+    if(btnSaveMob) btnSaveMob.addEventListener('click', save);
+  })();
+
+  /* ===== LOAD saved data for chosen date ===== */
+  function loadSavedForDate(){
+    var all = loadAbsenAll();
+    var records = all[chosenDate()];
+    if(!records || !records.length) return;
+    var map = {};
+    records.forEach(function(r){ map[r.nama] = r; });
+    document.querySelectorAll('#tbl-absen tbody tr').forEach(function(tr){
+      var cells = tr.querySelectorAll('td');
+      var nama = cells[1] ? cells[1].textContent.trim() : '';
+      var r = map[nama];
+      if(!r) return;
+      var btn = tr.querySelector('[data-att]');
+      if(btn){
+        btn.setAttribute('data-att', r.status);
+        renderSelectRow(btn);
+      }
+      var inp = tr.querySelector('input');
+      if(inp) inp.value = r.ket || '';
+    });
+    recount();
+  }
+
+  /* ===== DATE PICKER + CLASS LABELS ===== */
+  (function(){
+    var el = document.getElementById('absen-date');
+    if(el){
+      el.value = todayStr();
+      el.addEventListener('change', function(){ loadSavedForDate(); });
+    }
+    var kls = currentKelas();
+    document.querySelectorAll('#kelas-label-side, #kelas-label-drawer').forEach(function(e){ e.textContent = "Kelas " + kls; });
+    var title = document.title;
+    if(title.indexOf("Kelas 7A") !== -1) document.title = "Absensi Kelas " + kls + " — WaliKelas";
+    /* restore saved data for today on first load */
+    loadSavedForDate();
+    renderAllSelects();
+  })();
+  </script>
+
+</body>
+</html>

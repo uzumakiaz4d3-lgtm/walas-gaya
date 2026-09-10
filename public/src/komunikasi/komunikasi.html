@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Komunikasi Orang Tua — WaliKelas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1A3A5C',
+            secondary: '#2A7A6B',
+            accent: '#E89D3F',
+            neutral: '#F5F6F8',
+            danger: '#C23B22',
+            info: '#2B6CB0'
+          }
+        }
+      }
+    }
+  </script>
+  <script src="../assets/app.js" defer></script>
+</head>
+<body class="bg-neutral text-gray-800 min-h-screen">
+<!-- Topbar (desktop) -->
+  <header id="topbar" class="hidden md:flex fixed top-0 left-0 right-0 z-30 h-16 bg-white border-b border-gray-200 md:pl-72">
+    <div class="flex items-center pl-4 pr-2">
+      <button id="btn-show-sidebar" style="display:none" class="w-10 h-10 rounded-lg bg-neutral text-primary hover:bg-neutral/70 items-center justify-center transition mr-2" title="Buka sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <span id="tp-avatar" class="flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-white text-sm font-bold uppercase"></span>
+      <div class="ml-3 min-w-0">
+        <span id="tp-name" class="block text-sm font-semibold text-primary leading-tight truncate max-w-[170px]"></span>
+        <span id="tp-role" class="block text-xs text-gray-400 leading-tight"></span>
+      </div>
+    </div>
+    <div class="flex-1 flex items-center justify-center min-w-0 px-4">
+      <h1 id="pageTitleTop" class="text-base md:text-lg font-bold text-primary text-center truncate"></h1>
+    </div>
+    <div class="flex items-center pr-6">
+      <time data-today class="text-sm text-gray-500"></time>
+    </div>
+  </header>
+
+  <!-- Sidebar (desktop) -->
+  <aside class="hidden md:flex flex-col fixed inset-y-0 left-0 w-72 bg-primary text-white z-40">
+    <div class="flex items-center gap-3 px-6 h-16 border-b border-white/10">
+      <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent text-primary font-bold text-lg">W</span>
+      <div>
+        <span class="block font-semibold text-sm leading-tight">WaliKelas</span>
+        <span class="block text-xs text-white/60">Wali Kelas</span>
+      </div>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+      <a href="../dashboard/dashboard.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-gauge-high w-5 text-center"></i> Dashboard
+      </a>
+      <a href="../siswa/siswa.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-users w-5 text-center"></i> Data Siswa
+      </a>
+      <a href="../absensi/absensi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-clipboard-check w-5 text-center"></i> Absensi
+      </a>
+      <a href="../administrasi/administrasi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Administrasi
+      </a>
+      <a href="../pembinaan/pembinaan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-graduation-cap w-5 text-center"></i> Pembinaan
+      </a>
+      <a href="../komunikasi/komunikasi.html" class="navlink active flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
+        <i class="fa-solid fa-comments w-5 text-center"></i> Komunikasi
+      </a>
+      <a href="../laporan/laporan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
+      </a>
+      <a href="../pengaturan/pengaturan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+        <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
+      </a>
+    </nav>
+
+    <div class="px-4 py-4 border-t border-white/10 space-y-3">
+      <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
+        <span class="text-white/90 font-medium">Kelas 7A</span> · 2026/2027 Ganjil · 32 siswa aktif
+      </div>
+      <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
+        <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
+      </button>
+    </div>
+  </aside>
+
+  <!-- Bottom Nav (mobile) -->
+  <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-30 flex items-center justify-around px-2 py-2">
+    <a href="../dashboard/dashboard.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-gauge-high text-lg"></i> Beranda
+    </a>
+    <a href="../absensi/absensi.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-clipboard-check text-lg"></i> Absensi
+    </a>
+    <a href="../siswa/siswa.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-users text-lg"></i> Siswa
+    </a>
+    <a href="../komunikasi/komunikasi.html" class="flex flex-col items-center gap-0.5 text-primary text-xs">
+      <i class="fa-solid fa-comments text-lg"></i> Pesan
+    </a>
+    <button data-open-drawer class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
+      <i class="fa-solid fa-bars text-lg"></i> Menu
+    </button>
+  </nav>
+
+  <!-- Drawer -->
+  <div id="drawer" class="fixed inset-0 z-50 hidden">
+    <div data-close-drawer class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-y-0 left-0 w-72 bg-primary text-white shadow-xl flex flex-col transform transition-transform">
+      <div class="flex items-center justify-between px-6 h-16 border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent text-primary font-bold text-lg">W</span>
+          <div>
+            <span class="block font-semibold text-sm leading-tight">WaliKelas</span>
+            <span class="block text-xs text-white/60">Wali Kelas</span>
+          </div>
+        </div>
+        <button data-close-drawer class="text-white/60 hover:text-white transition">
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+      </div>
+
+      <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+        <a href="../dashboard/dashboard.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-gauge-high w-5 text-center"></i> Dashboard
+        </a>
+        <a href="../siswa/siswa.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-users w-5 text-center"></i> Data Siswa
+        </a>
+        <a href="../absensi/absensi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-clipboard-check w-5 text-center"></i> Absensi
+        </a>
+        <a href="../administrasi/administrasi.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Administrasi
+        </a>
+        <a href="../pembinaan/pembinaan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-graduation-cap w-5 text-center"></i> Pembinaan
+        </a>
+        <a href="../komunikasi/komunikasi.html" class="navlink active flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
+          <i class="fa-solid fa-comments w-5 text-center"></i> Komunikasi
+        </a>
+        <a href="../laporan/laporan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
+        </a>
+        <a href="../pengaturan/pengaturan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
+          <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
+        </a>
+      </nav>
+
+      <div class="px-4 py-4 border-t border-white/10 space-y-3">
+        <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
+          <span class="text-white/90 font-medium">Kelas 7A</span> · 2026/2027 Ganjil · 32 siswa aktif
+        </div>
+        <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
+          <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="p-4 pb-28 md:px-8 md:pb-8 md:pl-72 md:pt-24">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
+      <h1 class="page-title text-xl md:text-2xl font-bold text-primary md:hidden">Komunikasi Orang Tua</h1>
+      <button data-open-modal="kom-modal" class="inline-flex items-center gap-2 px-4 py-2 bg-secondary text-white text-sm font-medium rounded-lg hover:bg-secondary/90 transition">
+        <i class="fa-solid fa-plus text-xs"></i> Catat Komunikasi
+      </button>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-xs text-gray-500 mb-1">Bulan Ini</p>
+        <p class="text-2xl font-bold text-primary">8</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-xs text-gray-500 mb-1">WhatsApp</p>
+        <p class="text-2xl font-bold text-secondary">4</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-xs text-gray-500 mb-1">Telepon</p>
+        <p class="text-2xl font-bold text-info">3</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-xs text-gray-500 mb-1">Tatap Muka</p>
+        <p class="text-2xl font-bold text-accent">1</p>
+      </div>
+    </div>
+
+    <!-- Riwayat Komunikasi -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-5">
+      <h2 class="text-sm font-semibold text-gray-600 mb-3"><i class="fa-solid fa-clock-rotate-left mr-2 text-gray-400"></i>Riwayat Komunikasi</h2>
+      <div id="riwayat-kom" class="space-y-3">
+        <div class="flex flex-wrap items-start gap-2 p-3 bg-neutral rounded-xl">
+          <span class="text-xs text-gray-400 whitespace-nowrap pt-0.5">07-09-2026</span>
+          <span class="inline-block bg-secondary/10 text-secondary text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap">WhatsApp</span>
+          <p class="text-sm text-gray-600 flex-1 min-w-[200px]">Komunikasi dengan orang tua Budi Santoso mengenai alpa. Tindak lanjut: catat pembinaan.</p>
+        </div>
+        <div class="flex flex-wrap items-start gap-2 p-3 bg-neutral rounded-xl">
+          <span class="text-xs text-gray-400 whitespace-nowrap pt-0.5">06-09-2026</span>
+          <span class="inline-block bg-info/10 text-info text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap">Telepon</span>
+          <p class="text-sm text-gray-600 flex-1 min-w-[200px]">Telepon ke orang tua Siti Aminah. Topik: jadwal piket minggu depan.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Modal: Catat Komunikasi -->
+  <div id="kom-modal" class="modal">
+    <div class="box">
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="font-bold text-primary text-lg">Catat Komunikasi</h3>
+        <button data-close-modal class="text-gray-400 hover:text-gray-600 transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form id="kom-form" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Siswa</label>
+          <select id="kom-siswa" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/40">
+            <option value="">Pilih siswa</option>
+            <option>Ahmad Fauzan</option>
+            <option>Siti Aminah</option>
+            <option>Budi Santoso</option>
+            <option>Dewi Lestari</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Media</label>
+          <select id="kom-media" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/40">
+            <option value="">Pilih media</option>
+            <option>Telepon</option>
+            <option>WhatsApp</option>
+            <option>Pertemuan</option>
+            <option>Surat</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Ringkasan</label>
+          <textarea id="kom-ringkas" rows="3" placeholder="Tulis ringkasan komunikasi..." class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"></textarea>
+        </div>
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" data-close-modal class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700">Batal</button>
+          <button type="submit" class="bg-primary hover:bg-primary/90 text-white text-sm font-medium px-6 py-2.5 rounded-lg transition">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script>
+    (function () {
+      var form = document.getElementById("kom-form");
+      if (!form) return;
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var s = document.getElementById("kom-siswa");
+        var m = document.getElementById("kom-media");
+        var r = document.getElementById("kom-ringkas");
+        if (!s.value || !m.value || !r.value.trim()) {
+          if (typeof WKToast === "function") WKToast("Lengkapi siswa, media & ringkasan");
+          return;
+        }
+        var now = new Date();
+        var tgl = ("0" + now.getDate()).slice(-2) + "-" + ("0" + (now.getMonth() + 1)).slice(-2) + "-" + now.getFullYear();
+        var colors = { "Telepon": "info", "WhatsApp": "secondary", "Pertemuan": "primary", "Surat": "accent" };
+        var col = colors[m.value] || "secondary";
+        var box = document.createElement("div");
+        box.className = "flex flex-wrap items-start gap-2 p-3 bg-neutral rounded-xl";
+        box.innerHTML =
+          '<span class="text-xs text-gray-400 whitespace-nowrap pt-0.5">' + tgl + "</span>" +
+          '<span class="inline-block bg-' + col + '/10 text-' + col + ' text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap">' + m.value + "</span>" +
+          '<p class="text-sm text-gray-600 flex-1 min-w-[200px]">' + r.value.trim() + ' <span class="text-gray-400">(' + s.value + ")</span></p>";
+        document.getElementById("riwayat-kom").insertBefore(box, document.getElementById("riwayat-kom").firstChild);
+        form.reset();
+        document.getElementById("kom-modal").classList.remove("show");
+        if (typeof WKToast === "function") WKToast("Komunikasi dicatat");
+      });
+    })();
+  </script>
+
+</body>
+</html>
