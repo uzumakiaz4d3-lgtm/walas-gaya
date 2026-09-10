@@ -1,29 +1,51 @@
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: wali-kelas-db
+    environment:
+      POSTGRES_USER: walikelas
+      POSTGRES_PASSWORD: walikelas-secret
+      POSTGRES_DB: walikelas
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U walikelas -d walikelas"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   web:
     build:
       context: .
-      # Ganti nilai berikut saat build bila perlu:
-      # build args: --build-arg NEXT_PUBLIC_APP_URL=http://app.example.com
       args:
         NEXT_PUBLIC_APP_NAME: "WaliKelas"
         NEXT_PUBLIC_APP_URL: "http://localhost:3000"
     image: wali-kelas-app:latest
     container_name: wali-kelas-app
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
       - "3000:3000"
     env_file:
       - path: .env
         required: false
     environment:
-      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/walikelas?schema=public"
-      DIRECT_URL: "postgresql://postgres:postgres@localhost:5432/walikelas?schema=public"
+      DATABASE_URL: "postgresql://walikelas:walikelas-secret@db:5432/walikelas?schema=public"
+      DIRECT_URL: "postgresql://walikelas:walikelas-secret@db:5432/walikelas?schema=public"
       AUTH_SECRET: "change-this-secret-key"
       NEXT_PUBLIC_APP_NAME: "WaliKelas"
       NEXT_PUBLIC_APP_URL: "http://localhost:3000"
+      WK_DATA_MODE: "postgres"
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/auth/status').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 10s
+      start_period: 15s
+
+volumes:
+  pgdata:

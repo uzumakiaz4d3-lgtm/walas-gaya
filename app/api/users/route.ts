@@ -1,62 +1,67 @@
-import { readUsers, writeUsers, hashPassword, isAdminRequest } from "../users-lib";
+import { getSessionUser, json, hashPassword } from "../../../lib/auth";
+import { getStore, publicUser } from "../../../lib/store";
+import type { Role } from "../../../lib/store";
 
-function publicUser(u: any) {
-  return {
-    id: u.id,
-    email: u.email,
-    name: u.name,
-    role: u.role,
-    kelas: u.kelas || null,
-    status: u.status || "aktif",
-  };
+function requireAdmin(request: Request): { sub: string; role: string } | Response {
+  const session = getSessionUser(request);
+  if (!session) {
+    return json({ success: false, error: "Sesi tidak valid, silakan login ulang" }, 401);
+  }
+  if (session.role !== "admin") {
+    return json({ success: false, error: "Tidak diizinkan" }, 403);
+  }
+  return session;
 }
 
 export async function GET(request: Request) {
-  if (!isAdminRequest(request)) {
-    return Response.json({ success: false, error: "Tidak diizinkan" }, { status: 403 });
+  const admin = requireAdmin(request);
+  if (admin instanceof Response) return admin;
+  try {
+    const store = getStore();
+    await store.ensureReady();
+    const users = await store.listUsers();
+    return json({ success: true, users: users.map(publicUser) });
+  } catch {
+    return json({ success: false, error: "Terjadi kesalahan server" }, 500);
   }
-  const users = await readUsers();
-  return Response.json({ success: true, users: users.map(publicUser) });
 }
 
 export async function POST(request: Request) {
-  if (!isAdminRequest(request)) {
-    return Response.json({ success: false, error: "Tidak diizinkan" }, { status: 403 });
-  }
+  const admin = requireAdmin(request);
+  if (admin instanceof Response) return admin;
   try {
-    const body = await request.json();
-    const email = String(body.email || "").trim();
+    const body = await request.json().catch(() => ({}));
+    const email = String(body.email || "").trim().toLowerCase();
     const name = String(body.name || "").trim();
-    const password = String(body.password || "").trim();
-    const role = body.role === "admin" ? "admin" : "wali_kelas";
+    const password = String(body.password || "");
+    const role: Role = body.role === "admin" ? "admin" : "wali_kelas";
     const kelas = body.kelas || null;
 
     if (!email || !name || !password) {
-      return Response.json({ success: false, error: "Nama, email, dan password wajib diisi" }, { status: 400 });
+      return json({ success: false, error: "Nama, email, dan password wajib diisi" }, 400);
     }
     if (password.length < 6) {
-      return Response.json({ success: false, error: "Password minimal 6 karakter" }, { status: 400 });
+      return json({ success: false, error: "Password minimal 6 karakter" }, 400);
     }
 
-    const users = await readUsers();
-    if (users.some((u: any) => u.email.toLowerCase() === email.toLowerCase())) {
-      return Response.json({ success: false, error: "Email sudah terdaftar" }, { status: 409 });
+    const store = getStore();
+    await store.ensureReady();
+
+    if (await store.findUserByEmail(email)) {
+      return json({ success: false, error: "Email sudah terdaftar" }, 409);
     }
 
-    const user = {
-      id: `u-${Date.now()}`,
+    const user = await store.createUser({
       email,
-      passwordHash: hashPassword(password),
+      passwordHash: await hashPassword(password),
       name,
       role,
       kelas,
       status: "aktif",
-    };
-    users.push(user);
-    await writeUsers(users);
+    });
 
-    return Response.json({ success: true, user: publicUser(user) });
+    return json({ success: true, user: publicUser(user) });
   } catch {
-    return Response.json({ success: false, error: "Terjadi kesalahan server" }, { status: 500 });
+    return json({ success: false, error: "Terjadi kesalahan server" }, 500);
   }
 }

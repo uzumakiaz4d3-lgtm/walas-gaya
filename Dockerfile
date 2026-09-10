@@ -24,10 +24,11 @@ ENV NEXT_PUBLIC_APP_NAME=$NEXT_PUBLIC_APP_NAME \
     NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL \
     DATABASE_URL="postgresql://postgres:postgres@localhost:5432/walikelas?schema=public" \
     DIRECT_URL="postgresql://postgres:postgres@localhost:5432/walikelas?schema=public" \
-    AUTH_SECRET="change-this-secret-key"
+    AUTH_SECRET="change-this-secret-key" \
+    WK_DATA_MODE="memory"
 
 RUN npm run build
-# Smoke test: pastikan env terbaca & endpoint API berfungsi (gagal = build gagal)
+# Smoke test (memory store, tanpa database): env terbaca & endpoint API berfungsi (gagal = build gagal)
 RUN npm test
 
 ########## RUNTIME ##########
@@ -44,10 +45,6 @@ RUN apk add --no-cache libc6-compat
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/data ./data
-
-# Jalankan sebagai user non-root; pastikan data/ dapat ditulis (API admin)
-RUN chown -R node:node /app/data
 
 USER node
 EXPOSE 3000

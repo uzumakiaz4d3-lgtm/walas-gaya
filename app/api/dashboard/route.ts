@@ -1,15 +1,25 @@
+import { getSessionUser, json } from "../../../lib/auth";
+import { getStore, publicUser } from "../../../lib/store";
+
 /**
- * API Route: GET /api/dashboard
- * Mengambil data dashboard untuk user yang login
+ * GET /api/dashboard — data dashboard hanya untuk user yang login (sesi cookie)
  */
 export async function GET(request: Request) {
+  const session = getSessionUser(request);
+  if (!session) {
+    return json({ success: false, error: "Tidak diizinkan" }, 401);
+  }
   try {
-    const { searchParams } = new URL(request.url);
-    const role = searchParams.get("role") || "wali_kelas";
+    const store = getStore();
+    await store.ensureReady();
+    const user = await store.findUserById(session.sub);
+    if (!user || user.status === "nonaktif") {
+      return json({ success: false, error: "Sesi tidak valid" }, 401);
+    }
 
-    // Data dashboard dummy (akan diganti dengan query database nanti)
     const dashboardData = {
-      role,
+      role: user.role,
+      user: publicUser(user),
       totalStudents: 32,
       todayAttendance: {
         hadir: 28,
@@ -26,7 +36,7 @@ export async function GET(request: Request) {
         {
           id: "1",
           title: "Absensi hari ini",
-          description: "28 siswa hadir, 2 sakit, 1izin",
+          description: "28 siswa hadir, 2 sakit, 1 izin",
           time: "07-09-2026",
         },
         {
@@ -38,26 +48,8 @@ export async function GET(request: Request) {
       ],
     };
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        data: dashboardData,
-      }),
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-  } catch (error) {
-    return new Response(
-      JSON.stringify({ success: false, error: "Internal server error" }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    return json({ success: true, data: dashboardData });
+  } catch {
+    return json({ success: false, error: "Terjadi kesalahan server" }, 500);
   }
 }

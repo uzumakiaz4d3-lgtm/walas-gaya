@@ -1,52 +1,41 @@
-import { createHash } from "crypto";
-import { promises as fs } from "fs";
-import path from "path";
-
-const USERS_FILE = path.join(process.cwd(), "data", "users.json");
-
-async function getUsers() {
-  try {
-    const raw = await fs.readFile(USERS_FILE, "utf-8");
-    return JSON.parse(raw).users || [];
-  } catch {
-    return [];
-  }
-}
-
-function hashPassword(pwd: string) {
-  return createHash("sha256").update(String(pwd)).digest("hex");
-}
+import { getStore, publicUser } from "../../../lib/store";
+import { verifyPassword, signSession, buildSessionCookie, json } from "../../../lib/auth";
 
 export async function POST(request: Request) {
   try {
-    const { email, password } = await request.json();
-    const users = await getUsers();
-    const user = users.find(
-      (u: any) => u.email.toLowerCase() === String(email || "").trim().toLowerCase()
-    );
+    const body = await request.json().catch(() => ({}));
+    const email = String(body.email || "").trim().toLowerCase();
+    const password = String(body.password || "");
 
-    if (user && user.passwordHash === hashPassword(password) && user.status !== "nonaktif") {
-      return Response.json({
-        success: true,
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          kelas: user.kelas || null,
-        },
-        redirect: user.role === "admin" ? "/src/admin/admin.html" : "/src/dashboard/dashboard.html",
-      });
+    if (!email || !password) {
+      return json({ success: false, error: "Email dan kata sandi wajib diisi" }, 400);
     }
 
-    return Response.json(
-      { success: false, error: "Email atau kata sandi salah" },
-      { status: 401 }
+    const store = getStore();
+    await store.ensureReady();
+
+    const user = await store.findUserByEmail(email);
+    const valid =
+      user && user.status !== "nonaktif" && (await verifyPassword(password, user.passwordHash));
+
+    if (!valid || !user) {
+      return json({ success: false, error: "Email atau kata sandi salah" }, 401);
+    }
+
+    const token = signSession(user);
+    const redirect = user.role === "admin" ? "/src/admin/admin.html" : "/src/dashboard/dashboard.html";
+
+    return new Response(
+      JSON.stringify({ success: true, user: publicUser(user), redirect }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Set-Cookie": buildSessionCookie(token),
+        },
+      }
     );
   } catch {
-    return Response.json(
-      { success: false, error: "Terjadi kesalahan server" },
-      { status: 500 }
-    );
+    return json({ success: false, error: "Terjadi kesalahan server" }, 500);
   }
 }

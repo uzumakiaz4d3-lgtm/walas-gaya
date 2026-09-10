@@ -8,18 +8,22 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node scripts/smoke-test.mjs"
+    "test": "node scripts/smoke-test.mjs",
+    "db:seed": "node scripts/seed-db.mjs"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "next": "^16.3.4",
+    "pg": "^8.16.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
   "devDependencies": {
     "@types/node": "22.20.2",
+    "@types/pg": "^8.15.6",
     "@types/react": "19.3.0",
     "autoprefixer": "^10.5.5",
     "postcss": "^8.5.28",

@@ -1,3 +1,11 @@
+import { clearSessionCookie, json } from "../../../lib/auth";
+
 export async function POST() {
-  return Response.json({ success: true, redirect: "/" });
+  return new Response(JSON.stringify({ success: true }), {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json",
+      "Set-Cookie": clearSessionCookie(),
+    },
+  });
 }

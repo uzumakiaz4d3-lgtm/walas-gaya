@@ -1,13 +1,10 @@
 #!/usr/bin/env node
 /*
- * Smoke test for WaliKelas App.
- * 1. Verifies environment variables are readable (from process env or .env file).
- * 2. Boots the production server (next start) and probes key endpoints.
- * Exits non-zero on any failure so `npm test` and `docker build` fail loudly.
- *
- * Safe to run against a locally built app (npm run build) or inside a Docker
- * builder stage. A missing .env file is NOT an error here: Docker Compose /
- * runtime provides the variables. A malformed or non-empty-but-broken env IS.
+ * Smoke test untuk WaliKelas App.
+ * 1. Verifikasi environment variables terbaca (dari process env atau file .env).
+ * 2. Boot server produksi (next start) dalam MODE MEMORY (tanpa database) dan
+ *    uji endpoint penting: login, sesi cookie, guard admin, CRUD pengguna.
+ * Exits non-zero jika ada kegagalan sehingga `npm test` / `docker build` gagal tegas.
  */
 import { spawn, execSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
@@ -75,6 +72,8 @@ function ensureEnv() {
       : "[set]";
     console.log(`     ${key}=${shown}`);
   }
+  if (!process.env.WK_DATA_MODE) process.env.WK_DATA_MODE = "memory";
+  console.log(`     WK_DATA_MODE=${process.env.WK_DATA_MODE} (tes memakai memory store, tanpa DB)`);
 }
 
 function sleep(ms) {
@@ -102,34 +101,51 @@ function check(name, cond, extra) {
   }
 }
 
+const COOKIES = {};
+function pullCookies(res) {
+  const set = res.headers.getSetCookie ? res.headers.getSetCookie() : [];
+  for (const sc of set) {
+    const eq = sc.indexOf("=");
+    if (eq === -1) continue;
+    const key = sc.slice(0, eq).trim();
+    const val = sc.slice(eq + 1).split(";")[0].trim();
+    COOKIES[key] = val;
+  }
+}
+function cookieHeader() {
+  return Object.keys(COOKIES)
+    .map((k) => `${k}=${COOKIES[k]}`)
+    .join("; ");
+}
+
 async function api(pathname, options) {
+  const headers = { "Content-Type": "application/json", ...(options && options.headers) };
   return fetch(`${BASE}${pathname}`, {
     redirect: "manual",
     ...options,
-    headers: { "Content-Type": "application/json", ...(options && options.headers) },
+    headers,
   });
+}
+
+async function login(email, password) {
+  const res = await api("/api/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+  pullCookies(res);
+  return res;
 }
 
 async function main() {
   ensureEnv();
-  const required = ["build", "next build"];
   const built = existsSync(path.join(ROOT, ".next", "BUILD_ID"));
   if (!built) {
-    console.error(
-      `FAIL build: .next/BUILD_ID tidak ada. Jalankan ${required.join(" ")} sebelum ${required.slice(1).join(" ") === "next build" ? "npm test" : ""}!`
-    );
+    console.error("FAIL build: artefak .next/BUILD_ID tidak ada. Jalankan `npm run build` dulu!");
     process.exit(1);
   }
   console.log("OK   build: artefak .next ditemukan");
 
-  const nextBin = path.join(
-    ROOT,
-    "node_modules",
-    "next",
-    "dist",
-    "bin",
-    "next"
-  );
+  const nextBin = path.join(ROOT, "node_modules", "next", "dist", "bin", "next");
   const isWin = process.platform === "win32";
   const child = spawn(process.execPath, [nextBin, "start", "-p", String(PORT), "-H", "127.0.0.1"], {
     cwd: ROOT,
@@ -156,11 +172,7 @@ async function main() {
 
   if (up) {
     console.log("OK   server: berhasil boot di " + BASE);
-    const checks = {
-      "env NEXT_PUBLIC_APP_NAME terbaca": () =>
-        process.env.NEXT_PUBLIC_APP_NAME === "WaliKelas",
-    };
-    for (const [name, fn] of Object.entries(checks)) check(name, fn());
+    check("env NEXT_PUBLIC_APP_NAME terbaca", process.env.NEXT_PUBLIC_APP_NAME === "WaliKelas");
 
     let res = await api("/");
     check(
@@ -171,29 +183,95 @@ async function main() {
     );
 
     res = await api("/api/auth/status");
-    const statusJson = await res.json().catch(() => ({}));
-    check("GET /api/auth/status 200", res.status === 200, `status=${res.status}`);
-    check("auth status loggedIn=false", statusJson.loggedIn === false);
+    const stNo = await res.json().catch(() => ({}));
+    check("auth/status tanpa cookie loggedIn=false", res.status === 200 && stNo.loggedIn === false);
 
-    res = await api("/api/login", {
+    res = await login("admin@sekolah.id", "wali123");
+    const loginAdmin = await res.json().catch(() => ({}));
+    check(
+      "login admin sukses (cookie terpasang)",
+      res.status === 200 && loginAdmin.success === true && loginAdmin.user.role === "admin",
+      `status=${res.status} cookies=${Object.keys(COOKIES).length}`
+    );
+
+    res = await login("admin@sekolah.id", "salah123");
+    check("login password salah ditolak", res.status === 401, `status=${res.status}`);
+
+    res = await login("ahmad@walikelas.sch.id", "wali123");
+    const loginWali = await res.json().catch(() => ({}));
+    check(
+      "login wali_kelas sukses",
+      res.status === 200 && loginWali.success === true && loginWali.user.role === "wali_kelas",
+      `status=${res.status}`
+    );
+
+    res = await api("/api/auth/status", { headers: { cookie: cookieHeader() } });
+    const stWali = await res.json().catch(() => ({}));
+    check(
+      "auth/status dengan cookie wali → loggedIn=true role wali_kelas",
+      res.status === 200 && stWali.loggedIn === true && stWali.user.role === "wali_kelas",
+      `status=${res.status}`
+    );
+
+    res = await api("/api/users");
+    check("GET /api/users tanpa cookie ditolak (401)", res.status === 401, `status=${res.status}`);
+
+    const tampered = `${COOKIES[Object.keys(COOKIES)[0]] || ""}tampered`;
+    res = await api("/api/users", { headers: { cookie: `${Object.keys(COOKIES)[0]}=${tampered}` } });
+    check("cookie yang diubah-ubah ditolak (401)", res.status === 401, `status=${res.status}`);
+
+    res = await api("/api/users", { headers: { cookie: cookieHeader() } });
+    const usersWali = await res.json().catch(() => ({}));
+    check(
+      "GET /api/users (wali_kelas) ditolak 403",
+      res.status === 403 && usersWali.success === false,
+      `status=${res.status}`
+    );
+
+    res = await login("admin@sekolah.id", "wali123");
+    res = await api("/api/users", { headers: { cookie: cookieHeader() } });
+    const usersAdmin = await res.json().catch(() => ({}));
+    check(
+      "GET /api/users (admin) sukses — 5 pengguna default",
+      res.status === 200 && usersAdmin.success === true && usersAdmin.users.length === 5,
+      `status=${res.status} users=${usersAdmin.users && usersAdmin.users.length}`
+    );
+
+    res = await api("/api/users", {
       method: "POST",
-      body: JSON.stringify({ email: "admin@sekolah.id", password: "wali123" }),
+      headers: { cookie: cookieHeader() },
+      body: JSON.stringify({ email: "test@sekolah.id", name: "User Tes", password: "rahasiagakil" }),
     });
-    const loginJson = await res.json().catch(() => ({}));
-    check("POST /api/login admin berhasil", res.status === 200 && loginJson.success === true && loginJson.user.role === "admin", `status=${res.status}`);
+    const created = await res.json().catch(() => ({}));
+    check(
+      "POST /api/users (admin) membuat pengguna",
+      res.status === 200 && created.success === true && created.user.role === "wali_kelas",
+      `status=${res.status}`
+    );
 
-    res = await api("/api/login", {
-      method: "POST",
-      body: JSON.stringify({ email: "admin@sekolah.id", password: "salah123" }),
+    res = await login("test@sekolah.id", "rahasiagakil");
+    const loginNew = await res.json().catch(() => ({}));
+    check(
+      "login pengguna baru berhasil",
+      res.status === 200 && loginNew.success === true,
+      `status=${res.status}`
+    );
+
+    res = await login("admin@sekolah.id", "wali123");
+    res = await api("/api/users/" + encodeURIComponent(created.user.id), {
+      method: "DELETE",
+      headers: { cookie: cookieHeader() },
     });
-    check("POST /api/login password salah ditolak", res.status === 401, `status=${res.status}`);
+    const del = await res.json().catch(() => ({}));
+    check("DELETE /api/users/:id (admin) sukses", res.status === 200 && del.success === true, `status=${res.status}`);
 
-    res = await api("/api/users", { headers: { "x-user-role": "wali_kelas" } });
-    check("GET /api/users non-admin ditolak", res.status === 403, `status=${res.status}`);
-
-    res = await api("/api/users", { headers: { "x-user-role": "admin" } });
-    const usersJson = await res.json().catch(() => ({}));
-    check("GET /api/users admin sukses", res.status === 200 && usersJson.success === true && Array.isArray(usersJson.users), `status=${res.status}`);
+    res = await api("/api/dashboard", { headers: { cookie: cookieHeader() } });
+    const dash = await res.json().catch(() => ({}));
+    check(
+      "GET /api/dashboard (sesi) sukses",
+      res.status === 200 && dash.success === true && dash.data.role === "admin",
+      `status=${res.status}`
+    );
   }
 
   try {

@@ -1,84 +1,102 @@
-import { readUsers, writeUsers, hashPassword, isAdminRequest } from "../../users-lib";
+import { getSessionUser, json, hashPassword } from "../../../../lib/auth";
+import { getStore, publicUser } from "../../../../lib/store";
+import type { Role, UserStatus } from "../../../../lib/store";
 
-function publicUser(u: any) {
-  return {
-    id: u.id,
-    email: u.email,
-    name: u.name,
-    role: u.role,
-    kelas: u.kelas || null,
-    status: u.status || "aktif",
-  };
+function requireAdmin(request: Request): { sub: string; role: string } | Response {
+  const session = getSessionUser(request);
+  if (!session) {
+    return json({ success: false, error: "Sesi tidak valid, silakan login ulang" }, 401);
+  }
+  if (session.role !== "admin") {
+    return json({ success: false, error: "Tidak diizinkan" }, 403);
+  }
+  return session;
 }
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  if (!isAdminRequest(request)) {
-    return Response.json({ success: false, error: "Tidak diizinkan" }, { status: 403 });
-  }
-  const { id } = await params;
+  const admin = requireAdmin(request);
+  if (admin instanceof Response) return admin;
   try {
-    const users = await readUsers();
-    const idx = users.findIndex((u: any) => u.id === id);
-    if (idx === -1) {
-      return Response.json({ success: false, error: "Pengguna tidak ditemukan" }, { status: 404 });
+    const { id } = await params;
+    const store = getStore();
+    await store.ensureReady();
+
+    const current = await store.findUserById(id);
+    if (!current) {
+      return json({ success: false, error: "Pengguna tidak ditemukan" }, 404);
     }
 
-    const body = await request.json();
-    const email = String(body.email || "").trim();
+    const body = await request.json().catch(() => ({}));
+    const email = String(body.email || "").trim().toLowerCase();
     const name = String(body.name || "").trim();
     if (!email || !name) {
-      return Response.json({ success: false, error: "Nama dan email wajib diisi" }, { status: 400 });
-    }
-    if (email.toLowerCase() !== users[idx].email.toLowerCase() && users.some((u: any) => u.email.toLowerCase() === email.toLowerCase())) {
-      return Response.json({ success: false, error: "Email sudah terdaftar" }, { status: 409 });
+      return json({ success: false, error: "Nama dan email wajib diisi" }, 400);
     }
 
-    users[idx].email = email;
-    users[idx].name = name;
-    users[idx].role = body.role === "admin" ? "admin" : "wali_kelas";
-    users[idx].kelas = body.kelas || null;
+    const duplicate = await store.findUserByEmail(email);
+    if (duplicate && duplicate.id !== id) {
+      return json({ success: false, error: "Email sudah terdaftar" }, 409);
+    }
+
+    const patch: Partial<Omit<any, "id">> = {
+      email,
+      name,
+      role: body.role === "admin" ? ("admin" as Role) : ("wali_kelas" as Role),
+      kelas: body.kelas || null,
+    };
     if (body.status === "aktif" || body.status === "nonaktif") {
-      users[idx].status = body.status;
+      patch.status = body.status as UserStatus;
     }
     if (body.password) {
-      users[idx].passwordHash = hashPassword(body.password);
+      patch.passwordHash = await hashPassword(String(body.password));
     }
-    await writeUsers(users);
 
-    return Response.json({ success: true, user: publicUser(users[idx]) });
+    const updated = await store.updateUser(id, patch);
+    if (!updated) {
+      return json({ success: false, error: "Pengguna tidak ditemukan" }, 404);
+    }
+    return json({ success: true, user: publicUser(updated) });
   } catch {
-    return Response.json({ success: false, error: "Terjadi kesalahan server" }, { status: 500 });
+    return json({ success: false, error: "Terjadi kesalahan server" }, 500);
   }
 }
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  if (!isAdminRequest(request)) {
-    return Response.json({ success: false, error: "Tidak diizinkan" }, { status: 403 });
+  const admin = requireAdmin(request);
+  if (admin instanceof Response) return admin;
+  try {
+    const { id } = await params;
+    const store = getStore();
+    await store.ensureReady();
+
+    const target = await store.findUserById(id);
+    if (!target) {
+      return json({ success: false, error: "Pengguna tidak ditemukan" }, 404);
+    }
+    if (target.role === "admin") {
+      return json({ success: false, error: "Akun admin tidak dapat dihapus" }, 400);
+    }
+    await store.deleteUser(id);
+    return json({ success: true });
+  } catch {
+    return json({ success: false, error: "Terjadi kesalahan server" }, 500);
   }
-  const { id } = await params;
-  const users = await readUsers();
-  const target = users.find((u: any) => u.id === id);
-  if (!target) {
-    return Response.json({ success: false, error: "Pengguna tidak ditemukan" }, { status: 404 });
-  }
-  if (target.role === "admin") {
-    return Response.json({ success: false, error: "Akun admin tidak dapat dihapus" }, { status: 400 });
-  }
-  await writeUsers(users.filter((u: any) => u.id !== id));
-  return Response.json({ success: true });
 }
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  if (!isAdminRequest(request)) {
-    return Response.json({ success: false, error: "Tidak diizinkan" }, { status: 403 });
+  const admin = requireAdmin(request);
+  if (admin instanceof Response) return admin;
+  try {
+    const { id } = await params;
+    const store = getStore();
+    await store.ensureReady();
+
+    if (!(await store.findUserById(id))) {
+      return json({ success: false, error: "Pengguna tidak ditemukan" }, 404);
+    }
+    await store.updateUser(id, { passwordHash: await hashPassword("wali123") });
+    return json({ success: true, message: "Password direset ke wali123" });
+  } catch {
+    return json({ success: false, error: "Terjadi kesalahan server" }, 500);
   }
-  const { id } = await params;
-  const users = await readUsers();
-  const idx = users.findIndex((u: any) => u.id === id);
-  if (idx === -1) {
-    return Response.json({ success: false, error: "Pengguna tidak ditemukan" }, { status: 404 });
-  }
-  users[idx].passwordHash = hashPassword("wali123");
-  await writeUsers(users);
-  return Response.json({ success: true, message: "Password direset ke wali123" });
 }
