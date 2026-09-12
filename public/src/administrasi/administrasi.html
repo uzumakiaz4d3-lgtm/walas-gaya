@@ -288,7 +288,7 @@
           <i class="fa-solid fa-broom"></i>
         </span>
         <p class="text-sm font-semibold text-gray-800">Jadwal Piket</p>
-        <p class="text-xs text-gray-400 mt-1">Roster piket bersih kelas</p>
+        <p class="text-xs text-gray-400 mt-1">Pembagian piket otomatis dari data siswa</p>
       </button>
       <button onclick="openAdmModal('inventaris')" class="bg-white rounded-xl shadow-sm p-4 text-left hover:shadow-md transition group">
         <span class="flex items-center justify-center w-10 h-10 rounded-full bg-info/10 text-info mb-3 group-hover:bg-info group-hover:text-white transition">
@@ -362,6 +362,31 @@
         <button data-close-modal class="text-gray-400 hover:text-gray-600 transition"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
       <div id="adm-body" class="space-y-3 text-sm"></div>
+      <div id="piket-panel" class="hidden">
+        <div class="bg-neutral rounded-xl p-3 mb-4">
+          <p class="text-xs font-semibold text-gray-600 mb-2"><i class="fa-solid fa-calendar-check mr-1.5 text-primary"></i>Hari aktif piket</p>
+          <p class="text-xs text-gray-400 mb-2">Centang hari sekolah. Siswa dibagi merata dari data siswa ke hari-hari ini.</p>
+          <div id="piket-days" class="flex flex-wrap gap-2"></div>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+          <button type="button" id="piket-auto" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition">
+            <i class="fa-solid fa-scissors mr-1.5"></i>Bagi Otomatis
+          </button>
+          <button type="button" id="piket-shuffle" title="Acak pembagian piket (setiap bulan ulangi agar bergantian)" class="px-4 py-2 rounded-lg bg-accent text-white text-sm font-medium hover:bg-accent/90 transition">
+            <i class="fa-solid fa-shuffle mr-1.5"></i>Acak
+          </button>
+          <button type="button" id="piket-clear" class="px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition">
+            <i class="fa-solid fa-eraser mr-1.5"></i>Kosongkan
+          </button>
+        </div>
+        <div id="piket-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+        <p id="piket-info" class="text-xs text-gray-400 mt-3"></p>
+        <div class="flex items-center justify-end gap-2 pt-4 mt-4 border-t border-gray-100">
+          <button type="button" id="piket-save" class="px-5 py-2 rounded-lg bg-secondary text-white text-sm font-medium hover:bg-secondary/90 transition">
+            <i class="fa-solid fa-floppy-disk mr-1.5"></i>Simpan Jadwal Piket
+          </button>
+        </div>
+      </div>
       <datalist id="ekskul-datalist">
         <option value="Pramuka">
         <option value="Paskibra">
@@ -499,7 +524,21 @@
     function openAdmModal(key) {
       admKey = key;
       document.getElementById("adm-title").textContent = ADM_TITLES[key] + " " + currentKelas();
-      renderAdm("view");
+      var panel = document.getElementById("piket-panel");
+      var body = document.getElementById("adm-body");
+      var hidden = ["adm-add", "adm-cancel", "adm-save", "adm-edit"];
+      if (key === "piket") {
+        body.classList.add("hidden");
+        panel.classList.remove("hidden");
+        hidden.forEach(function (b) { var el = document.getElementById(b); if (el) el.classList.add("hidden"); });
+        piketParse(loadAdm());
+        renderPiketDays();
+        renderPiketGrid();
+      } else {
+        panel.classList.add("hidden");
+        body.classList.remove("hidden");
+        renderAdm("view");
+      }
       document.getElementById("adm-modal").classList.add("show");
     }
 
@@ -671,6 +710,156 @@
       renderIdentitas();
       updateAdmStats();
       renderAgenda();
+    })();
+
+    /* ===== Jadwal Piket otomatis ===== */
+    var PIKET_DAYS = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    var piketState = { days: [], map: {} };
+
+    function piketStudentNames() {
+      try {
+        var a = JSON.parse(localStorage.getItem("siswa_" + currentKelas()) || "null");
+        return (Array.isArray(a) ? a : []).map(function (s) { return (s.nama || "").trim(); }).filter(Boolean);
+      } catch (e) { return []; }
+    }
+    function piketParse(data) {
+      var map = {}, days = [];
+      ((data && data.piket) || []).forEach(function (x) {
+        var i = x.indexOf(":");
+        var day = (i >= 0 ? x.slice(0, i) : x).trim();
+        if (!day) return;
+        if (days.indexOf(day) === -1) days.push(day);
+        map[day] = String(i >= 0 ? x.slice(i + 1) : "").split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+      });
+      if (!days.length) days = PIKET_DAYS.slice(0, 5);
+      days.sort(function (a, b) { return PIKET_DAYS.indexOf(a) - PIKET_DAYS.indexOf(b); });
+      piketState.days = days;
+      piketState.map = map;
+    }
+    function piketToStrings() {
+      return piketState.days.map(function (d) {
+        return d + ":" + (piketState.map[d] || []).join(", ");
+      });
+    }
+    function renderPiketDays() {
+      document.getElementById("piket-days").innerHTML = PIKET_DAYS.map(function (d) {
+        var on = piketState.days.indexOf(d) !== -1;
+        var cls = on
+          ? "bg-primary text-white border-primary"
+          : "bg-white text-gray-600 border-gray-200 hover:border-accent";
+        return '<button type="button" data-piket-day="' + d + '" class="px-3 py-1.5 rounded-full border text-sm font-medium transition ' + cls + '">' + d + "</button>";
+      }).join("");
+    }
+    function renderPiketGrid() {
+      var grid = document.getElementById("piket-grid");
+      var info = document.getElementById("piket-info");
+      if (!piketState.days.length) {
+        grid.innerHTML = '<p class="text-sm text-gray-400 col-span-full text-center py-6">Pilih hari aktif lalu klik <b>Bagi Otomatis</b>.</p>';
+        if (info) info.textContent = "";
+        return;
+      }
+      var names = [];
+      grid.innerHTML = piketState.days.map(function (d) {
+        var g = piketState.map[d] || [];
+        names = names.concat(g);
+        return '<div class="bg-neutral rounded-xl p-3">' +
+          '<div class="flex items-center justify-between mb-2">' +
+          '<p class="font-semibold text-sm text-primary">' + d + "</p>" +
+          '<span class="text-[10px] font-medium text-gray-400">' + g.length + " siswa</span>" +
+          "</div>" +
+          '<div class="flex flex-wrap gap-1.5">' +
+          (g.length ? g.map(function (n) {
+            return '<span class="px-2 py-1 rounded-lg bg-white text-xs text-gray-700 border border-gray-100">' + escHtml(n) + "</span>";
+          }).join("") : '<span class="text-xs text-gray-400">—</span>') +
+          "</div>" +
+          "</div>";
+      }).join("");
+      if (info) info.textContent = names.length
+        ? names.length + " siswa terjadwal dalam " + piketState.days.length + " hari (dari " + piketStudentNames().length + " siswa di data siswa)"
+        : "Belum ada siswa. Klik Bagi Otomatis untuk membagi siswa dari data siswa.";
+    }
+    function shuffleArr(arr) {
+      for (var i = arr.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+      }
+      return arr;
+    }
+    function piketAuto() {
+      var names = piketStudentNames();
+      if (!names.length) {
+        if (typeof WKToast === "function") WKToast("Belum ada data siswa di kelas " + currentKelas());
+        return;
+      }
+      if (!piketState.days.length) {
+        if (typeof WKToast === "function") WKToast("Pilih minimal 1 hari aktif");
+        return;
+      }
+      var m = {};
+      names.forEach(function (n, i) {
+        var d = piketState.days[i % piketState.days.length];
+        (m[d] || (m[d] = [])).push(n);
+      });
+      piketState.map = m;
+      renderPiketGrid();
+      if (typeof WKToast === "function") WKToast(names.length + " siswa dibagi ke " + piketState.days.length + " hari");
+    }
+    function piketShuffle() {
+      var names = [];
+      piketState.days.forEach(function (d) { (piketState.map[d] || []).forEach(function (n) { names.push(n); }); });
+      if (!names.length) { piketAuto(); return; }
+      var counts = piketState.days.map(function (d) { return (piketState.map[d] || []).length; });
+      shuffleArr(names);
+      var m = {}, idx = 0;
+      piketState.days.forEach(function (d, di) {
+        m[d] = names.slice(idx, idx + counts[di]);
+        idx += counts[di];
+      });
+      piketState.map = m;
+      renderPiketGrid();
+      if (typeof WKToast === "function") WKToast("Jadwal piket diacak — ulangi tiap bulan agar hari & teman bergantian");
+    }
+
+    (function () {
+      var daysWrap = document.getElementById("piket-days");
+      if (daysWrap) daysWrap.addEventListener("click", function (e) {
+        var btn = e.target.closest("[data-piket-day]");
+        if (!btn) return;
+        var d = btn.getAttribute("data-piket-day");
+        var i = piketState.days.indexOf(d);
+        if (i === -1) {
+          piketState.days.push(d);
+          if (!piketState.map[d]) piketState.map[d] = [];
+        } else {
+          piketState.days.splice(i, 1);
+          delete piketState.map[d];
+        }
+        piketState.days.sort(function (a, b) { return PIKET_DAYS.indexOf(a) - PIKET_DAYS.indexOf(b); });
+        renderPiketDays();
+        renderPiketGrid();
+      });
+      var btnAuto = document.getElementById("piket-auto");
+      if (btnAuto) btnAuto.addEventListener("click", piketAuto);
+      var btnShuf = document.getElementById("piket-shuffle");
+      if (btnShuf) btnShuf.addEventListener("click", piketShuffle);
+      var btnClr = document.getElementById("piket-clear");
+      if (btnClr) btnClr.addEventListener("click", function () {
+        piketState.map = {};
+        renderPiketGrid();
+        if (typeof WKToast === "function") WKToast("Jadwal piket dikosongkan");
+      });
+      var btnSave = document.getElementById("piket-save");
+      if (btnSave) btnSave.addEventListener("click", function () {
+        if (!piketState.days.length) {
+          if (typeof WKToast === "function") WKToast("Pilih minimal 1 hari aktif");
+          return;
+        }
+        var data = loadAdm();
+        data.piket = piketToStrings();
+        saveAdm(data);
+        renderPiketGrid();
+        if (typeof WKToast === "function") WKToast("Jadwal piket tersimpan");
+      });
     })();
 
     (function () {
