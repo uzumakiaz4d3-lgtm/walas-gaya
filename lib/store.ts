@@ -33,6 +33,27 @@ export interface NewUser {
   status: UserStatus;
 }
 
+export interface WalasRow {
+  id: string;
+  nama: string;
+  nip: string | null;
+  no_telp: string | null;
+  status: "aktif" | "nonaktif";
+}
+
+export interface NewWalas {
+  nama: string;
+  nip?: string | null;
+  no_telp?: string | null;
+  status?: "aktif" | "nonaktif";
+}
+
+export interface RombelRow {
+  id: string;
+  nama: string;
+  status: "aktif" | "nonaktif";
+}
+
 export interface Store {
   ensureReady(): Promise<void>;
   listUsers(): Promise<UserRow[]>;
@@ -41,6 +62,15 @@ export interface Store {
   createUser(data: NewUser): Promise<UserRow>;
   updateUser(id: string, patch: Partial<UserRow>): Promise<UserRow | null>;
   deleteUser(id: string): Promise<boolean>;
+  listWalas(): Promise<WalasRow[]>;
+  findWalasById(id: string): Promise<WalasRow | null>;
+  createWalas(data: NewWalas): Promise<WalasRow>;
+  updateWalas(id: string, patch: Partial<WalasRow>): Promise<WalasRow | null>;
+  deleteWalas(id: string): Promise<boolean>;
+  listRombel(): Promise<RombelRow[]>;
+  findRombelByNama(nama: string): Promise<RombelRow | null>;
+  createRombel(nama: string): Promise<RombelRow>;
+  deleteRombel(id: string): Promise<boolean>;
   resetAll(): Promise<void>;
   close(): Promise<void>;
 }
@@ -130,6 +160,8 @@ async function seedDefaults(store: Store): Promise<void> {
 
 class MemoryStore implements Store {
   private rows = new Map<string, UserRow>();
+  private walasRows = new Map<string, WalasRow>();
+  private rombelRows = new Map<string, RombelRow>();
   private ready = false;
 
   async ensureReady(): Promise<void> {
@@ -180,13 +212,71 @@ class MemoryStore implements Store {
     return this.rows.delete(id);
   }
 
+  async listWalas(): Promise<WalasRow[]> {
+    return Array.from(this.walasRows.values());
+  }
+
+  async findWalasById(id: string): Promise<WalasRow | null> {
+    return this.walasRows.get(id) || null;
+  }
+
+  async createWalas(data: NewWalas): Promise<WalasRow> {
+    const row: WalasRow = {
+      id: uid(),
+      nama: data.nama,
+      nip: data.nip || null,
+      no_telp: data.no_telp || null,
+      status: data.status || "aktif",
+    };
+    this.walasRows.set(row.id, row);
+    return row;
+  }
+
+  async updateWalas(id: string, patch: Partial<WalasRow>): Promise<WalasRow | null> {
+    const cur = this.walasRows.get(id);
+    if (!cur) return null;
+    const next = { ...cur, ...patch };
+    this.walasRows.set(id, next);
+    return next;
+  }
+
+  async deleteWalas(id: string): Promise<boolean> {
+    return this.walasRows.delete(id);
+  }
+
+  async listRombel(): Promise<RombelRow[]> {
+    return Array.from(this.rombelRows.values());
+  }
+
+  async findRombelByNama(nama: string): Promise<RombelRow | null> {
+    const n = String(nama || "").trim().toLowerCase();
+    for (const r of this.rombelRows.values()) {
+      if (r.nama.toLowerCase() === n) return r;
+    }
+    return null;
+  }
+
+  async createRombel(nama: string): Promise<RombelRow> {
+    const row: RombelRow = { id: uid(), nama: String(nama).trim(), status: "aktif" };
+    this.rombelRows.set(row.id, row);
+    return row;
+  }
+
+  async deleteRombel(id: string): Promise<boolean> {
+    return this.rombelRows.delete(id);
+  }
+
   async resetAll(): Promise<void> {
     this.rows.clear();
+    this.walasRows.clear();
+    this.rombelRows.clear();
     await seedAdmin(this);
   }
 
   async close(): Promise<void> {
     this.rows.clear();
+    this.walasRows.clear();
+    this.rombelRows.clear();
   }
 }
 
@@ -221,6 +311,19 @@ class PostgresStore implements Store {
       kelas TEXT,
       status TEXT NOT NULL DEFAULT 'aktif'
     )`);
+    await this.pool.query(`CREATE TABLE IF NOT EXISTS walas (
+      id TEXT PRIMARY KEY,
+      nama TEXT NOT NULL,
+      nip TEXT,
+      no_telp TEXT,
+      status TEXT NOT NULL DEFAULT 'aktif'
+    )`);
+    await this.pool.query(`CREATE TABLE IF NOT EXISTS rombel (
+      id TEXT PRIMARY KEY,
+      nama TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'aktif'
+    )`);
+    await this.pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS rombel_nama_lower ON rombel (LOWER(nama))`);
   }
 
   private rowToUser(r: any): UserRow {
@@ -292,8 +395,82 @@ class PostgresStore implements Store {
     return (res.rowCount || 0) > 0;
   }
 
+  private rowToWalas(r: any): WalasRow {
+    return { id: r.id, nama: r.nama, nip: r.nip, no_telp: r.no_telp, status: r.status };
+  }
+
+  async listWalas(): Promise<WalasRow[]> {
+    const res = await this.pool.query(`SELECT id, nama, nip, no_telp, status FROM walas ORDER BY nama ASC`);
+    return res.rows.map((r) => this.rowToWalas(r));
+  }
+
+  async findWalasById(id: string): Promise<WalasRow | null> {
+    const res = await this.pool.query(`SELECT id, nama, nip, no_telp, status FROM walas WHERE id = $1 LIMIT 1`, [id]);
+    return res.rows.length ? this.rowToWalas(res.rows[0]) : null;
+  }
+
+  async createWalas(data: NewWalas): Promise<WalasRow> {
+    const id = uid();
+    const res = await this.pool.query(
+      `INSERT INTO walas (id, nama, nip, no_telp, status)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id, nama, nip, no_telp, status`,
+      [id, data.nama, data.nip || null, data.no_telp || null, data.status || "aktif"]
+    );
+    return this.rowToWalas(res.rows[0]);
+  }
+
+  async updateWalas(id: string, patch: Partial<WalasRow>): Promise<WalasRow | null> {
+    const cur = await this.findWalasById(id);
+    if (!cur) return null;
+    const next: WalasRow = { ...cur, ...patch };
+    await this.pool.query(
+      `UPDATE walas SET nama=$1, nip=$2, no_telp=$3, status=$4 WHERE id=$5`,
+      [next.nama, next.nip, next.no_telp, next.status, id]
+    );
+    return next;
+  }
+
+  async deleteWalas(id: string): Promise<boolean> {
+    const res = await this.pool.query(`DELETE FROM walas WHERE id = $1`, [id]);
+    return (res.rowCount || 0) > 0;
+  }
+
+  private rowToRombel(r: any): RombelRow {
+    return { id: r.id, nama: r.nama, status: r.status };
+  }
+
+  async listRombel(): Promise<RombelRow[]> {
+    const res = await this.pool.query(`SELECT id, nama, status FROM rombel ORDER BY nama ASC`);
+    return res.rows.map((r) => this.rowToRombel(r));
+  }
+
+  async findRombelByNama(nama: string): Promise<RombelRow | null> {
+    const res = await this.pool.query(
+      `SELECT id, nama, status FROM rombel WHERE LOWER(nama) = LOWER($1) LIMIT 1`,
+      [String(nama || "")]
+    );
+    return res.rows.length ? this.rowToRombel(res.rows[0]) : null;
+  }
+
+  async createRombel(nama: string): Promise<RombelRow> {
+    const id = uid();
+    const res = await this.pool.query(
+      `INSERT INTO rombel (id, nama, status) VALUES ($1, $2, 'aktif') RETURNING id, nama, status`,
+      [id, String(nama).trim()]
+    );
+    return this.rowToRombel(res.rows[0]);
+  }
+
+  async deleteRombel(id: string): Promise<boolean> {
+    const res = await this.pool.query(`DELETE FROM rombel WHERE id = $1`, [id]);
+    return (res.rowCount || 0) > 0;
+  }
+
   async resetAll(): Promise<void> {
     await this.pool.query(`DELETE FROM users`);
+    await this.pool.query(`DELETE FROM walas`);
+    await this.pool.query(`DELETE FROM rombel`);
     await seedAdmin(this);
   }
 

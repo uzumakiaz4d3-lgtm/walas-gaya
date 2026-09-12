@@ -176,31 +176,39 @@
     (async function loadRingkasan() {
       const tbody = document.getElementById('tbody-ringkasan-kelas');
       try {
-        const res = await fetch('/api/users');
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        const walas = (data.users || []).filter(u => u.role === 'wali_kelas');
-        const kelasSet = new Set(walas.map(u => u.kelas).filter(Boolean));
+        const [resW, resR, resU] = await Promise.all([
+          fetch('/api/walas'),
+          fetch('/api/rombel'),
+          fetch('/api/users'),
+        ]);
+        if (!resW.ok || !resR.ok || !resU.ok) throw new Error('HTTP gagal');
+        const dataW = await resW.json();
+        const dataR = await resR.json();
+        const dataU = await resU.json();
+        const walas = dataW.walas || [];
+        const rombel = dataR.rombel || [];
+        const users = dataU.users || [];
         document.getElementById('s-walas').textContent = walas.length;
-        document.getElementById('s-kelas').textContent = kelasSet.size;
+        document.getElementById('s-kelas').textContent = rombel.length;
         document.getElementById('s-siswa').textContent = '0';
         document.getElementById('s-kehadiran').textContent = '—';
         if (!tbody) return;
-        const byKelas = {};
-        walas.forEach(u => {
-          const k = u.kelas || 'Tanpa kelas';
-          if (!byKelas[k]) byKelas[k] = [];
-          byKelas[k].push(u.name);
+        const rows = rombel.map(r => {
+          const withWalas = users.filter(u => u.role === 'wali_kelas' && u.kelas === r.nama);
+          return {
+            kelas: r.nama,
+            walas: withWalas.map(u => u.name),
+            rowspan: 1,
+          };
         });
-        const keys = Object.keys(byKelas).sort();
-        if (!keys.length) {
-          tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-10 text-center text-gray-400">Belum ada kelas — tambahkan wali kelas melalui menu Pengguna.</td></tr>';
+        if (!rows.length) {
+          tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-10 text-center text-gray-400">Belum ada rombel — mulai dari Langkah 1 (Profil Wali Kelas) lalu Langkah 2 (Rombel).</td></tr>';
           return;
         }
-        tbody.innerHTML = keys.map(k =>
+        tbody.innerHTML = rows.map(r =>
           '<tr class="hover:bg-gray-50">' +
-          '<td class="px-6 py-3 font-medium"><a href="../dashboard/dashboard.html?kelas=' + encodeURIComponent(k) + '" class="text-primary hover:text-accent hover:underline">' + escHtml(k) + '</a></td>' +
-          '<td class="px-6 py-3">' + escHtml(byKelas[k].join(', ')) + '</td>' +
+          '<td class="px-6 py-3 font-medium"><a href="../dashboard/dashboard.html?kelas=' + encodeURIComponent(r.kelas) + '" class="text-primary hover:text-accent hover:underline">' + escHtml(r.kelas) + '</a></td>' +
+          '<td class="px-6 py-3">' + (r.walas.length ? escHtml(r.walas.join(', ')) : '<span class="text-gray-400">Belum ada walas</span>') + '</td>' +
           '<td class="px-6 py-3">—</td>' +
           '<td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">Belum ada data</span></td>' +
           '</tr>'

@@ -16,7 +16,7 @@
   <!-- role-guard -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pengguna — Admin</title>
+  <title>Akun Pengguna — Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
   <link href="../../assets/styles.css" rel="stylesheet">
@@ -41,10 +41,10 @@
     <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
       <a href="../../admin/admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-tachometer-alt w-5 text-center text-xs"></i> Dashboard</a>
       <a href="../admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-chart-pie w-5 text-center text-xs"></i> Ringkasan</a>
-      <a href="../walas/walas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-chalkboard-teacher w-5 text-center text-xs"></i> Wali Kelas</a>
-      <a href="../kelas/kelas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-school w-5 text-center text-xs"></i> Kelas</a>
+      <a href="../walas/walas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-chalkboard-teacher w-5 text-center text-xs"></i> Profil Wali Kelas</a>
+      <a href="../kelas/kelas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-school w-5 text-center text-xs"></i> Rombel</a>
       <a href="../monitoring/monitoring.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-eye w-5 text-center text-xs"></i> Monitoring</a>
-      <a href="pengguna.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm bg-white/10 font-semibold border-l-4 border-accent"><i class="fas fa-users w-5 text-center text-xs"></i> Pengguna</a>
+      <a href="pengguna.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm bg-white/10 font-semibold border-l-4 border-accent"><i class="fas fa-users w-5 text-center text-xs"></i> Akun Pengguna</a>
       <a href="../audit/audit.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-clipboard-list w-5 text-center text-xs"></i> Audit Log</a>
     </nav>
     <div class="px-6 py-4 text-[11px] text-white/40 border-t border-white/10">Mode: Admin &middot; Read-only monitoring</div>
@@ -61,12 +61,19 @@
     </header>
 
     <main class="p-4 md:p-8 max-w-7xl mx-auto">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 class="text-2xl font-bold text-primary">Pengguna & Hak Akses</h1>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+        <div>
+          <h1 class="text-2xl font-bold text-primary">Akun Pengguna</h1>
+          <p class="text-sm text-gray-500 mt-1">Langkah 3 — buat akun login untuk wali kelas atau admin. Pastikan sudah input <a href="../walas/walas.html" class="text-info underline">Profil Wali Kelas</a> dan <a href="../kelas/kelas.html" class="text-info underline">Rombel</a>.</p>
+        </div>
         <div class="flex flex-col sm:flex-row gap-3">
           <button onclick="resetAllData()" class="inline-flex items-center gap-2 text-danger border border-danger/30 hover:bg-danger/5 px-4 py-2.5 rounded-xl text-sm font-semibold transition"><i class="fas fa-trash-can"></i> Reset Semua Data</button>
           <button onclick="openModal()" class="inline-flex items-center gap-2 bg-accent hover:bg-accent/90 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition"><i class="fas fa-plus"></i> Tambah Pengguna</button>
         </div>
+      </div>
+
+      <div class="mb-4 py-2 px-4 rounded-xl bg-info/10 border border-info/20 text-xs text-info">
+        <i class="fas fa-list-ol mr-1"></i> Urutan input: <b>1. Profil Wali Kelas</b> &rarr; <b>2. Rombel</b> &rarr; <b>3. Akun Pengguna</b> &check;
       </div>
 
       <!-- Search -->
@@ -82,7 +89,7 @@
         <div class="overflow-x-auto">
           <table id="tbl-p" class="w-full text-sm">
             <thead class="bg-neutral text-gray-500 text-xs uppercase"><tr>
-              <th class="text-left px-6 py-3">Nama</th><th class="text-left px-6 py-3">Email</th><th class="text-left px-6 py-3">Kelas</th><th class="text-left px-6 py-3">Peran</th><th class="text-left px-6 py-3">Status</th><th class="text-left px-6 py-3">Aksi</th>
+              <th class="text-left px-6 py-3">Nama</th><th class="text-left px-6 py-3">Email</th><th class="text-left px-6 py-3">Kelas/Rombel</th><th class="text-left px-6 py-3">Peran</th><th class="text-left px-6 py-3">Status</th><th class="text-left px-6 py-3">Aksi</th>
             </tr></thead>
             <tbody id="tp-b" class="divide-y divide-gray-50"></tbody>
           </table>
@@ -101,9 +108,37 @@
       <form onsubmit="saveUser(event)" class="p-6 space-y-4">
         <input type="hidden" id="p-id">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-          <input id="p-nama" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Peran</label>
+          <select id="p-peran" required onchange="onRoleChange()" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+            <option value="wali_kelas">Wali Kelas</option>
+            <option value="admin">Admin</option>
+          </select>
         </div>
+
+        <!-- Wali Kelas: nama + rombel dari dropdown -->
+        <div id="p-walas-wrap">
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Wali Kelas</label>
+            <select id="p-walas-select" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+              <option value="">— Memuat data wali kelas —</option>
+            </select>
+            <p id="p-walas-hint" class="text-xs text-gray-400 mt-1 hidden">Belum ada profil wali kelas. Input dulu di <a href="../walas/walas.html" class="text-info underline">Profil Wali Kelas (Langkah 1)</a>.</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Rombel / Kelas</label>
+            <select id="p-rombel-select" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+              <option value="">— Memuat data rombel —</option>
+            </select>
+            <p id="p-rombel-hint" class="text-xs text-gray-400 mt-1 hidden">Belum ada rombel. Input dulu di <a href="../kelas/kelas.html" class="text-info underline">Rombel (Langkah 2)</a>.</p>
+          </div>
+        </div>
+
+        <!-- Admin: nama manual -->
+        <div id="p-admin-wrap" class="hidden">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+          <input id="p-nama-admin" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+        </div>
+
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
           <input id="p-email" type="email" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent" placeholder="nama@sekolah.id">
@@ -111,19 +146,6 @@
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Password <span id="p-pass-hint" class="text-xs text-gray-400 font-normal"></span></label>
           <input id="p-password" type="password" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent" placeholder="Minimal 6 karakter">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Peran</label>
-          <select id="p-peran" required onchange="toggleKelasField()" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
-            <option value="wali_kelas">Wali Kelas</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
-        <div id="p-kelasWrap">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
-          <select id="p-kelas" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
-            <option value="7A">7A</option><option value="7B">7B</option><option value="8A">8A</option><option value="8B">8B</option>
-          </select>
         </div>
         <div class="flex justify-end gap-3 pt-2">
           <button type="button" onclick="closeModal()" class="px-4 py-2.5 rounded-xl text-sm text-gray-500 hover:bg-gray-100">Batal</button>
@@ -154,10 +176,10 @@
     <nav class="px-3 py-2 space-y-1">
       <a href="../../admin/admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-tachometer-alt w-5 text-center text-xs"></i> Dashboard</a>
       <a href="../admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-chart-pie w-5 text-center text-xs"></i> Ringkasan</a>
-      <a href="../walas/walas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-chalkboard-teacher w-5 text-center text-xs"></i> Wali Kelas</a>
-      <a href="../kelas/kelas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-school w-5 text-center text-xs"></i> Kelas</a>
+      <a href="../walas/walas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-chalkboard-teacher w-5 text-center text-xs"></i> Profil Wali Kelas</a>
+      <a href="../kelas/kelas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-school w-5 text-center text-xs"></i> Rombel</a>
       <a href="../monitoring/monitoring.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-eye w-5 text-center text-xs"></i> Monitoring</a>
-      <a href="pengguna.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm bg-white/10 font-semibold text-white"><i class="fas fa-users w-5 text-center text-xs"></i> Pengguna</a>
+      <a href="pengguna.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm bg-white/10 font-semibold text-white"><i class="fas fa-users w-5 text-center text-xs"></i> Akun Pengguna</a>
       <a href="../audit/audit.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-clipboard-list w-5 text-center text-xs"></i> Audit Log</a>
     </nav>
     <div class="absolute bottom-0 inset-x-0 px-6 py-4 border-t border-white/10">
@@ -169,7 +191,8 @@
   <script src="../../assets/app.js"></script>
   <script>
     var USERS = [];
-    var q = "";
+    var WALAS_LIST = [];
+    var ROMBEL_LIST = [];
 
     function api(headers, method, url, body) {
       return fetch(url, {
@@ -187,6 +210,16 @@
       });
     }
 
+    function loadWalasAndRombel() {
+      return Promise.all([
+        api(null, "GET", "/api/walas"),
+        api(null, "GET", "/api/rombel")
+      ]).then(function (results) {
+        WALAS_LIST = (results[0].walas || []);
+        ROMBEL_LIST = (results[1].rombel || []);
+      }).catch(function () {});
+    }
+
     function renderTable() {
       var qlow = document.getElementById("qp").value.toLowerCase();
       var list = USERS.filter(function (u) {
@@ -194,7 +227,7 @@
       });
       var tb = document.getElementById("tp-b");
       if (!list.length) {
-        tb.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center text-gray-400 text-sm">Belum ada pengguna</td></tr>';
+        tb.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center text-gray-400 text-sm">Belum ada akun pengguna. Pilih <b>Tambah Pengguna</b> untuk membuat akun walas dari profil yang sudah dibuat.</td></tr>';
         return;
       }
       tb.innerHTML = list.map(function (u) {
@@ -208,14 +241,14 @@
           ? '<span class="text-xs text-gray-300 cursor-not-allowed"><i class="fas fa-trash mr-1"></i>Hapus</span>'
           : '<button onclick="delUser(\'' + u.id + '\')" class="text-danger hover:text-danger/80 text-xs"><i class="fas fa-trash mr-1"></i>Hapus</button>';
         return '<tr class="hover:bg-gray-50">'
-          + '<td class="px-6 py-3 font-medium">' + u.name + "</td>"
-          + '<td class="px-6 py-3 text-gray-500">' + u.email + "</td>"
-          + '<td class="px-6 py-3 text-gray-500">' + (u.kelas || "-") + "</td>"
+          + '<td class="px-6 py-3 font-medium">' + escHtml(u.name) + "</td>"
+          + '<td class="px-6 py-3 text-gray-500">' + escHtml(u.email) + "</td>"
+          + '<td class="px-6 py-3 text-gray-500">' + escHtml(u.kelas || "-") + "</td>"
           + '<td class="px-6 py-3">' + roleBadge + "</td>"
           + '<td class="px-6 py-3">' + statusBadge + "</td>"
           + '<td class="px-6 py-3"><div class="flex items-center gap-3">'
           + '<button onclick="editUser(\'' + u.id + '\')" class="text-info hover:text-info/80 text-xs"><i class="fas fa-pen mr-1"></i>Edit</button>'
-          + '<button onclick="resetUser(\'' + u.id + '\',\'' + u.name.replace(/'/g, "") + '\')" class="text-gray-500 hover:text-gray-700 text-xs"><i class="fas fa-undo mr-1"></i>Reset</button>'
+          + '<button onclick="resetUser(\'' + u.id + '\',\'' + escHtml(u.name).replace(/'/g, "\\'") + '\')" class="text-gray-500 hover:text-gray-700 text-xs"><i class="fas fa-undo mr-1"></i>Reset</button>'
           + del
           + "</div></td></tr>";
       }).join("");
@@ -224,13 +257,17 @@
     function openModal() {
       document.getElementById("m-title").textContent = "Tambah Pengguna";
       document.getElementById("p-id").value = "";
-      document.getElementById("p-nama").value = "";
       document.getElementById("p-email").value = "";
       document.getElementById("p-password").value = "";
       document.getElementById("p-password").required = true;
       document.getElementById("p-pass-hint").textContent = "";
       document.getElementById("p-peran").value = "wali_kelas";
-      toggleKelasField();
+      document.getElementById("p-nama-admin").value = "";
+      loadWalasAndRombel().then(function () {
+        populateWalasSelect("");
+        populateRombelSelect("");
+        onRoleChange();
+      });
       document.getElementById("modal-pengguna").classList.remove("hidden");
     }
 
@@ -239,42 +276,87 @@
       if (!u) return;
       document.getElementById("m-title").textContent = "Edit Pengguna";
       document.getElementById("p-id").value = u.id;
-      document.getElementById("p-nama").value = u.name;
       document.getElementById("p-email").value = u.email;
       document.getElementById("p-password").value = "";
       document.getElementById("p-password").required = false;
       document.getElementById("p-pass-hint").textContent = "(kosongkan jika tidak diganti)";
       document.getElementById("p-peran").value = u.role;
-      document.getElementById("p-kelas").value = u.kelas || "7A";
-      toggleKelasField();
+      document.getElementById("p-nama-admin").value = u.name;
+      loadWalasAndRombel().then(function () {
+        populateWalasSelect(u.name);
+        populateRombelSelect(u.kelas || "");
+        onRoleChange();
+      });
       document.getElementById("modal-pengguna").classList.remove("hidden");
+    }
+
+    function populateWalasSelect(selectedName) {
+      var sel = document.getElementById("p-walas-select");
+      var hint = document.getElementById("p-walas-hint");
+      if (!WALAS_LIST.length) {
+        sel.innerHTML = '<option value="">— Tidak ada profil walas —</option>';
+        hint.classList.remove("hidden");
+        return;
+      }
+      hint.classList.add("hidden");
+      sel.innerHTML = '<option value="">Pilih wali kelas</option>' + WALAS_LIST.map(function (w) {
+        return '<option value="' + escHtml(w.nama) + '"' + (w.nama === selectedName ? ' selected' : '') + '>' + escHtml(w.nama) + '</option>';
+      }).join('');
+    }
+
+    function populateRombelSelect(selectedKelas) {
+      var sel = document.getElementById("p-rombel-select");
+      var hint = document.getElementById("p-rombel-hint");
+      if (!ROMBEL_LIST.length) {
+        sel.innerHTML = '<option value="">— Tidak ada rombel —</option>';
+        hint.classList.remove("hidden");
+        return;
+      }
+      hint.classList.add("hidden");
+      sel.innerHTML = '<option value="">Pilih rombel</option>' + ROMBEL_LIST.map(function (r) {
+        return '<option value="' + escHtml(r.nama) + '"' + (r.nama === selectedKelas ? ' selected' : '') + '>' + escHtml(r.nama) + '</option>';
+      }).join('');
     }
 
     function closeModal() {
       document.getElementById("modal-pengguna").classList.add("hidden");
     }
 
-    function toggleKelasField() {
+    function onRoleChange() {
       var isW = document.getElementById("p-peran").value === "wali_kelas";
-      document.getElementById("p-kelasWrap").classList.toggle("hidden", !isW);
+      document.getElementById("p-walas-wrap").classList.toggle("hidden", !isW);
+      document.getElementById("p-admin-wrap").classList.toggle("hidden", isW);
     }
 
     function saveUser(e) {
       e.preventDefault();
       var id = document.getElementById("p-id").value;
+      var role = document.getElementById("p-peran").value;
+      var name, kelas;
+      if (role === "wali_kelas") {
+        name = document.getElementById("p-walas-select").value;
+        kelas = document.getElementById("p-rombel-select").value;
+        if (!name) { toast("Pilih nama wali kelas terlebih dahulu"); return; }
+      } else {
+        name = document.getElementById("p-nama-admin").value.trim();
+        kelas = null;
+        if (!name) { toast("Nama wajib diisi"); return; }
+      }
       var payload = {
-        name: document.getElementById("p-nama").value.trim(),
+        name: name,
         email: document.getElementById("p-email").value.trim(),
         password: document.getElementById("p-password").value,
-        role: document.getElementById("p-peran").value,
-        kelas: document.getElementById("p-peran").value === "wali_kelas" ? document.getElementById("p-kelas").value : null
+        role: role,
+        kelas: kelas
       };
+      if (!id && !payload.password) { toast("Password wajib diisi"); return; }
+      if (payload.password && payload.password.length < 6) { toast("Password minimal 6 karakter"); return; }
       var req = id
         ? api(null, "PUT", "/api/users/" + encodeURIComponent(id), payload)
         : api(null, "POST", "/api/users", payload);
       req.then(function (res) {
         if (!res.success) { toast(res.error || "Gagal menyimpan"); return; }
-        toast(id ? "Pengguna diperbarui" : "Pengguna berhasil ditambah");
+        toast(id ? "Pengguna diperbarui" : "Akun pengguna berhasil dibuat");
         closeModal();
         loadUsers();
       }).catch(function () { toast("Gagal terhubung ke server"); });
@@ -301,8 +383,8 @@
     }
 
     function resetAllData() {
-      if (!confirm("Hapus SEMUA data (semua akun walas + seluruh data siswa/absensi)? Aplikasi kembali kosong dan hanya menyisakan akun Admin. Tindakan tidak dapat dibatalkan.")) return;
-      var ketik = prompt("Ketik RESET untuk mengonfirmasi penghapusan seluruh data:");
+      if (!confirm("Hapus SEMUA data (profil wali kelas, rombel, akun walas, & seluruh data siswa/absensi)? Aplikasi kembali kosong dan hanya menyisakan akun Admin. Tindakan ini tidak dapat dibatalkan.")) return;
+      var ketik = prompt('Ketik "RESET" untuk mengonfirmasi penghapusan seluruh data:');
       if (ketik !== "RESET") { toast("Dibatalkan"); return; }
       api(null, "POST", "/api/reset")
         .then(function (res) {
@@ -323,6 +405,10 @@
       t.textContent = msg;
       document.body.appendChild(t);
       setTimeout(function () { t.remove(); }, 2500);
+    }
+
+    function escHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     }
 
     function toggleDrawer() {

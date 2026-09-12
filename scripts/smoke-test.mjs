@@ -255,6 +255,19 @@ async function main() {
       `status=${res.status}`
     );
 
+    res = await api("/api/walas", { headers: { cookie: cookieHeader() } });
+    check(
+      "GET /api/walas (wali_kelas) ditolak 403",
+      res.status === 403,
+      `status=${res.status}`
+    );
+    res = await api("/api/rombel", { headers: { cookie: cookieHeader() } });
+    check(
+      "GET /api/rombel (wali_kelas) ditolak 403",
+      res.status === 403,
+      `status=${res.status}`
+    );
+
     res = await login("admin@sekolah.id", "wali123");
     res = await api("/api/users/" + encodeURIComponent(created.user.id), {
       method: "DELETE",
@@ -262,6 +275,57 @@ async function main() {
     });
     const del = await res.json().catch(() => ({}));
     check("DELETE /api/users/:id (admin) sukses", res.status === 200 && del.success === true, `status=${res.status}`);
+
+    res = await api("/api/walas", {
+      method: "POST",
+      headers: { cookie: cookieHeader() },
+      body: JSON.stringify({ nama: "Guru Uji", nip: "198001012000001" }),
+    });
+    const walasCreated = await res.json().catch(() => ({}));
+    check(
+      "POST /api/walas (admin) membuat profil walas",
+      res.status === 200 && walasCreated.success === true && walasCreated.walas.nama === "Guru Uji",
+      `status=${res.status}`
+    );
+
+    res = await api("/api/rombel", {
+      method: "POST",
+      headers: { cookie: cookieHeader() },
+      body: JSON.stringify({ nama: "7-1" }),
+    });
+    const rombelCreated = await res.json().catch(() => ({}));
+    check(
+      "POST /api/rombel (admin) membuat rombel manual",
+      res.status === 200 && rombelCreated.success === true && rombelCreated.rombel.nama === "7-1",
+      `status=${res.status}`
+    );
+
+    res = await api("/api/rombel", {
+      method: "POST",
+      headers: { cookie: cookieHeader() },
+      body: JSON.stringify({ nama: "7-1" }),
+    });
+    check(
+      "POST /api/rombel duplikat ditolak 409",
+      res.status === 409,
+      `status=${res.status}`
+    );
+
+    res = await api("/api/walas", { headers: { cookie: cookieHeader() } });
+    const walasList = await res.json().catch(() => ({}));
+    res = await api("/api/rombel", { headers: { cookie: cookieHeader() } });
+    const rombelList = await res.json().catch(() => ({}));
+    check(
+      "GET /api/walas (admin) berisi profil yang dibuat",
+      res.status === 200 &&
+        (walasList.walas || []).some((w) => w.nama === "Guru Uji" && w.nip === "198001012000001"),
+      `status=${res.status} walas=${walasList.walas && walasList.walas.length}`
+    );
+    check(
+      "GET /api/rombel (admin) berisi rombel yang dibuat",
+      (rombelList.rombel || []).some((r) => r.nama === "7-1"),
+      `rombel=${rombelList.rombel && rombelList.rombel.length}`
+    );
 
     res = await api("/api/reset", {
       method: "POST",
@@ -291,6 +355,20 @@ async function main() {
       "GET /api/users setelah reset → hanya admin",
       res.status === 200 && usersAfterReset.success === true && usersAfterReset.users.length === 1 && usersAfterReset.users[0].role === "admin",
       `status=${res.status} users=${usersAfterReset.users && usersAfterReset.users.length}`
+    );
+    res = await api("/api/walas", { headers: { cookie: cookieHeader() } });
+    const walasAfterReset = await res.json().catch(() => ({}));
+    res = await api("/api/rombel", { headers: { cookie: cookieHeader() } });
+    const rombelAfterReset = await res.json().catch(() => ({}));
+    check(
+      "GET /api/walas setelah reset → kosong",
+      res.status === 200 && (walasAfterReset.walas || []).length === 0,
+      `status=${res.status} walas=${walasAfterReset.walas && walasAfterReset.walas.length}`
+    );
+    check(
+      "GET /api/rombel setelah reset → kosong",
+      res.status === 200 && (rombelAfterReset.rombel || []).length === 0,
+      `status=${res.status} rombel=${rombelAfterReset.rombel && rombelAfterReset.rombel.length}`
     );
 
     res = await api("/api/dashboard", { headers: { cookie: cookieHeader() } });

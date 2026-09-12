@@ -16,7 +16,7 @@
   <!-- role-guard -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wali Kelas — Admin</title>
+  <title>Profil Wali Kelas — Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
   <link href="../../assets/styles.css" rel="stylesheet">
@@ -41,13 +41,13 @@
     <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
       <a href="../../admin/admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-tachometer-alt w-5 text-center text-xs"></i> Dashboard</a>
       <a href="../admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-chart-pie w-5 text-center text-xs"></i> Ringkasan</a>
-      <a href="walas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm bg-white/10 font-semibold border-l-4 border-accent"><i class="fas fa-chalkboard-teacher w-5 text-center text-xs"></i> Wali Kelas</a>
-      <a href="../kelas/kelas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-school w-5 text-center text-xs"></i> Kelas</a>
+      <a href="walas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm bg-white/10 font-semibold border-l-4 border-accent"><i class="fas fa-chalkboard-teacher w-5 text-center text-xs"></i> Profil Wali Kelas</a>
+      <a href="../kelas/kelas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-school w-5 text-center text-xs"></i> Rombel</a>
       <a href="../monitoring/monitoring.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-eye w-5 text-center text-xs"></i> Monitoring</a>
-      <a href="../pengguna/pengguna.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-users w-5 text-center text-xs"></i> Pengguna</a>
+      <a href="../pengguna/pengguna.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-users w-5 text-center text-xs"></i> Akun Pengguna</a>
       <a href="../audit/audit.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/10 text-white/70"><i class="fas fa-clipboard-list w-5 text-center text-xs"></i> Audit Log</a>
     </nav>
-    <div class="px-6 py-4 text-[11px] text-white/40 border-t border-white/10">Mode: Admin · Read-only monitoring</div>
+    <div class="px-6 py-4 text-[11px] text-white/40 border-t border-white/10">Mode: Admin &middot; Read-only monitoring</div>
   </aside>
 
   <!-- Main -->
@@ -61,16 +61,23 @@
     </header>
 
     <main class="p-4 md:p-8 max-w-7xl mx-auto">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 class="text-2xl font-bold text-primary">Wali Kelas</h1>
-        <button onclick="document.getElementById('modal-walas').classList.remove('hidden')" class="inline-flex items-center gap-2 bg-accent hover:bg-accent/90 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition"><i class="fas fa-plus"></i> Tambah Walas</button>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+        <div>
+          <h1 class="text-2xl font-bold text-primary">Profil Wali Kelas</h1>
+          <p class="text-sm text-gray-500 mt-1">Langkah 1 — input data wali kelas. Setelah itu lanjut ke <a href="../kelas/kelas.html" class="text-info underline">Rombel (Langkah 2)</a>.</p>
+        </div>
+        <button onclick="openWalasModal()" class="inline-flex items-center gap-2 bg-accent hover:bg-accent/90 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition"><i class="fas fa-plus"></i> Tambah Walas</button>
+      </div>
+
+      <div class="mb-4 py-2 px-4 rounded-xl bg-info/10 border border-info/20 text-xs text-info">
+        <i class="fas fa-list-ol mr-1"></i> Urutan input: <b>1. Profil Wali Kelas</b> &rarr; <b>2. Rombel</b> &rarr; <b>3. Akun Pengguna</b>
       </div>
 
       <!-- Search -->
       <div class="mb-4">
         <div class="relative max-w-sm">
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-          <input id="qw" type="text" placeholder="Cari walas atau rombel..." oninput="filterWalas()" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+          <input id="qw" type="text" placeholder="Cari wali kelas..." oninput="filterWalas()" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
         </div>
       </div>
 
@@ -79,7 +86,7 @@
         <div class="overflow-x-auto">
           <table id="tbl-walas" class="w-full text-sm">
             <thead class="bg-neutral text-gray-500 text-xs uppercase"><tr>
-              <th class="text-left px-6 py-3">Walas</th><th class="text-left px-6 py-3">Rombel</th><th class="text-left px-6 py-3">Siswa</th><th class="text-left px-6 py-3">Status</th><th class="text-left px-6 py-3">Aksi</th>
+              <th class="text-left px-6 py-3">Nama</th><th class="text-left px-6 py-3">NIP</th><th class="text-left px-6 py-3">No. Telp</th><th class="text-left px-6 py-3">Status</th><th class="text-left px-6 py-3">Aksi</th>
             </tr></thead>
 <tbody id="tbody-walas" class="divide-y divide-gray-50"></tbody>
           </table>
@@ -88,27 +95,26 @@
     </main>
   </div>
 
-  <!-- Modal Tambah Walas -->
+  <!-- Modal Tambah/Edit Walas -->
   <div id="modal-walas" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-md">
       <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-        <h3 class="font-bold text-primary">Tambah Wali Kelas</h3>
+        <h3 id="modal-walas-title" class="font-bold text-primary">Tambah Wali Kelas</h3>
         <button onclick="document.getElementById('modal-walas').classList.add('hidden')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
       </div>
-      <form onsubmit="event.preventDefault(); toast('Walas berhasil ditambah'); document.getElementById('modal-walas').classList.add('hidden');" class="p-6 space-y-4">
+      <form id="form-walas" onsubmit="saveWalas(event)" class="p-6 space-y-4">
+        <input type="hidden" id="w-id">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
           <input id="w-nama" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-          <input id="w-mail" type="email" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+          <label class="block text-sm font-medium text-gray-700 mb-1">NIP <span class="text-gray-400">(opsional)</span></label>
+          <input id="w-nip" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Rombel</label>
-          <select id="w-rombel" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
-            <option value="">Pilih rombel</option><option>7A</option><option>7B</option><option>8A</option><option>8B</option>
-          </select>
+          <label class="block text-sm font-medium text-gray-700 mb-1">No. Telp <span class="text-gray-400">(opsional)</span></label>
+          <input id="w-telp" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
         </div>
         <div class="flex justify-end gap-3 pt-2">
           <button type="button" onclick="document.getElementById('modal-walas').classList.add('hidden')" class="px-4 py-2.5 rounded-xl text-sm text-gray-500 hover:bg-gray-100">Batal</button>
@@ -139,10 +145,10 @@
     <nav class="px-3 py-2 space-y-1">
       <a href="../../admin/admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-tachometer-alt w-5 text-center text-xs"></i> Dashboard</a>
       <a href="../admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-chart-pie w-5 text-center text-xs"></i> Ringkasan</a>
-      <a href="walas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm bg-white/10 font-semibold text-white"><i class="fas fa-chalkboard-teacher w-5 text-center text-xs"></i> Wali Kelas</a>
-      <a href="../kelas/kelas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-school w-5 text-center text-xs"></i> Kelas</a>
+      <a href="walas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm bg-white/10 font-semibold text-white"><i class="fas fa-chalkboard-teacher w-5 text-center text-xs"></i> Profil Wali Kelas</a>
+      <a href="../kelas/kelas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-school w-5 text-center text-xs"></i> Rombel</a>
       <a href="../monitoring/monitoring.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-eye w-5 text-center text-xs"></i> Monitoring</a>
-      <a href="../pengguna/pengguna.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-users w-5 text-center text-xs"></i> Pengguna</a>
+      <a href="../pengguna/pengguna.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-users w-5 text-center text-xs"></i> Akun Pengguna</a>
       <a href="../audit/audit.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/70 hover:bg-white/10"><i class="fas fa-clipboard-list w-5 text-center text-xs"></i> Audit Log</a>
     </nav>
     <div class="absolute bottom-0 inset-x-0 px-6 py-4 border-t border-white/10">
@@ -153,6 +159,7 @@
 
   <script src="../../assets/app.js"></script>
   <script>
+    let WALAS = [];
     function toggleDrawer() {
       const d = document.getElementById('drawer');
       const o = document.getElementById('drawer-overlay');
@@ -161,47 +168,121 @@
       d.classList.toggle('-translate-x-full', !open);
       o.classList.toggle('hidden', !open);
     }
-    function toast(msg) {
+    function toast(msg, type) {
       const t = document.createElement('div');
-      t.className = 'fixed top-4 right-4 z-[60] bg-primary text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium animate-[fadeIn_.2s]';
+      t.className = 'fixed top-4 right-4 z-[60] bg-'
+        + (type === 'error' ? 'danger' : 'primary')
+        + ' text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium animate-[fadeIn_.2s]';
       t.textContent = msg;
       document.body.appendChild(t);
       setTimeout(() => t.remove(), 2500);
     }
-function filterWalas() {
+    function escHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function statusBadge(status) {
+      return status === 'nonaktif'
+        ? '<span class="px-2 py-0.5 rounded-full text-xs bg-gray-200 text-gray-600">Nonaktif</span>'
+        : '<span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">Aktif</span>';
+    }
+    function filterWalas() {
       const q = document.getElementById('qw').value.toLowerCase();
       document.querySelectorAll('#tbl-walas tbody tr').forEach(r => {
         r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
       });
     }
-    function escHtml(s) {
-      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    function renderWalas() {
+      const tbody = document.getElementById('tbody-walas');
+      if (!WALAS.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-12 text-center text-gray-400">Belum ada profil wali kelas. Klik <b>Tambah Walas</b> untuk memulai dari nol.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = WALAS.map(w =>
+        '<tr class="hover:bg-gray-50">' +
+        '<td class="px-6 py-3 font-medium">' + escHtml(w.nama) + '</td>' +
+        '<td class="px-6 py-3">' + escHtml(w.nip || '—') + '</td>' +
+        '<td class="px-6 py-3">' + escHtml(w.no_telp || '—') + '</td>' +
+        '<td class="px-6 py-3">' + statusBadge(w.status) + '</td>' +
+        '<td class="px-6 py-3">' +
+          '<button onclick="openWalasModal(' + JSON.stringify(w.id) + ')" class="text-info hover:text-info/80 text-xs mr-2"><i class="fas fa-edit mr-1"></i>Edit</button>' +
+          '<button onclick="delWalas(' + JSON.stringify(w.id) + ')" class="text-danger hover:text-danger/80 text-xs"><i class="fas fa-trash mr-1"></i>Hapus</button>' +
+        '</td>' +
+        '</tr>'
+      ).join('');
     }
-    (async function loadWalas() {
+    async function loadWalas() {
       const tbody = document.getElementById('tbody-walas');
       if (!tbody) return;
       try {
-        const res = await fetch('/api/users');
+        const res = await fetch('/api/walas');
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
-        const walas = (data.users || []).filter(u => u.role === 'wali_kelas');
-        if (!walas.length) {
-          tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-12 text-center text-gray-400">Belum ada wali kelas. Tambahkan pengguna berperan Wali Kelas melalui menu Pengguna — aplikasi mulai dari nol.</td></tr>';
-          return;
-        }
-        tbody.innerHTML = walas.map(u =>
-          '<tr class="hover:bg-gray-50">' +
-          '<td class="px-6 py-3 font-medium">' + escHtml(u.name) + '</td>' +
-          '<td class="px-6 py-3">' + escHtml(u.kelas || '—') + '</td>' +
-          '<td class="px-6 py-3">—</td>' +
-          '<td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">Aktif</span></td>' +
-          '<td class="px-6 py-3"><button onclick="toast(\'Petakan ' + escHtml(u.name) + '\')" class="text-info hover:text-info/80 text-xs mr-2"><i class="fas fa-project-diagram mr-1"></i>Petakan</button><button onclick="toast(\'Reset akun ' + escHtml(u.name) + '\')" class="text-danger hover:text-danger/80 text-xs"><i class="fas fa-undo mr-1"></i>Reset</button></td>' +
-          '</tr>'
-        ).join('');
+        WALAS = data.walas || [];
+        renderWalas();
       } catch (e) {
         tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-12 text-center text-gray-400">Gagal memuat data wali kelas.</td></tr>';
       }
-    })();
+    }
+    function openWalasModal(id) {
+      document.getElementById('form-walas').reset();
+      document.getElementById('w-id').value = '';
+      const title = document.getElementById('modal-walas-title');
+      if (id) {
+        const w = WALAS.find(x => x.id === id);
+        if (!w) return;
+        document.getElementById('w-id').value = w.id;
+        document.getElementById('w-nama').value = w.nama;
+        document.getElementById('w-nip').value = w.nip || '';
+        document.getElementById('w-telp').value = w.no_telp || '';
+        title.textContent = 'Edit Wali Kelas';
+      } else {
+        title.textContent = 'Tambah Wali Kelas';
+      }
+      document.getElementById('modal-walas').classList.remove('hidden');
+      document.getElementById('w-nama').focus();
+    }
+    async function saveWalas(event) {
+      event.preventDefault();
+      const id = document.getElementById('w-id').value;
+      const nama = document.getElementById('w-nama').value.trim();
+      const nip = document.getElementById('w-nip').value.trim();
+      const no_telp = document.getElementById('w-telp').value.trim();
+      const payload = { nama, nip, no_telp };
+      try {
+        const res = await fetch(id ? '/api/walas/' + encodeURIComponent(id) : '/api/walas', {
+          method: id ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          toast(data.error || 'Gagal menyimpan', 'error');
+          return;
+        }
+        toast(id ? 'Profil wali kelas diperbarui' : 'Profil wali kelas berhasil ditambah');
+        document.getElementById('modal-walas').classList.add('hidden');
+        loadWalas();
+      } catch (e) {
+        toast('Terjadi kesalahan jaringan', 'error');
+      }
+    }
+    async function delWalas(id) {
+      const w = WALAS.find(x => x.id === id);
+      if (!confirm('Hapus profil wali kelas "' + (w && w.nama || '') + '"?')) return;
+      try {
+        const res = await fetch('/api/walas/' + encodeURIComponent(id), { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok) {
+          toast(data.error || 'Gagal menghapus', 'error');
+          return;
+        }
+        toast('Profil wali kelas dihapus');
+        loadWalas();
+      } catch (e) {
+        toast('Terjadi kesalahan jaringan', 'error');
+      }
+    }
+    loadWalas();
   </script>
 </body>
 </html>

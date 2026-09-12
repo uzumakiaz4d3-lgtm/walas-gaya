@@ -85,7 +85,20 @@ async function main() {
     kelas TEXT,
     status TEXT NOT NULL DEFAULT 'aktif'
   )`);
-  console.log("OK   skema: tabel users siap");
+  await client.query(`CREATE TABLE IF NOT EXISTS walas (
+    id TEXT PRIMARY KEY,
+    nama TEXT NOT NULL,
+    nip TEXT,
+    no_telp TEXT,
+    status TEXT NOT NULL DEFAULT 'aktif'
+  )`);
+  await client.query(`CREATE TABLE IF NOT EXISTS rombel (
+    id TEXT PRIMARY KEY,
+    nama TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'aktif'
+  )`);
+  await client.query(`CREATE UNIQUE INDEX IF NOT EXISTS rombel_nama_lower ON rombel (LOWER(nama))`);
+  console.log("OK   skema: tabel users, walas, dan rombel siap");
 
   const { rows } = await client.query(`SELECT COUNT(*)::int AS n FROM users`);
   const count = rows[0].n;
