@@ -191,7 +191,7 @@
         '<tr class="hover:bg-gray-50">' +
         '<td class="px-6 py-3 font-medium">' + escHtml(r.nama) + '</td>' +
         '<td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">Aktif</span></td>' +
-        '<td class="px-6 py-3"><button onclick="delRombel(' + JSON.stringify(r.id) + ')" class="text-danger hover:text-danger/80 text-xs"><i class="fas fa-trash mr-1"></i>Hapus</button></td>' +
+        '<td class="px-6 py-3"><button onclick="delRombel(\'' + r.id + '\')" class="text-danger hover:text-danger/80 text-xs"><i class="fas fa-trash mr-1"></i>Hapus</button></td>' +
         '</tr>'
       ).join('');
     }
