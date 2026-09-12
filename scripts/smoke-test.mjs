@@ -269,19 +269,30 @@ async function main() {
     });
     const rst = await res.json().catch(() => ({}));
     check(
-      "POST /api/reset (admin) → reset, kembali 5 user default",
-      res.status === 200 && rst.success === true && rst.reset === true && rst.users === 5,
+      "POST /api/reset (admin) → reset, hanya admin yang tersisa (1 user)",
+      res.status === 200 && rst.success === true && rst.reset === true && rst.users === 1,
       `status=${res.status} users=${rst.users}`
     );
     res = await login("ahmad@walikelas.sch.id", "wali123");
-    const loginAfterReset = await res.json().catch(() => ({}));
     check(
-      "login wali_kelas setelah reset berhasil (wali123)",
-      res.status === 200 && loginAfterReset.success === true,
+      "login walas setelah reset ditolak (akun walas terhapus)",
+      res.status === 401,
       `status=${res.status}`
     );
-
     res = await login("admin@sekolah.id", "wali123");
+    check(
+      "login admin setelah reset masih jalan",
+      res.status === 200,
+      `status=${res.status}`
+    );
+    res = await api("/api/users", { headers: { cookie: cookieHeader() } });
+    const usersAfterReset = await res.json().catch(() => ({}));
+    check(
+      "GET /api/users setelah reset → hanya admin",
+      res.status === 200 && usersAfterReset.success === true && usersAfterReset.users.length === 1 && usersAfterReset.users[0].role === "admin",
+      `status=${res.status} users=${usersAfterReset.users && usersAfterReset.users.length}`
+    );
+
     res = await api("/api/dashboard", { headers: { cookie: cookieHeader() } });
     const dash = await res.json().catch(() => ({}));
     check(

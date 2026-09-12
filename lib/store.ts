@@ -98,6 +98,18 @@ function hashSync(pw: string): string {
   return bcrypt.hashSync(pw, 10);
 }
 
+async function seedAdmin(store: Store): Promise<void> {
+  if (await store.findUserByEmail("admin@sekolah.id")) return;
+  await store.createUser({
+    email: "admin@sekolah.id",
+    passwordHash: hashSync(DEFAULT_PASSWORD),
+    name: "Admin Sekolah",
+    role: "admin",
+    kelas: null,
+    status: "aktif",
+  });
+}
+
 async function seedDefaults(store: Store): Promise<void> {
   const existing = await store.listUsers();
   if (existing.length > 0) return;
@@ -170,7 +182,7 @@ class MemoryStore implements Store {
 
   async resetAll(): Promise<void> {
     this.rows.clear();
-    await seedDefaults(this);
+    await seedAdmin(this);
   }
 
   async close(): Promise<void> {
@@ -282,7 +294,7 @@ class PostgresStore implements Store {
 
   async resetAll(): Promise<void> {
     await this.pool.query(`DELETE FROM users`);
-    await seedDefaults(this);
+    await seedAdmin(this);
   }
 
   async close(): Promise<void> {

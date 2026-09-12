@@ -301,7 +301,7 @@
     }
 
     function resetAllData() {
-      if (!confirm("Hapus SEMUA data (semua akun + seluruh absensi)? Tindakan ini tidak dapat dibatalkan.")) return;
+      if (!confirm("Hapus SEMUA data (semua akun walas + seluruh data siswa/absensi)? Aplikasi kembali kosong dan hanya menyisakan akun Admin. Tindakan tidak dapat dibatalkan.")) return;
       var ketik = prompt("Ketik RESET untuk mengonfirmasi penghapusan seluruh data:");
       if (ketik !== "RESET") { toast("Dibatalkan"); return; }
       api(null, "POST", "/api/reset")
