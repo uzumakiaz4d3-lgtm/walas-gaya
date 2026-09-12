@@ -391,7 +391,7 @@
           if (!res.success) { toast(res.error || "Gagal reset"); return; }
           for (var i = localStorage.length - 1; i >= 0; i--) {
             var k = localStorage.key(i);
-            if (k && k.indexOf("absensi_") === 0) localStorage.removeItem(k);
+            if (k && (k.indexOf("absensi_") === 0 || k.indexOf("siswa_") === 0 || k.indexOf("admData_") === 0)) localStorage.removeItem(k);
           }
           toast("Semua data direset ke awal");
           loadUsers();

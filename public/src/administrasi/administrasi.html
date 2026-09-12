@@ -468,11 +468,7 @@
     function currentKelas() {
       var p = new URLSearchParams(location.search).get("kelas");
       if (p) return p;
-      var s = localStorage.getItem("userKelas");
-      if (s) return s;
-      var map = { "Ahmad Fauzan": "7A", "Siti Aminah": "7B", "Budi Santoso": "8A", "Dewi Lestari": "8B" };
-      var name = localStorage.getItem("userName") || "";
-      return map[name] || "7A";
+      return localStorage.getItem("userKelas") || "";
     }
     function loadAdm() {
       var stored = {};

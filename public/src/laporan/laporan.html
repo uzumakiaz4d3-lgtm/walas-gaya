@@ -274,9 +274,7 @@
       var p = new URLSearchParams(location.search);
       var k = p.get("kelas");
       if (k) return k;
-      var n = localStorage.getItem("userName");
-      var m = { "Ahmad Fauzan":"7A", "Siti Aminah":"7B", "Budi Santoso":"8A", "Dewi Lestari":"8B" };
-      return (n && m[n]) ? m[n] : (localStorage.getItem("userKelas") || "7A");
+      return localStorage.getItem("userKelas") || "";
     }
     function loadAbsensiAll() {
       try { return JSON.parse(localStorage.getItem("absensi_" + currentKelas())) || {}; } catch(e){ return {}; }

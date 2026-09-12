@@ -193,7 +193,7 @@
       <div class="bg-white rounded-xl shadow-sm p-4">
         <p class="text-xs text-gray-500 mb-1">Persentase</p>
         <p class="text-2xl font-bold text-primary" id="c-persen">0%</p>
-        <p class="text-[10px] text-gray-400 mt-0.5">dari 0 siswa</p>
+        <p class="text-[10px] text-gray-400 mt-0.5" id="absen-siswa-total">dari 0 siswa</p>
       </div>
     </div>
 
@@ -243,7 +243,7 @@
         </table>
       </div>
       <div class="px-4 py-3 border-t border-gray-100 text-xs text-gray-400">
-        Menampilkan 0 dari 0 siswa
+        <span id="absen-count">Menampilkan 0 dari 0 siswa</span>
       </div>
     </div>
 
@@ -269,9 +269,7 @@
     var p = new URLSearchParams(location.search);
     var k = p.get("kelas");
     if (k) return k;
-    var n = localStorage.getItem("userName");
-    var m = { "Ahmad Fauzan":"7A", "Siti Aminah":"7B", "Budi Santoso":"8A", "Dewi Lestari":"8B" };
-    return (n && m[n]) ? m[n] : (localStorage.getItem("userKelas") || "7A");
+    return localStorage.getItem("userKelas") || "";
   }
   function todayStr() {
     var d = new Date();
@@ -321,6 +319,45 @@
       recount();
     });
   })();
+
+  /* ===== ROSTER SISWA (from localStorage) ===== */
+  var ATT_VALS = ['H','S','I','A','D','T'];
+  function siswaRoster(){
+    try {
+      var arr = JSON.parse(localStorage.getItem("siswa_" + currentKelas()) || "null");
+      return Array.isArray(arr) ? arr : [];
+    } catch(e){ return []; }
+  }
+  function buildAbsenRows(){
+    var tbody = document.querySelector('#tbl-absen tbody');
+    if(!tbody) return;
+    var roster = siswaRoster();
+    var sidebarEl = document.querySelectorAll('.bg-white\\/5');
+    if(!roster.length){
+      tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-12 text-center text-gray-400">Belum ada siswa di rombel ini. Tambah atau impor siswa di menu Data Siswa, lalu tekan <b>Simpan Data Siswa</b>.</td></tr>';
+      sidebarEl.forEach(function(el){ el.innerHTML = '<span class="text-white/90 font-medium">Kelas ' + (currentKelas()||'-') + '</span> · 2026/2027 Ganjil · 0 siswa aktif'; });
+      return;
+    }
+    var html = roster.map(function(s, i){
+      var opts = ATT_VALS.map(function(v){
+        return '<button type="button" class="att-opt" data-val="' + v + '">' + v + '</button>';
+      }).join('');
+      return '<tr data-nis="' + String(s.nis).replace(/"/g,'&quot;') + '">' +
+        '<td class="px-4 py-3 text-gray-500">' + (i+1) + '</td>' +
+        '<td class="px-4 py-3 font-medium text-gray-700">' + String(s.nama).replace(/</g,'&lt;') + '</td>' +
+        '<td class="px-4 py-3"><div class="att-select flex gap-1" data-att="H">' + opts + '</div></td>' +
+        '<td class="px-4 py-3"><input type="text" placeholder="Keterangan" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/40"></td>' +
+        '</tr>';
+    }).join('');
+    tbody.innerHTML = html;
+    var n = roster.length;
+    sidebarEl.forEach(function(el){ el.innerHTML = '<span class="text-white/90 font-medium">Kelas ' + currentKelas() + '</span> · 2026/2027 Ganjil · ' + n + ' siswa aktif'; });
+    var totalEl = document.getElementById('absen-siswa-total');
+    if(totalEl) totalEl.textContent = 'dari ' + n + ' siswa';
+    var countEl = document.getElementById('absen-count');
+    if(countEl) countEl.textContent = 'Menampilkan ' + n + ' dari ' + n + ' siswa';
+    document.title = 'Absensi Kelas ' + currentKelas() + ' — WaliKelas';
+  }
 
   /* ===== SEARCH ===== */
   (function(){
@@ -428,12 +465,14 @@
       el.addEventListener('change', function(){ loadSavedForDate(); });
     }
     var kls = currentKelas();
-    document.querySelectorAll('#kelas-label-side, #kelas-label-drawer').forEach(function(e){ e.textContent = "Kelas " + kls; });
+    document.getElementById('kelas-label-side').textContent = kls ? 'Kelas ' + kls : 'Absensi';
+    document.getElementById('kelas-label-drawer').textContent = kls ? 'Kelas ' + kls : 'Absensi';
     var title = document.title;
-    if(title.indexOf("Kelas 7A") !== -1) document.title = "Absensi Kelas " + kls + " — WaliKelas";
-    /* restore saved data for today on first load */
-    loadSavedForDate();
+    if(title.indexOf('Kelas') !== -1) document.title = 'Absensi' + (kls ? ' Kelas ' + kls : '') + ' — WaliKelas';
+    /* build roster from siswa localStorage, then restore saved attendance for today */
+    buildAbsenRows();
     renderAllSelects();
+    loadSavedForDate();
   })();
   </script>
 

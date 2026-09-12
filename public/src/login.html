@@ -109,8 +109,23 @@
             if (result.success) {
               localStorage.setItem("userRole", result.user.role);
               localStorage.setItem("userName", result.user.name);
+              localStorage.setItem("userId", result.user.id);
               if (result.user.kelas) localStorage.setItem("userKelas", result.user.kelas);
+              else localStorage.removeItem("userKelas");
               localStorage.setItem("loggedIn", "true");
+
+              var lastUser = localStorage.getItem("wkLastUserId");
+              var newUser = result.user.id;
+              if (lastUser && lastUser !== newUser) {
+                for (var i = localStorage.length - 1; i >= 0; i--) {
+                  var k = localStorage.key(i) || "";
+                  if (k.indexOf("absensi_") === 0 || k.indexOf("admData_") === 0 || k.indexOf("siswa_") === 0 || k === "catatanTerakhir") {
+                    localStorage.removeItem(k);
+                  }
+                }
+              }
+              localStorage.setItem("wkLastUserId", newUser);
+
               window.location.href = result.redirect || "/src/dashboard/dashboard.html";
               return;
             }

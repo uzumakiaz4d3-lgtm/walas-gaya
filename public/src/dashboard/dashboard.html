@@ -376,20 +376,12 @@
         "8A": { siswa: 0, hadir: 0, persen: "0%", perhatian: 0, izin: 0, bars: [0, 0, 0, 0, 0], rata: 0, info: "0 siswa aktif" },
         "8B": { siswa: 0, hadir: 0, persen: "0%", perhatian: 0, izin: 0, bars: [0, 0, 0, 0, 0], rata: 0, info: "0 siswa aktif" }
       };
-      var WALAS_KELAS = {
-        "Ahmad Fauzan": "7A",
-        "Siti Aminah": "7B",
-        "Budi Santoso": "8A",
-        "Dewi Lestari": "8B"
-      };
-
       function currentKelas() {
         var params = new URLSearchParams(window.location.search);
         if (params.get("kelas")) return params.get("kelas");
         var stored = localStorage.getItem("userKelas");
-        if (stored && CLASS_DATA[stored]) return stored;
-        var name = localStorage.getItem("userName");
-        return WALAS_KELAS[name] || "7A";
+        if (stored) return stored;
+        return "7A";
       }
 
       function applyKelas(key) {
