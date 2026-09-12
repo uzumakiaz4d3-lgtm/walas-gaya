@@ -7,7 +7,75 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
-  <script>
+<!-- Modal: Template Pesan WhatsApp -->
+  <div id="tpl-modal" class="modal">
+    <div class="box">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-primary text-lg">Template Pesan WhatsApp</h3>
+        <button data-close-modal class="text-gray-400 hover:text-gray-600 transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <p class="text-xs text-gray-400 mb-4 text-left">Placeholder yang bisa dipakai: <code>{nama}</code> <code>{nis}</code> <code>{kelas}</code> <code>{ortu}</code> <code>{tanggal}</code> <code>{waktu}</code> <code>{isi}</code>. Tombol "Kirim" di riwayat memakai template <b>Umum</b>.</p>
+      <form id="tpl-form" class="space-y-4 text-left">
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Izin</label>
+          <textarea id="tpl-izin" rows="3" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Terlambat</label>
+          <textarea id="tpl-telat" rows="3" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Tanpa Keterangan (Alpha)</label>
+          <textarea id="tpl-alpha" rows="3" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Panggilan Orang Tua</label>
+          <textarea id="tpl-panggilan" rows="3" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Umum</label>
+          <textarea id="tpl-umum" rows="3" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"></textarea>
+        </div>
+        <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white text-sm font-medium px-6 py-2.5 rounded-lg transition">Simpan Template</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Kirim Massal WhatsApp -->
+  <div id="kirim-modal" class="modal">
+    <div class="box">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-primary text-lg">Kirim Massal WhatsApp</h3>
+        <button data-close-modal class="text-gray-400 hover:text-gray-600 transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div class="space-y-4 text-left">
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Jenis Pesan</label>
+          <select id="send-type" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/40">
+            <option value="umum">Umum</option>
+            <option value="izin">Izin</option>
+            <option value="telat">Terlambat</option>
+            <option value="alpha">Tanpa Keterangan (Alpha)</option>
+            <option value="panggilan">Panggilan Orang Tua</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Pratinjau Pesan</label>
+          <textarea id="send-preview" rows="4" readonly class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-600 focus:outline-none resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Kirim ke (centang yang diinginkan)</label>
+          <div id="send-list" class="space-y-1.5 max-h-56 overflow-y-auto pr-1"></div>
+        </div>
+      </div>
+      <button id="send-open" class="mt-4 w-full bg-secondary hover:bg-secondary/90 text-white text-sm font-medium px-6 py-2.5 rounded-lg transition">
+        <i class="fa-brands fa-whatsapp mr-1.5"></i> Buka WhatsApp untuk Siswa Terpilih
+      </button>
+      <p class="text-xs text-gray-400 mt-2 text-center">Tiap siswa dibuka di tab WhatsApp (Web/App) dengan pesan terisi — tinggal tekan kirim. Jika pop-up diblokir, izinkan pop-up situs ini.</p>
+    </div>
+  </div>
+
+<script>
     tailwind.config = {
       theme: {
         extend: {
@@ -169,9 +237,17 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
       <h1 class="page-title text-xl md:text-2xl font-bold text-primary md:hidden">Komunikasi Orang Tua</h1>
-      <button data-open-modal="kom-modal" class="inline-flex items-center gap-2 px-4 py-2 bg-secondary text-white text-sm font-medium rounded-lg hover:bg-secondary/90 transition">
-        <i class="fa-solid fa-plus text-xs"></i> Catat Komunikasi
-      </button>
+      <div class="flex flex-wrap items-center gap-2">
+        <button data-open-modal="tpl-modal" class="inline-flex items-center gap-2 px-3 py-2 bg-white text-gray-600 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition">
+          <i class="fa-solid fa-message text-xs"></i> Template
+        </button>
+        <button data-open-modal="kirim-modal" class="inline-flex items-center gap-2 px-3 py-2 bg-accent text-white text-sm font-medium rounded-lg hover:bg-accent/90 transition">
+          <i class="fa-brands fa-whatsapp text-xs"></i> Kirim Massal
+        </button>
+        <button data-open-modal="kom-modal" class="inline-flex items-center gap-2 px-4 py-2 bg-secondary text-white text-sm font-medium rounded-lg hover:bg-secondary/90 transition">
+          <i class="fa-solid fa-plus text-xs"></i> Catat Komunikasi
+        </button>
+      </div>
     </div>
 
     <!-- Stat Cards -->
@@ -296,11 +372,12 @@
       wrap.innerHTML = arr.map(function (r) {
         var col = colors[r.media] || "secondary";
         var hp = r.hp ? " — " + escHtml(r.hp) : "";
-        var link = r.hp ? '<a href="https://wa.me/' + r.hp.replace(/[^0-9]/g, "") + '" target="_blank" class="ml-1 text-[11px] text-secondary hover:underline"><i class="fa-brands fa-whatsapp"></i></a>' : "";
+        var link = r.hp ? '<a href="https://wa.me/' + r.hp.replace(/[^0-9]/g, "") + '" target="_blank" class="ml-1 text-[11px] text-secondary hover:underline" title="Buka WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>' : "";
+        var sendBtn = r.hp ? '<button type="button" data-kirim-wa data-hp="' + escHtml(r.hp) + '" data-siswa="' + escHtml(r.siswa) + '" data-isi="' + escHtml(r.ringkas) + '" class="ml-1 text-[11px] px-1.5 py-0.5 rounded-lg bg-secondary/10 text-secondary font-medium hover:bg-secondary/20 transition" title="Kirim pesan ke nomor ini">Kirim</button>' : "";
         return '<div class="flex flex-wrap items-start gap-2 p-3 bg-white rounded-xl">' +
           '<span class="text-xs text-gray-400 whitespace-nowrap pt-0.5">' + escHtml(r.tgl) + "</span>" +
           '<span class="inline-block bg-' + col + "/10 text-" + col + ' text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap">' + escHtml(r.media) + "</span>" +
-          '<p class="text-sm text-gray-600 flex-1 min-w-[200px]">' + escHtml(r.ringkas) + ' <span class="text-gray-400">(' + escHtml(r.siswa) + hp + ")</span>" + link + "</p></div>";
+          '<p class="text-sm text-gray-600 flex-1 min-w-[200px]">' + escHtml(r.ringkas) + ' <span class="text-gray-400">(' + escHtml(r.siswa) + hp + ")</span>" + link + sendBtn + "</p></div>";
       }).join("");
     }
 
@@ -332,6 +409,149 @@
         document.getElementById("kom-modal").classList.remove("show");
         if (typeof WKToast === "function") WKToast("Komunikasi dicatat");
       });
+    })();
+
+    /* ===== TEMPLATE PESAN WHATSAPP ===== */
+    function defTemplates() {
+      return {
+        izin: "Assalamualaikum. Yth. Bapak/Ibu {ortu},\nSaya wali kelas {kelas}. Ananda {nama} (NIS {nis}) hari ini izin tidak masuk sekolah. Mohon konfirmasi kehadirannya kepada saya.\nTerima kasih.",
+        telat: "Assalamualaikum. Yth. Bapak/Ibu {ortu},\nSaya wali kelas {kelas}. Ananda {nama} (NIS {nis}) tercatat terlambat masuk sekolah hari ini. Mohon diingatkan agar lebih disiplin.\nTerima kasih.",
+        alpha: "Assalamualaikum. Yth. Bapak/Ibu {ortu},\nSaya wali kelas {kelas}. Ananda {nama} (NIS {nis}) tidak hadir tanpa keterangan hari ini. Mohon hubungi saya untuk konfirmasi.\nTerima kasih.",
+        panggilan: "Assalamualaikum. Yth. Bapak/Ibu {ortu},\nDalam rangka pembinaan, kami mengundang Bapak/Ibu hadir ke sekolah untuk membahas perkembangan Ananda {nama} (NIS {nis}) kelas {kelas}. Mohon konfirmasi kehadiran.\nTerima kasih.",
+        umum: "Assalamualaikum. Yth. Bapak/Ibu {ortu},\nKami dari wali kelas {kelas} menyampaikan: {isi}\nTerima kasih."
+      };
+    }
+    function getTemplates() {
+      try {
+        var t = JSON.parse(localStorage.getItem("templates_" + currentKelas()) || "null");
+        if (t && typeof t === "object") {
+          var d = defTemplates(), out = {};
+          Object.keys(d).forEach(function (k) { out[k] = (t[k] && String(t[k]).trim()) ? String(t[k]) : d[k]; });
+          return out;
+        }
+      } catch (e) {}
+      return defTemplates();
+    }
+    function saveTemplates(t) {
+      localStorage.setItem("templates_" + currentKelas(), JSON.stringify(t));
+      if (window.WKSync) WKSync.push(currentKelas(), 'templates', t);
+    }
+    function waNumber(hp) {
+      var d = String(hp || "").replace(/[^0-9]/g, "");
+      if (!d) return "";
+      if (d.indexOf("0") === 0) d = "62" + d.slice(1);
+      return d;
+    }
+    function todayStr() {
+      return new Date().toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    }
+    function fillTpl(tpl, s) {
+      var data = {
+        nama: s.nama || "",
+        nis: s.nis || "",
+        kelas: currentKelas() || "-",
+        ortu: s.ortu || "",
+        tanggal: todayStr(),
+        waktu: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
+        isi: s.isi || "",
+        catatan: s.catatan || ""
+      };
+      return String(tpl || "").replace(/\{(\w+)\}/g, function (m, key) { return data[key] !== undefined ? data[key] : m; });
+    }
+    function waLink(hp, msg) {
+      var n = waNumber(hp);
+      return n ? "https://wa.me/" + n + "?text=" + encodeURIComponent(msg) : "";
+    }
+    function openWA(hp, msg) {
+      var url = waLink(hp, msg);
+      if (!url) {
+        if (typeof WKToast === "function") WKToast("Nomor HP tidak valid");
+        return;
+      }
+      window.open(url, "_blank");
+    }
+    function kirimWA(hp, siswa, isi) {
+      openWA(hp, fillTpl(getTemplates().umum, { nama: siswa, isi: isi || "" }));
+    }
+
+    /* Tombol "Kirim" di riwayat */
+    document.addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-kirim-wa]");
+      if (!btn) return;
+      e.preventDefault();
+      kirimWA(btn.getAttribute("data-hp"), btn.getAttribute("data-siswa"), btn.getAttribute("data-isi"));
+    });
+
+    /* ===== MODAL: TEMPLATE ===== */
+    (function () {
+      var form = document.getElementById("tpl-form");
+      if (!form) return;
+      var keys = ["izin", "telat", "alpha", "panggilan", "umum"];
+      var t = getTemplates();
+      keys.forEach(function (k) {
+        var el = document.getElementById("tpl-" + k);
+        if (el) el.value = t[k] || "";
+      });
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var data = {};
+        keys.forEach(function (k) { data[k] = (document.getElementById("tpl-" + k).value || "").trim(); });
+        saveTemplates(data);
+        document.getElementById("tpl-modal").classList.remove("show");
+        if (typeof WKToast === "function") WKToast("Template pesan tersimpan");
+      });
+    })();
+
+    /* ===== MODAL: KIRIM MASSAL ===== */
+    (function () {
+      var type = document.getElementById("send-type");
+      var list = document.getElementById("send-list");
+      var preview = document.getElementById("send-preview");
+      var openBtn = document.getElementById("send-open");
+      if (!type || !list || !preview || !openBtn) return;
+
+      function students() {
+        return getRoster().filter(function (s) { return waNumber(s.hp); });
+      }
+      function renderList() {
+        var picks = students();
+        list.innerHTML = picks.length
+          ? picks.map(function (s, i) {
+              return '<label class="flex items-center gap-2 text-sm text-gray-700 border border-gray-100 rounded-lg px-3 py-2 hover:bg-gray-50 cursor-pointer">' +
+                '<input type="checkbox" class="send-chk" value="' + i + '" checked>' +
+                '<span class="font-medium">' + escHtml(s.nama) + '</span>' +
+                '<span class="text-xs text-gray-400 ml-auto"><i class="fa-brands fa-whatsapp mr-1 text-secondary"></i>' + escHtml(s.hp) + '</span></label>';
+            }).join("")
+          : '<p class="text-sm text-gray-400">Belum ada siswa dengan No. HP. Isi No. HP di halaman Data Siswa (tombol Edit).</p>';
+      }
+      function previewMsg() {
+        var picks = students();
+        var sel = list.querySelector("input.send-chk:checked");
+        var idx = sel ? parseInt(sel.value, 10) : 0;
+        var s = picks[idx] || {};
+        preview.value = fillTpl(getTemplates()[type.value] || getTemplates().umum, s);
+      }
+      type.addEventListener("change", previewMsg);
+      list.addEventListener("change", previewMsg);
+      openBtn.addEventListener("click", function () {
+        var picks = students();
+        var tpl = getTemplates()[type.value] || getTemplates().umum;
+        var opened = 0;
+        list.querySelectorAll("input.send-chk:checked").forEach(function (chk) {
+          var s = picks[parseInt(chk.value, 10)];
+          if (!s) return;
+          openWA(s.hp, fillTpl(tpl, s));
+          opened++;
+        });
+        if (opened) {
+          document.getElementById("kirim-modal").classList.remove("show");
+          if (typeof WKToast === "function") WKToast(opened + " percakapan WhatsApp dibuka");
+        } else {
+          if (typeof WKToast === "function") WKToast("Centang siswa dengan No. HP terlebih dahulu", "error");
+        }
+      });
+      renderList();
+      previewMsg();
     })();
   </script>
 

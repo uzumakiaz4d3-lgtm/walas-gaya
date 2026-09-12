@@ -7,7 +7,7 @@
 (function () {
   if (window.WKSync) return;
 
-  var CLASS_KEYS = ["siswa", "absensi", "admData", "pembinaan", "komunikasi"];
+  var CLASS_KEYS = ["siswa", "absensi", "admData", "pembinaan", "komunikasi", "templates"];
 
   function json(res) {
     try { return res.json(); } catch (e) { return Promise.resolve({ success: false }); }
