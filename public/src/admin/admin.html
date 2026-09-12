@@ -176,6 +176,25 @@
     function escHtml(s) {
       return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     }
+    function hitungKehadiran(absensi) {
+      if (!absensi || typeof absensi !== 'object') return null;
+      let total = 0, hadir = 0;
+      Object.keys(absensi).forEach(function (dt) {
+        const arr = absensi[dt];
+        if (!Array.isArray(arr)) return;
+        arr.forEach(function (rec) {
+          total++;
+          const st = rec && rec.status;
+          if (st === 'H' || st === 'S') hadir++;
+        });
+      });
+      return total ? Math.round((hadir / total) * 100) : null;
+    }
+    function kelasSummary(doc) {
+      const siswa = (doc && Array.isArray(doc.siswa)) ? doc.siswa.length : 0;
+      const absensi = doc && typeof doc.absensi === 'object' ? doc.absensi : null;
+      return { siswa: siswa, pct: hitungKehadiran(absensi) };
+    }
     (async function loadRingkasan() {
       const tbody = document.getElementById('tbody-ringkasan-kelas');
       try {
@@ -191,31 +210,40 @@
         const walas = dataW.walas || [];
         const rombel = dataR.rombel || [];
         const users = dataU.users || [];
-        document.getElementById('s-walas').textContent = walas.length;
-        document.getElementById('s-kelas').textContent = rombel.length;
-        document.getElementById('s-siswa').textContent = '0';
-        document.getElementById('s-kehadiran').textContent = '—';
-        if (!tbody) return;
-        const rows = rombel.map(r => {
-          const withWalas = users.filter(u => u.role === 'wali_kelas' && u.kelas === r.nama);
+        const docs = await Promise.all(rombel.map(function (r) {
+          return fetch('/api/kelas-data?kelas=' + encodeURIComponent(r.nama))
+            .then(function (x) { return x.json(); })
+            .catch(function () { return {}; });
+        }));
+        const rows = rombel.map(function (r, i) {
+          const doc = (docs[i] && docs[i].success) ? (docs[i].data || {}) : {};
+          const s = kelasSummary(doc);
+          const withWalas = users.filter(function (u) { return u.role === 'wali_kelas' && u.kelas === r.nama; });
           return {
             kelas: r.nama,
-            walas: withWalas.map(u => u.name),
-            rowspan: 1,
+            walas: withWalas.map(function (u) { return u.name; }),
+            siswa: s.siswa,
+            pct: s.pct,
           };
         });
+        document.getElementById('s-walas').textContent = walas.length;
+        document.getElementById('s-kelas').textContent = rombel.length;
+        document.getElementById('s-siswa').textContent = String(rows.reduce(function (a, r) { return a + r.siswa; }, 0));
+        const valid = rows.filter(function (r) { return r.pct !== null; }).map(function (r) { return r.pct; });
+        document.getElementById('s-kehadiran').textContent = valid.length ? Math.round(valid.reduce(function (a, b) { return a + b; }, 0) / valid.length) + '%' : '—';
+        if (!tbody) return;
         if (!rows.length) {
           tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-10 text-center text-gray-400">Belum ada rombel — mulai dari Langkah 1 (Profil Wali Kelas) lalu Langkah 2 (Rombel).</td></tr>';
           return;
         }
-        tbody.innerHTML = rows.map(r =>
-          '<tr class="hover:bg-gray-50">' +
-          '<td class="px-6 py-3 font-medium"><a href="../dashboard/dashboard.html?kelas=' + encodeURIComponent(r.kelas) + '" class="text-primary hover:text-accent hover:underline">' + escHtml(r.kelas) + '</a></td>' +
-          '<td class="px-6 py-3">' + (r.walas.length ? escHtml(r.walas.join(', ')) : '<span class="text-gray-400">Belum ada walas</span>') + '</td>' +
-          '<td class="px-6 py-3">—</td>' +
-          '<td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">Belum ada data</span></td>' +
-          '</tr>'
-        ).join('');
+        tbody.innerHTML = rows.map(function (r) {
+          return '<tr class="hover:bg-gray-50">' +
+            '<td class="px-6 py-3 font-medium"><a href="../dashboard/dashboard.html?kelas=' + encodeURIComponent(r.kelas) + '" class="text-primary hover:text-accent hover:underline">' + escHtml(r.kelas) + '</a></td>' +
+            '<td class="px-6 py-3">' + (r.walas.length ? escHtml(r.walas.join(', ')) : '<span class="text-gray-400">Belum ada walas</span>') + '</td>' +
+            '<td class="px-6 py-3">' + (r.siswa ? r.siswa : '0') + '</td>' +
+            '<td class="px-6 py-3">' + (r.pct !== null ? '<span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">' + r.pct + '%</span>' : '<span class="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">Belum ada data</span>') + '</td>' +
+            '</tr>';
+        }).join('');
       } catch (e) {
         if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-10 text-center text-gray-400">Gagal memuat ringkasan.</td></tr>';
       }

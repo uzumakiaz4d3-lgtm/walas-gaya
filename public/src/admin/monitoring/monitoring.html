@@ -72,10 +72,7 @@
         <select id="f-kelas" onchange="filterMon()" class="px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
           <option value="">Semua Kelas</option><option>7A</option><option>7B</option><option>8A</option><option>8B</option>
         </select>
-        <select id="f-jenis" onchange="filterMon()" class="px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
-          <option value="">Semua Jenis</option><option>Absensi</option><option>Izin</option><option>Pembinaan</option><option>Laporan</option>
-        </select>
-        <div class="relative flex-1">
+<div class="relative flex-1">
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
           <input id="f-cari" type="text" placeholder="Cari..." oninput="filterMon()" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
         </div>
@@ -88,9 +85,7 @@
             <thead class="bg-neutral text-gray-500 text-xs uppercase"><tr>
               <th class="text-left px-6 py-3">Kelas</th><th class="text-left px-6 py-3">Walas</th><th class="text-left px-6 py-3">Hadir</th><th class="text-left px-6 py-3">Izin</th><th class="text-left px-6 py-3">Alpa</th><th class="text-left px-6 py-3">Status</th><th class="text-left px-6 py-3">Aksi</th>
             </tr></thead>
-<tbody class="divide-y divide-gray-50">
-              <tr><td colspan="7" class="px-6 py-12 text-center text-gray-400">Belum ada kegiatan monitoring — data kosong mulai dari nol.</td></tr>
-            </tbody>
+<tbody id="tbody-mon" class="divide-y divide-gray-50"></tbody>
           </table>
         </div>
       </div>
@@ -149,7 +144,102 @@
       document.body.appendChild(t);
       setTimeout(() => t.remove(), 2500);
     }
-function filterMon() {
+var MON = [];
+    var KLAS_LABEL = '';
+    function escHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function emptyRow(msg) {
+      return '<tr><td colspan="7" class="px-6 py-12 text-center text-gray-400">' + msg + '</td></tr>';
+    }
+    function latestAbsensi(doc) {
+      var abs = (doc && typeof doc.absensi === 'object') ? doc.absensi : {};
+      var dates = Object.keys(abs).sort();
+      if (!dates.length) return null;
+      return abs[dates[dates.length - 1]];
+    }
+    function hitungAbsen(list) {
+      var hadir = 0, izin = 0, alpa = 0;
+      if (Array.isArray(list)) {
+        list.forEach(function (rec) {
+          var st = rec && rec.status;
+          if (st === 'H' || st === 'S') hadir++;
+          else if (st === 'I') izin++;
+          else if (st === 'A') alpa++;
+        });
+      }
+      return { hadir: hadir, izin: izin, alpa: alpa, len: Array.isArray(list) ? list.length : 0 };
+    }
+    function loadMon() {
+      const tbody = document.getElementById('tbody-mon');
+      if (!tbody) return;
+      Promise.all([
+        fetch('/api/rombel').then(r => r.json()).catch(() => ({})),
+        fetch('/api/users').then(r => r.json()).catch(() => ({})),
+      ]).then(function (res) {
+        var rombel = (res[0] && res[0].rombel) || [];
+        var users = (res[1] && res[1].users) || [];
+        var sel = document.getElementById('f-kelas');
+        if (sel) {
+          sel.innerHTML = '<option value="">Semua Kelas</option>' + rombel.map(function (r) {
+            return '<option value="' + escHtml(r.nama) + '">' + escHtml(r.nama) + '</option>';
+          }).join('');
+        }
+        if (!rombel.length) {
+          tbody.innerHTML = emptyRow('Belum ada rombel — tambah rombel di menu Kelas terlebih dahulu.');
+          return;
+        }
+        return Promise.all(rombel.map(function (r) {
+          return fetch('/api/kelas-data?kelas=' + encodeURIComponent(r.nama))
+            .then(function (x) { return x.json(); })
+            .catch(function () { return {}; })
+            .then(function (resd) {
+              var doc = (resd && resd.success) ? (resd.data || {}) : {};
+              var latest = latestAbsensi(doc);
+              var h = hitungAbsen(latest);
+              var walas = users.filter(function (u) { return u.role === 'wali_kelas' && u.kelas === r.nama; }).map(function (u) { return u.name; });
+              return {
+                nama: r.nama,
+                walas: walas.join(', ') || '—',
+                hadir: h.hadir, izin: h.izin, alpa: h.alpa,
+                hasAbs: h.len > 0,
+                hasData: doc && Object.keys(doc).length > 0,
+              };
+            });
+        }));
+      }).then(function (rows) {
+        if (!rows || !rows.length) return;
+        MON = rows;
+        renderMon();
+      }).catch(function () {
+        if (tbody) tbody.innerHTML = emptyRow('Gagal memuat data monitoring.');
+      });
+    }
+    function statusBadge(r) {
+      if (r.hasAbs) return '<span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">Aktif</span>';
+      if (r.hasData) return '<span class="px-2 py-0.5 rounded-full text-xs bg-yellow-100 text-yellow-700">Belum absen</span>';
+      return '<span class="px-2 py-0.5 rounded-full text-xs bg-gray-200 text-gray-600">Belum ada data</span>';
+    }
+    function renderMon() {
+      const tbody = document.getElementById('tbody-mon');
+      if (!tbody) return;
+      if (!MON.length) {
+        tbody.innerHTML = emptyRow('Belum ada kegiatan monitoring — data kosong mulai dari nol.');
+        return;
+      }
+      tbody.innerHTML = MON.map(function (r) {
+        return '<tr data-kelas="' + escHtml(r.nama) + '">' +
+          '<td class="px-6 py-3 font-medium">' + escHtml(r.nama) + '</td>' +
+          '<td class="px-6 py-3">' + escHtml(r.walas) + '</td>' +
+          '<td class="px-6 py-3">' + (r.hasAbs ? r.hadir : '—') + '</td>' +
+          '<td class="px-6 py-3">' + (r.hasAbs ? r.izin : '—') + '</td>' +
+          '<td class="px-6 py-3">' + (r.hasAbs ? r.alpa : '—') + '</td>' +
+          '<td class="px-6 py-3">' + statusBadge(r) + '</td>' +
+          '<td class="px-6 py-3"><a href="../dashboard/dashboard.html?kelas=' + encodeURIComponent(r.nama) + '" class="text-info hover:text-info/80 text-xs"><i class="fas fa-eye mr-1"></i>Lihat</a></td>' +
+          '</tr>';
+      }).join('');
+    }
+    function filterMon() {
       const kelas = document.getElementById('f-kelas').value;
       const q = document.getElementById('f-cari').value.toLowerCase();
       document.querySelectorAll('#tbl-mon tbody tr').forEach(r => {
@@ -177,8 +267,9 @@ function filterMon() {
       a.download = 'monitoring_sekolah.csv';
       document.body.appendChild(a); a.click();
       setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 400);
-      toast('Export data sekolah berhasil');
+toast('Export data sekolah berhasil');
     }
+    loadMon();
   </script>
 </body>
 </html>
