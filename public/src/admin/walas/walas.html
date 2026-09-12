@@ -81,12 +81,7 @@
             <thead class="bg-neutral text-gray-500 text-xs uppercase"><tr>
               <th class="text-left px-6 py-3">Walas</th><th class="text-left px-6 py-3">Rombel</th><th class="text-left px-6 py-3">Siswa</th><th class="text-left px-6 py-3">Status</th><th class="text-left px-6 py-3">Aksi</th>
             </tr></thead>
-            <tbody class="divide-y divide-gray-50">
-              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium">Ahmad Fauzan</td><td class="px-6 py-3">7A</td><td class="px-6 py-3">32</td><td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">Aktif</span></td><td class="px-6 py-3"><button onclick="toast('Petakan Ahmad Fauzan → 7A')" class="text-info hover:text-info/80 text-xs mr-2"><i class="fas fa-project-diagram mr-1"></i>Petakan</button><button onclick="toast('Reset akun Ahmad Fauzan')" class="text-danger hover:text-danger/80 text-xs"><i class="fas fa-undo mr-1"></i>Reset</button></td></tr>
-              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium">Siti Aminah</td><td class="px-6 py-3">7B</td><td class="px-6 py-3">30</td><td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">Aktif</span></td><td class="px-6 py-3"><button onclick="toast('Petakan Siti Aminah → 7B')" class="text-info hover:text-info/80 text-xs mr-2"><i class="fas fa-project-diagram mr-1"></i>Petakan</button><button onclick="toast('Reset akun Siti Aminah')" class="text-danger hover:text-danger/80 text-xs"><i class="fas fa-undo mr-1"></i>Reset</button></td></tr>
-              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium">Budi Santoso</td><td class="px-6 py-3">8A</td><td class="px-6 py-3">34</td><td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">Aktif</span></td><td class="px-6 py-3"><button onclick="toast('Petakan Budi Santoso → 8A')" class="text-info hover:text-info/80 text-xs mr-2"><i class="fas fa-project-diagram mr-1"></i>Petakan</button><button onclick="toast('Reset akun Budi Santoso')" class="text-danger hover:text-danger/80 text-xs"><i class="fas fa-undo mr-1"></i>Reset</button></td></tr>
-              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium">Dewi Lestari</td><td class="px-6 py-3">8B</td><td class="px-6 py-3">32</td><td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">Aktif</span></td><td class="px-6 py-3"><button onclick="toast('Petakan Dewi Lestari → 8B')" class="text-info hover:text-info/80 text-xs mr-2"><i class="fas fa-project-diagram mr-1"></i>Petakan</button><button onclick="toast('Reset akun Dewi Lestari')" class="text-danger hover:text-danger/80 text-xs"><i class="fas fa-undo mr-1"></i>Reset</button></td></tr>
-            </tbody>
+<tbody id="tbody-walas" class="divide-y divide-gray-50"></tbody>
           </table>
         </div>
       </div>
@@ -173,12 +168,40 @@
       document.body.appendChild(t);
       setTimeout(() => t.remove(), 2500);
     }
-    function filterWalas() {
+function filterWalas() {
       const q = document.getElementById('qw').value.toLowerCase();
       document.querySelectorAll('#tbl-walas tbody tr').forEach(r => {
         r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
       });
     }
+    function escHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    (async function loadWalas() {
+      const tbody = document.getElementById('tbody-walas');
+      if (!tbody) return;
+      try {
+        const res = await fetch('/api/users');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const walas = (data.users || []).filter(u => u.role === 'wali_kelas');
+        if (!walas.length) {
+          tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-12 text-center text-gray-400">Belum ada wali kelas. Tambahkan pengguna berperan Wali Kelas melalui menu Pengguna — aplikasi mulai dari nol.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = walas.map(u =>
+          '<tr class="hover:bg-gray-50">' +
+          '<td class="px-6 py-3 font-medium">' + escHtml(u.name) + '</td>' +
+          '<td class="px-6 py-3">' + escHtml(u.kelas || '—') + '</td>' +
+          '<td class="px-6 py-3">—</td>' +
+          '<td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">Aktif</span></td>' +
+          '<td class="px-6 py-3"><button onclick="toast(\'Petakan ' + escHtml(u.name) + '\')" class="text-info hover:text-info/80 text-xs mr-2"><i class="fas fa-project-diagram mr-1"></i>Petakan</button><button onclick="toast(\'Reset akun ' + escHtml(u.name) + '\')" class="text-danger hover:text-danger/80 text-xs"><i class="fas fa-undo mr-1"></i>Reset</button></td>' +
+          '</tr>'
+        ).join('');
+      } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-12 text-center text-gray-400">Gagal memuat data wali kelas.</td></tr>';
+      }
+    })();
   </script>
 </body>
 </html>

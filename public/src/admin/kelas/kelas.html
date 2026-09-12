@@ -81,12 +81,7 @@
             <thead class="bg-neutral text-gray-500 text-xs uppercase"><tr>
               <th class="text-left px-6 py-3">Kelas</th><th class="text-left px-6 py-3">Walas</th><th class="text-left px-6 py-3">Siswa</th><th class="text-left px-6 py-3">Semester</th><th class="text-left px-6 py-3">Aksi</th>
             </tr></thead>
-            <tbody class="divide-y divide-gray-50">
-              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium">7A</td><td class="px-6 py-3">Ahmad Fauzan</td><td class="px-6 py-3">32</td><td class="px-6 py-3">Ganjil 2026/27</td><td class="px-6 py-3"><button onclick="toast('Lihat wali kelas 7A → Ahmad Fauzan')" class="text-info hover:text-info/80 text-xs"><i class="fas fa-chalkboard-teacher mr-1"></i>Walas</button></td></tr>
-              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium">7B</td><td class="px-6 py-3">Siti Aminah</td><td class="px-6 py-3">30</td><td class="px-6 py-3">Ganjil 2026/27</td><td class="px-6 py-3"><button onclick="toast('Lihat wali kelas 7B → Siti Aminah')" class="text-info hover:text-info/80 text-xs"><i class="fas fa-chalkboard-teacher mr-1"></i>Walas</button></td></tr>
-              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium">8A</td><td class="px-6 py-3">Budi Santoso</td><td class="px-6 py-3">34</td><td class="px-6 py-3">Ganjil 2026/27</td><td class="px-6 py-3"><button onclick="toast('Lihat wali kelas 8A → Budi Santoso')" class="text-info hover:text-info/80 text-xs"><i class="fas fa-chalkboard-teacher mr-1"></i>Walas</button></td></tr>
-              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium">8B</td><td class="px-6 py-3">Dewi Lestari</td><td class="px-6 py-3">32</td><td class="px-6 py-3">Ganjil 2026/27</td><td class="px-6 py-3"><button onclick="toast('Lihat wali kelas 8B → Dewi Lestari')" class="text-info hover:text-info/80 text-xs"><i class="fas fa-chalkboard-teacher mr-1"></i>Walas</button></td></tr>
-            </tbody>
+<tbody id="tbody-kelas" class="divide-y divide-gray-50"></tbody>
           </table>
         </div>
       </div>
@@ -169,12 +164,51 @@
       document.body.appendChild(t);
       setTimeout(() => t.remove(), 2500);
     }
-    function filterKelas() {
+function filterKelas() {
       const q = document.getElementById('qk').value.toLowerCase();
       document.querySelectorAll('#tbl-kelas tbody tr').forEach(r => {
         r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
       });
     }
+    function escHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    (async function loadKelas() {
+      const tbody = document.getElementById('tbody-kelas');
+      const sel = document.getElementById('k-walas');
+      if (!tbody) return;
+      try {
+        const res = await fetch('/api/users');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const walas = (data.users || []).filter(u => u.role === 'wali_kelas');
+        const byKelas = {};
+        walas.forEach(u => {
+          const k = u.kelas || 'Tanpa kelas';
+          if (!byKelas[k]) byKelas[k] = [];
+          byKelas[k].push(u.name);
+        });
+        const keys = Object.keys(byKelas).sort();
+        if (!keys.length) {
+          tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-12 text-center text-gray-400">Belum ada kelas. Tambahkan wali kelas dengan rombel melalui menu Pengguna — aplikasi mulai dari nol.</td></tr>';
+        } else {
+          tbody.innerHTML = keys.map(k =>
+            '<tr class="hover:bg-gray-50">' +
+            '<td class="px-6 py-3 font-medium">' + escHtml(k) + '</td>' +
+            '<td class="px-6 py-3">' + escHtml(byKelas[k].join(', ')) + '</td>' +
+            '<td class="px-6 py-3">—</td>' +
+            '<td class="px-6 py-3">Ganjil 2026/27</td>' +
+            '<td class="px-6 py-3"><button onclick="toast(\'Lihat wali kelas ' + escHtml(k) + '\')" class="text-info hover:text-info/80 text-xs"><i class="fas fa-chalkboard-teacher mr-1"></i>Walas</button></td>' +
+            '</tr>'
+          ).join('');
+        }
+        if (sel) {
+          sel.innerHTML = '<option value="">Pilih wali kelas</option>' + walas.map(u => '<option value="' + escHtml(u.name) + '">' + escHtml(u.name) + '</option>').join('');
+        }
+      } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-12 text-center text-gray-400">Gagal memuat data kelas.</td></tr>';
+      }
+    })();
   </script>
 </body>
 </html>

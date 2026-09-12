@@ -66,21 +66,21 @@
 
       <!-- Stat cards -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-primary">
+<div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-primary">
           <div class="text-xs text-gray-500 mb-1">Wali Kelas</div>
-          <div class="text-2xl font-bold text-primary">6</div>
+          <div class="text-2xl font-bold text-primary" id="s-walas">0</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-secondary">
           <div class="text-xs text-gray-500 mb-1">Kelas</div>
-          <div class="text-2xl font-bold text-secondary">4</div>
+          <div class="text-2xl font-bold text-secondary" id="s-kelas">0</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-info">
           <div class="text-xs text-gray-500 mb-1">Siswa</div>
-          <div class="text-2xl font-bold text-info">128</div>
+          <div class="text-2xl font-bold text-info" id="s-siswa">0</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-secondary">
           <div class="text-xs text-gray-500 mb-1">Kehadiran Rata</div>
-          <div class="text-2xl font-bold text-secondary">89%</div>
+          <div class="text-2xl font-bold text-secondary" id="s-kehadiran">—</div>
         </div>
       </div>
 
@@ -92,12 +92,7 @@
             <thead class="bg-neutral text-gray-500 text-xs uppercase"><tr>
               <th class="text-left px-6 py-3">Kelas</th><th class="text-left px-6 py-3">Walas</th><th class="text-left px-6 py-3">Siswa</th><th class="text-left px-6 py-3">Rata-rata</th>
             </tr></thead>
-            <tbody class="divide-y divide-gray-50">
-              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium"><a href="../dashboard/dashboard.html?kelas=7A" class="text-primary hover:text-accent hover:underline">7A</a></td><td class="px-6 py-3">Ahmad Fauzan</td><td class="px-6 py-3">32</td><td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">87.5%</span></td></tr>
-              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium"><a href="../dashboard/dashboard.html?kelas=7B" class="text-primary hover:text-accent hover:underline">7B</a></td><td class="px-6 py-3">Siti Aminah</td><td class="px-6 py-3">30</td><td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">91.2%</span></td></tr>
-              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium"><a href="../dashboard/dashboard.html?kelas=8A" class="text-primary hover:text-accent hover:underline">8A</a></td><td class="px-6 py-3">Budi Santoso</td><td class="px-6 py-3">34</td><td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-yellow-100 text-yellow-700">85.3%</span></td></tr>
-              <tr class="hover:bg-gray-50"><td class="px-6 py-3 font-medium"><a href="../dashboard/dashboard.html?kelas=8B" class="text-primary hover:text-accent hover:underline">8B</a></td><td class="px-6 py-3">Dewi Lestari</td><td class="px-6 py-3">32</td><td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700">88.9%</span></td></tr>
-            </tbody>
+<tbody id="tbody-ringkasan-kelas" class="divide-y divide-gray-50"></tbody>
           </table>
         </div>
       </div>
@@ -106,11 +101,8 @@
         <!-- Aktivitas Terbaru -->
         <div class="bg-white rounded-xl shadow-sm">
           <div class="px-6 py-4 border-b border-gray-100"><h2 class="font-bold text-primary">Aktivitas Terbaru</h2></div>
-          <ul class="divide-y divide-gray-50">
-            <li class="px-6 py-3 flex items-start gap-3"><span class="mt-0.5 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-check text-green-600 text-xs"></i></span><div><div class="text-sm font-medium">Ahmad Fauzan mengirim laporan</div><div class="text-xs text-gray-400">10 Sep 2026 · 08:32</div></div></li>
-            <li class="px-6 py-3 flex items-start gap-3"><span class="mt-0.5 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-edit text-blue-600 text-xs"></i></span><div><div class="text-sm font-medium">Siti Aminah memperbarui absensi 7B</div><div class="text-xs text-gray-400">10 Sep 2026 · 07:15</div></div></li>
-            <li class="px-6 py-3 flex items-start gap-3"><span class="mt-0.5 w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-exclamation-triangle text-yellow-600 text-xs"></i></span><div><div class="text-sm font-medium">Peringatan: 3 siswa alpa di 8A</div><div class="text-xs text-gray-400">09 Sep 2026 · 14:00</div></div></li>
-            <li class="px-6 py-3 flex items-start gap-3"><span class="mt-0.5 w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0"><i class="fas fa-user-plus text-purple-600 text-xs"></i></span><div><div class="text-sm font-medium">Admin menambah pengguna baru</div><div class="text-xs text-gray-400">09 Sep 2026 · 10:45</div></div></li>
+<ul class="divide-y divide-gray-50">
+            <li class="px-6 py-10 text-center text-sm text-gray-400">Belum ada aktivitas — data kosong mulai dari nol.</li>
           </ul>
         </div>
 
@@ -178,6 +170,45 @@
       d.classList.toggle('-translate-x-full', !open);
       o.classList.toggle('hidden', !open);
     }
+    function escHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    (async function loadRingkasan() {
+      const tbody = document.getElementById('tbody-ringkasan-kelas');
+      try {
+        const res = await fetch('/api/users');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const walas = (data.users || []).filter(u => u.role === 'wali_kelas');
+        const kelasSet = new Set(walas.map(u => u.kelas).filter(Boolean));
+        document.getElementById('s-walas').textContent = walas.length;
+        document.getElementById('s-kelas').textContent = kelasSet.size;
+        document.getElementById('s-siswa').textContent = '0';
+        document.getElementById('s-kehadiran').textContent = '—';
+        if (!tbody) return;
+        const byKelas = {};
+        walas.forEach(u => {
+          const k = u.kelas || 'Tanpa kelas';
+          if (!byKelas[k]) byKelas[k] = [];
+          byKelas[k].push(u.name);
+        });
+        const keys = Object.keys(byKelas).sort();
+        if (!keys.length) {
+          tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-10 text-center text-gray-400">Belum ada kelas — tambahkan wali kelas melalui menu Pengguna.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = keys.map(k =>
+          '<tr class="hover:bg-gray-50">' +
+          '<td class="px-6 py-3 font-medium"><a href="../dashboard/dashboard.html?kelas=' + encodeURIComponent(k) + '" class="text-primary hover:text-accent hover:underline">' + escHtml(k) + '</a></td>' +
+          '<td class="px-6 py-3">' + escHtml(byKelas[k].join(', ')) + '</td>' +
+          '<td class="px-6 py-3">—</td>' +
+          '<td class="px-6 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">Belum ada data</span></td>' +
+          '</tr>'
+        ).join('');
+      } catch (e) {
+        if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-10 text-center text-gray-400">Gagal memuat ringkasan.</td></tr>';
+      }
+    })();
   </script>
 </body>
 </html>
