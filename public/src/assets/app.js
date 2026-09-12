@@ -122,69 +122,30 @@
 
   window.WKToast = WKToast;
 
-  var WK_THEMES = {
-    normal: {
-      label: "Normal",
-      primary: "#1A3A5C",
-      secondary: "#2A7A6B",
-      accent: "#E89D3F",
-      neutral: "#F5F6F8"
-    },
-    dark: {
-      label: "Gelap",
-      primary: "#16263B",
-      secondary: "#2A9D8F",
-      accent: "#F4A94F",
-      neutral: "#0F172A"
-    },
-    fullcolor: {
-      label: "Full Color",
-      primary: "#7C3AED",
-      secondary: "#0D9488",
-      accent: "#F59E0B",
-      neutral: "#F8FAFC"
+  var XLS_LOADED = false;
+  var XLS_QUEUE = [];
+  function loadXLS(cb) {
+    if (window.XLSX) {
+      cb(true);
+      return;
     }
-  };
-
-  function applyTheme(name, persist) {
-    name = WK_THEMES[name] ? name : "normal";
-    if (persist) {
-      try {
-        localStorage.setItem("wkTheme", name);
-      } catch (e) {}
-    }
-    document.documentElement.setAttribute("data-theme", name);
-    var t = WK_THEMES[name];
-    try {
-      if (window.tailwind && window.tailwind.config) {
-        var cfg = window.tailwind.config;
-        cfg.theme = cfg.theme || {};
-        cfg.theme.extend = cfg.theme.extend || {};
-        cfg.theme.extend.colors = Object.assign(
-          {},
-          cfg.theme.extend.colors,
-          {
-            primary: t.primary,
-            secondary: t.secondary,
-            accent: t.accent,
-            neutral: t.neutral
-          }
-        );
-        window.tailwind.rebuild();
-      }
-    } catch (e) {}
+    XLS_QUEUE.push(cb);
+    if (XLS_LOADED) return;
+    XLS_LOADED = true;
+    var s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+    s.onload = function () {
+      XLS_QUEUE.forEach(function (c) { c(!!window.XLSX); });
+      XLS_QUEUE = [];
+    };
+    s.onerror = function () {
+      XLS_QUEUE.forEach(function (c) { c(false); });
+      XLS_QUEUE = [];
+    };
+    document.head.appendChild(s);
   }
 
-  function initTheme() {
-    var saved = "normal";
-    try {
-      var v = localStorage.getItem("wkTheme");
-      if (WK_THEMES[v]) saved = v;
-    } catch (e) {}
-    applyTheme(saved, false);
-  }
-
-  window.applyTheme = applyTheme;
+  window.WKLoadXLS = loadXLS;
 
   function initDrawer() {
     var drawer = $("#drawer");
@@ -407,7 +368,6 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    initTheme();
     initDate();
     initTopbar();
     initNav();

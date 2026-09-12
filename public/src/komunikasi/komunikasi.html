@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Komunikasi Orang Tua â€” WaliKelas</title>
+  <title>Komunikasi Orang Tua — WaliKelas</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
@@ -71,7 +71,7 @@
       <button id="send-open" class="mt-4 w-full bg-secondary hover:bg-secondary/90 text-white text-sm font-medium px-6 py-2.5 rounded-lg transition">
         <i class="fa-brands fa-whatsapp mr-1.5"></i> Buka WhatsApp untuk Siswa Terpilih
       </button>
-      <p class="text-xs text-gray-400 mt-2 text-center">Tiap siswa dibuka di tab WhatsApp (Web/App) dengan pesan terisi â€” tinggal tekan kirim. Jika pop-up diblokir, izinkan pop-up situs ini.</p>
+      <p class="text-xs text-gray-400 mt-2 text-center">Tiap siswa dibuka di tab WhatsApp (Web/App) dengan pesan terisi — tinggal tekan kirim. Jika pop-up diblokir, izinkan pop-up situs ini.</p>
     </div>
   </div>
 
@@ -156,7 +156,7 @@
 
     <div class="px-4 py-4 border-t border-white/10 space-y-3">
       <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
-        <span class="text-white/90 font-medium">Kelas 7A</span> Â· 2026/2027 Ganjil Â· 0 siswa aktif
+        <span class="text-white/90 font-medium">Kelas 7A</span> · 2026/2027 Ganjil · 0 siswa aktif
       </div>
       <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
         <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
@@ -231,7 +231,7 @@
 
       <div class="px-4 py-4 border-t border-white/10 space-y-3">
         <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
-          <span class="text-white/90 font-medium">Kelas 7A</span> Â· 2026/2027 Ganjil Â· 0 siswa aktif
+          <span class="text-white/90 font-medium">Kelas 7A</span> · 2026/2027 Ganjil · 0 siswa aktif
         </div>
         <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
           <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
@@ -352,7 +352,7 @@
       var sel = document.getElementById("kom-siswa");
       if (!sel) return;
       sel.innerHTML = '<option value="">Pilih siswa</option>' + getRoster().map(function (s) {
-        return '<option value="' + escHtml(s.nama) + '"' + (s.hp ? ' data-hp="' + escHtml(s.hp) + '"' : "") + ">" + escHtml(s.nama) + (s.hp ? " â€” " + escHtml(s.hp) : " (no HP belum diisi)") + "</option>";
+        return '<option value="' + escHtml(s.nama) + '"' + (s.hp ? ' data-hp="' + escHtml(s.hp) + '"' : "") + ">" + escHtml(s.nama) + (s.hp ? " — " + escHtml(s.hp) : " (no HP belum diisi)") + "</option>";
       }).join("");
     }
     function updateStats() {
@@ -380,7 +380,7 @@
       var colors = { "Telepon": "info", "WhatsApp": "secondary", "Pertemuan": "primary", "Surat": "accent" };
       wrap.innerHTML = arr.map(function (r) {
         var col = colors[r.media] || "secondary";
-        var hp = r.hp ? " â€” " + escHtml(r.hp) : "";
+        var hp = r.hp ? " — " + escHtml(r.hp) : "";
         var link = r.hp ? '<a href="https://wa.me/' + r.hp.replace(/[^0-9]/g, "") + '" target="_blank" class="ml-1 text-[11px] text-secondary hover:underline" title="Buka WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>' : "";
         var sendBtn = r.hp ? '<button type="button" data-kirim-wa data-hp="' + escHtml(r.hp) + '" data-siswa="' + escHtml(r.siswa) + '" data-isi="' + escHtml(r.ringkas) + '" class="ml-1 text-[11px] px-1.5 py-0.5 rounded-lg bg-secondary/10 text-secondary font-medium hover:bg-secondary/20 transition" title="Kirim pesan ke nomor ini">Kirim</button>' : "";
         return '<div class="flex flex-wrap items-start gap-2 p-3 bg-white rounded-xl">' +

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Absensi Kelas 7A â€” WaliKelas</title>
+  <title>Absensi Kelas 7A — WaliKelas</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
@@ -84,7 +84,7 @@
     </nav>
     <div class="px-4 py-4 border-t border-white/10 space-y-3">
       <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
-        <span class="text-white/90 font-medium" id="kelas-label-side">Kelas 7A</span> Â· 2026/2027 Ganjil Â· 0 siswa aktif
+        <span class="text-white/90 font-medium" id="kelas-label-side">Kelas 7A</span> · 2026/2027 Ganjil · 0 siswa aktif
       </div>
       <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
         <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
@@ -157,7 +157,7 @@
       </nav>
       <div class="px-4 py-4 border-t border-white/10 space-y-3">
         <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
-          <span class="text-white/90 font-medium" id="kelas-label-drawer">Kelas 7A</span> Â· 2026/2027 Ganjil Â· 0 siswa aktif
+          <span class="text-white/90 font-medium" id="kelas-label-drawer">Kelas 7A</span> · 2026/2027 Ganjil · 0 siswa aktif
         </div>
         <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
           <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
@@ -242,7 +242,7 @@
           </thead>
           <tbody class="divide-y divide-gray-50">
             <tr>
-              <td colspan="4" class="px-4 py-12 text-center text-gray-400">Belum ada siswa di rombel ini. Data kosong mulai dari nol â€” tambahkan siswa melalui admin.</td>
+              <td colspan="4" class="px-4 py-12 text-center text-gray-400">Belum ada siswa di rombel ini. Data kosong mulai dari nol — tambahkan siswa melalui admin.</td>
             </tr>
           </tbody>
         </table>
@@ -341,7 +341,7 @@
     var sidebarEl = document.querySelectorAll('.bg-white\\/5');
     if(!roster.length){
       tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-12 text-center text-gray-400">Belum ada siswa di rombel ini. Tambah atau impor siswa di menu Data Siswa, lalu tekan <b>Simpan Data Siswa</b>.</td></tr>';
-      sidebarEl.forEach(function(el){ el.innerHTML = '<span class="text-white/90 font-medium">Kelas ' + (currentKelas()||'-') + '</span> Â· 2026/2027 Ganjil Â· 0 siswa aktif'; });
+      sidebarEl.forEach(function(el){ el.innerHTML = '<span class="text-white/90 font-medium">Kelas ' + (currentKelas()||'-') + '</span> · 2026/2027 Ganjil · 0 siswa aktif'; });
       return;
     }
     var html = roster.map(function(s, i){
@@ -357,12 +357,12 @@
     }).join('');
     tbody.innerHTML = html;
     var n = roster.length;
-    sidebarEl.forEach(function(el){ el.innerHTML = '<span class="text-white/90 font-medium">Kelas ' + currentKelas() + '</span> Â· 2026/2027 Ganjil Â· ' + n + ' siswa aktif'; });
+    sidebarEl.forEach(function(el){ el.innerHTML = '<span class="text-white/90 font-medium">Kelas ' + currentKelas() + '</span> · 2026/2027 Ganjil · ' + n + ' siswa aktif'; });
     var totalEl = document.getElementById('absen-siswa-total');
     if(totalEl) totalEl.textContent = 'dari ' + n + ' siswa';
     var countEl = document.getElementById('absen-count');
     if(countEl) countEl.textContent = 'Menampilkan ' + n + ' dari ' + n + ' siswa';
-    document.title = 'Absensi Kelas ' + currentKelas() + ' â€” WaliKelas';
+    document.title = 'Absensi Kelas ' + currentKelas() + ' — WaliKelas';
   }
 
   /* ===== SEARCH ===== */
@@ -474,7 +474,7 @@
     document.getElementById('kelas-label-side').textContent = kls ? 'Kelas ' + kls : 'Absensi';
     document.getElementById('kelas-label-drawer').textContent = kls ? 'Kelas ' + kls : 'Absensi';
     var title = document.title;
-    if(title.indexOf('Kelas') !== -1) document.title = 'Absensi' + (kls ? ' Kelas ' + kls : '') + ' â€” WaliKelas';
+    if(title.indexOf('Kelas') !== -1) document.title = 'Absensi' + (kls ? ' Kelas ' + kls : '') + ' — WaliKelas';
     /* build roster from siswa localStorage, then restore saved attendance for today */
     buildAbsenRows();
     renderAllSelects();

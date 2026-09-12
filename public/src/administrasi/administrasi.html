@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Administrasi Kelas 7A â€” WaliKelas</title>
+  <title>Administrasi Kelas 7A — WaliKelas</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
@@ -88,7 +88,7 @@
 
     <div class="px-4 py-4 border-t border-white/10 space-y-3">
       <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
-        <span id="kelas-label-drawer" class="text-white/90 font-medium">Kelas 7A</span> Â· 2026/2027 Ganjil Â· 0 siswa aktif
+        <span id="kelas-label-drawer" class="text-white/90 font-medium">Kelas 7A</span> · 2026/2027 Ganjil · 0 siswa aktif
       </div>
       <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
         <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
@@ -163,7 +163,7 @@
 
       <div class="px-4 py-4 border-t border-white/10 space-y-3">
         <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
-<span id="kelas-label-side" class="text-white/90 font-medium">Kelas 7A</span> Â· 2026/2027 Ganjil Â· 0 siswa aktif
+<span id="kelas-label-side" class="text-white/90 font-medium">Kelas 7A</span> · 2026/2027 Ganjil · 0 siswa aktif
         </div>
         <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
           <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
@@ -242,27 +242,27 @@
       <dl class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-3">
         <div class="flex items-start gap-2">
           <dt class="text-xs text-gray-400 min-w-[110px]">Sekolah</dt>
-          <dd class="text-sm font-medium text-gray-800" id="idt-sekolah">â€”</dd>
+          <dd class="text-sm font-medium text-gray-800" id="idt-sekolah">—</dd>
         </div>
         <div class="flex items-start gap-2">
           <dt class="text-xs text-gray-400 min-w-[110px]">Kepala Sekolah</dt>
-          <dd class="text-sm font-medium text-gray-800" id="idt-kepala">â€”</dd>
+          <dd class="text-sm font-medium text-gray-800" id="idt-kepala">—</dd>
         </div>
         <div class="flex items-start gap-2">
           <dt class="text-xs text-gray-400 min-w-[110px]">Tahun/Semester</dt>
-          <dd class="text-sm font-medium text-gray-800" id="idt-tahun">â€”</dd>
+          <dd class="text-sm font-medium text-gray-800" id="idt-tahun">—</dd>
         </div>
         <div class="flex items-start gap-2">
           <dt class="text-xs text-gray-400 min-w-[110px]">Wali Kelas</dt>
-          <dd class="text-sm font-medium text-gray-800" id="idt-walas">â€”</dd>
+          <dd class="text-sm font-medium text-gray-800" id="idt-walas">—</dd>
         </div>
         <div class="flex items-start gap-2">
           <dt class="text-xs text-gray-400 min-w-[110px]">Siswa</dt>
-          <dd class="text-sm font-medium text-gray-800" id="idt-siswa">â€”</dd>
+          <dd class="text-sm font-medium text-gray-800" id="idt-siswa">—</dd>
         </div>
         <div class="flex items-start gap-2">
           <dt class="text-xs text-gray-400 min-w-[110px]">NPSN</dt>
-          <dd class="text-sm font-medium text-gray-800" id="idt-npsn">â€”</dd>
+          <dd class="text-sm font-medium text-gray-800" id="idt-npsn">—</dd>
         </div>
       </dl>
     </div>
@@ -406,7 +406,7 @@
       var i = item.indexOf(":");
       var siswa = i >= 0 ? item.slice(0, i).trim() : "";
       var rest = i >= 0 ? item.slice(i + 1).trim() : item.trim();
-      var j = rest.indexOf(" â€” ");
+      var j = rest.indexOf(" — ");
       var ekskul = j >= 0 ? rest.slice(0, j).trim() : rest;
       var jabatan = j >= 0 ? rest.slice(j + 3).trim() : "";
       return { siswa: siswa, ekskul: ekskul, jabatan: jabatan };
@@ -420,7 +420,7 @@
     function studentOptions(sel) {
       var names = studentNames();
       if (sel && names.indexOf(sel) === -1) names.unshift(sel);
-      return '<option value="">â€” pilih siswa â€”</option>' + names.map(function (n) {
+      return '<option value="">— pilih siswa —</option>' + names.map(function (n) {
         return '<option value="' + escHtml(n) + '"' + (n === sel ? " selected" : "") + ">" + escHtml(n) + "</option>";
       }).join("");
     }
@@ -576,12 +576,12 @@
       var roster = [];
       try { var a = JSON.parse(localStorage.getItem("siswa_" + currentKelas()) || "null"); roster = Array.isArray(a) ? a : []; } catch (e) {}
       var set = function (id, val) { var e = document.getElementById(id); if (e) e.textContent = val; };
-      set("idt-sekolah", s.sekolah || "â€”");
-      set("idt-kepala", s.kepala || "â€”");
-      set("idt-tahun", s.tahun ? s.tahun + " Ganjil" : "â€”");
-      set("idt-walas", localStorage.getItem("userName") || "â€”");
+      set("idt-sekolah", s.sekolah || "—");
+      set("idt-kepala", s.kepala || "—");
+      set("idt-tahun", s.tahun ? s.tahun + " Ganjil" : "—");
+      set("idt-walas", localStorage.getItem("userName") || "—");
       set("idt-siswa", roster.length ? roster.length + " orang" : "0");
-      set("idt-npsn", s.npsn || "â€”");
+      set("idt-npsn", s.npsn || "—");
     }
 
     /* ===== Statistik dari data tersimpan ===== */
@@ -636,7 +636,7 @@
             var ex = row.querySelector(".adm-row-ekskul");
             var jb = row.querySelector(".adm-row-jab");
             if (!si || !si.value || !ex || !ex.value.trim()) return;
-            vals.push(si.value + ": " + ex.value.trim() + (jb && jb.value.trim() ? " â€” " + jb.value.trim() : ""));
+            vals.push(si.value + ": " + ex.value.trim() + (jb && jb.value.trim() ? " — " + jb.value.trim() : ""));
           } else if (isStudentKey(admKey)) {
             var li = row.querySelector(".adm-row-label");
             var sl = row.querySelector(".adm-row-siswa");
@@ -667,7 +667,7 @@
       });
       var idt = document.getElementById("identitas-kelas");
       if (idt) idt.textContent = "Identitas Kelas " + kls;
-      document.title = "Administrasi Kelas " + kls + " â€” WaliKelas";
+      document.title = "Administrasi Kelas " + kls + " — WaliKelas";
       renderIdentitas();
       updateAdmStats();
       renderAgenda();
