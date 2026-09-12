@@ -41,6 +41,7 @@ export interface Store {
   createUser(data: NewUser): Promise<UserRow>;
   updateUser(id: string, patch: Partial<UserRow>): Promise<UserRow | null>;
   deleteUser(id: string): Promise<boolean>;
+  resetAll(): Promise<void>;
   close(): Promise<void>;
 }
 
@@ -167,6 +168,11 @@ class MemoryStore implements Store {
     return this.rows.delete(id);
   }
 
+  async resetAll(): Promise<void> {
+    this.rows.clear();
+    await seedDefaults(this);
+  }
+
   async close(): Promise<void> {
     this.rows.clear();
   }
@@ -272,6 +278,11 @@ class PostgresStore implements Store {
   async deleteUser(id: string): Promise<boolean> {
     const res = await this.pool.query(`DELETE FROM users WHERE id = $1`, [id]);
     return (res.rowCount || 0) > 0;
+  }
+
+  async resetAll(): Promise<void> {
+    await this.pool.query(`DELETE FROM users`);
+    await seedDefaults(this);
   }
 
   async close(): Promise<void> {

@@ -263,6 +263,25 @@ async function main() {
     const del = await res.json().catch(() => ({}));
     check("DELETE /api/users/:id (admin) sukses", res.status === 200 && del.success === true, `status=${res.status}`);
 
+    res = await api("/api/reset", {
+      method: "POST",
+      headers: { cookie: cookieHeader() },
+    });
+    const rst = await res.json().catch(() => ({}));
+    check(
+      "POST /api/reset (admin) → reset, kembali 5 user default",
+      res.status === 200 && rst.success === true && rst.reset === true && rst.users === 5,
+      `status=${res.status} users=${rst.users}`
+    );
+    res = await login("ahmad@walikelas.sch.id", "wali123");
+    const loginAfterReset = await res.json().catch(() => ({}));
+    check(
+      "login wali_kelas setelah reset berhasil (wali123)",
+      res.status === 200 && loginAfterReset.success === true,
+      `status=${res.status}`
+    );
+
+    res = await login("admin@sekolah.id", "wali123");
     res = await api("/api/dashboard", { headers: { cookie: cookieHeader() } });
     const dash = await res.json().catch(() => ({}));
     check(

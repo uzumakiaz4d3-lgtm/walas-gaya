@@ -63,7 +63,10 @@
     <main class="p-4 md:p-8 max-w-7xl mx-auto">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <h1 class="text-2xl font-bold text-primary">Pengguna & Hak Akses</h1>
-        <button onclick="openModal()" class="inline-flex items-center gap-2 bg-accent hover:bg-accent/90 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition"><i class="fas fa-plus"></i> Tambah Pengguna</button>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button onclick="resetAllData()" class="inline-flex items-center gap-2 text-danger border border-danger/30 hover:bg-danger/5 px-4 py-2.5 rounded-xl text-sm font-semibold transition"><i class="fas fa-trash-can"></i> Reset Semua Data</button>
+          <button onclick="openModal()" class="inline-flex items-center gap-2 bg-accent hover:bg-accent/90 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition"><i class="fas fa-plus"></i> Tambah Pengguna</button>
+        </div>
       </div>
 
       <!-- Search -->
@@ -292,6 +295,23 @@
         .then(function (res) {
           if (!res.success) { toast(res.error || "Gagal menghapus"); return; }
           toast("Akun dihapus");
+          loadUsers();
+        })
+        .catch(function () { toast("Gagal terhubung ke server"); });
+    }
+
+    function resetAllData() {
+      if (!confirm("Hapus SEMUA data (semua akun + seluruh absensi)? Tindakan ini tidak dapat dibatalkan.")) return;
+      var ketik = prompt("Ketik RESET untuk mengonfirmasi penghapusan seluruh data:");
+      if (ketik !== "RESET") { toast("Dibatalkan"); return; }
+      api(null, "POST", "/api/reset")
+        .then(function (res) {
+          if (!res.success) { toast(res.error || "Gagal reset"); return; }
+          for (var i = localStorage.length - 1; i >= 0; i--) {
+            var k = localStorage.key(i);
+            if (k && k.indexOf("absensi_") === 0) localStorage.removeItem(k);
+          }
+          toast("Semua data direset ke awal");
           loadUsers();
         })
         .catch(function () { toast("Gagal terhubung ke server"); });
