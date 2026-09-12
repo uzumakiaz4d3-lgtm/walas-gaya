@@ -303,6 +303,56 @@
     </div>
   </div>
 
+  <!-- Modal: Edit Siswa -->
+  <div id="edit-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div data-close-modal class="absolute inset-0 bg-black/40"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-bold text-primary">Edit Siswa</h2>
+        <button data-close-modal class="text-gray-400 hover:text-gray-600 transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      <form id="form-edit-siswa" class="space-y-4" novalidate>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Nama Lengkap <span class="text-[#C23B22]">*</span></label>
+          <input name="n-e-nama" type="text" required placeholder="Nama siswa" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/40">
+          <p class="text-xs text-[#C23B22] mt-1 hidden err-e-nama">Nama wajib diisi</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">NIS</label>
+          <input name="n-e-nis" type="text" readonly class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-500">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Jenis Kelamin <span class="text-[#C23B22]">*</span></label>
+            <select name="n-e-jk" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/40">
+              <option value="L">Laki-laki</option>
+              <option value="P">Perempuan</option>
+            </select>
+            <p class="text-xs text-[#C23B22] mt-1 hidden err-e-jk">Pilih jenis kelamin</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Status</label>
+            <select name="n-e-status" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/40">
+              <option value="Aktif">Aktif</option>
+              <option value="Perhatian">Perhatian</option>
+              <option value="Izin">Izin</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">No. HP / WhatsApp</label>
+          <input name="n-e-hp" type="tel" placeholder="0812xxxxxxx (opsional, untuk komunikasi)" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary/40">
+          <p class="text-xs text-gray-400 mt-1">Dipakai halaman Komunikasi untuk hubungi orang tua/siswa.</p>
+        </div>
+        <button type="submit" class="w-full bg-secondary text-white font-medium text-sm py-2.5 rounded-lg hover:bg-secondary/90 transition">
+          <i class="fa-solid fa-pen mr-1.5"></i> Simpan Perubahan
+        </button>
+      </form>
+    </div>
+  </div>
+
   <!-- Modal: Profil Siswa -->
   <div id="profile-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
     <div data-close-modal class="absolute inset-0 bg-black/40"></div>
@@ -401,6 +451,7 @@
       '<td class="px-4 py-3"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium ' + stCls + '">' + status + '</span></td>' +
       '<td class="px-4 py-3 text-center hadir-cell">0</td>' +
       '<td class="px-4 py-3"><div class="flex items-center gap-1.5">' +
+      '<button data-open-modal="edit-modal" class="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition">Edit</button>' +
       '<button data-open-modal="profile-modal" class="px-2 py-1 rounded text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 transition">Profil</button>' +
       '<a href="../pembinaan/pembinaan.html" class="px-2 py-1 rounded text-xs font-medium bg-accent/10 text-accent hover:bg-accent/20 transition">Bina</a>' +
       '<a href="../komunikasi/komunikasi.html" class="px-2 py-1 rounded text-xs font-medium bg-secondary/10 text-secondary hover:bg-secondary/20 transition">Hubungi</a>' +
@@ -524,6 +575,68 @@
 
     profileModal.querySelectorAll('[data-close-modal]').forEach(function(el){
       el.addEventListener('click', function(){ profileModal.classList.add('hidden'); });
+    });
+  })();
+
+  /* ===== EDIT MODAL ===== */
+  (function(){
+    const editModal = document.getElementById('edit-modal');
+    if(!editModal) return;
+    let currentTr = null;
+
+    document.addEventListener('click', function(e){
+      const btn = e.target.closest('[data-open-modal="edit-modal"]');
+      if(!btn) return;
+      const tr = btn.closest('tr');
+      if(!tr) return;
+      currentTr = tr;
+      editModal.querySelector('[name="n-e-nama"]').value = tr.getAttribute('data-nama') || '';
+      editModal.querySelector('[name="n-e-nis"]').value = tr.getAttribute('data-nis') || '';
+      editModal.querySelector('[name="n-e-jk"]').value = tr.getAttribute('data-jk') || 'L';
+      editModal.querySelector('[name="n-e-hp"]').value = tr.getAttribute('data-hp') || '';
+      editModal.querySelector('[name="n-e-status"]').value = tr.getAttribute('data-status') || 'Aktif';
+      editModal.querySelectorAll('.err-e-nama,.err-e-jk').forEach(function(el){ el.classList.add('hidden'); });
+      editModal.classList.remove('hidden');
+    });
+
+    editModal.querySelectorAll('[data-close-modal]').forEach(function(el){
+      el.addEventListener('click', function(){ editModal.classList.add('hidden'); });
+    });
+
+    const form = document.getElementById('form-edit-siswa');
+    if(form) form.addEventListener('submit', function(e){
+      e.preventDefault();
+      if(!currentTr) return;
+      const nama = form.querySelector('[name="n-e-nama"]').value.trim();
+      const jk   = form.querySelector('[name="n-e-jk"]').value;
+      const hp   = form.querySelector('[name="n-e-hp"]').value.trim();
+      const status = form.querySelector('[name="n-e-status"]').value;
+      let valid = true;
+      form.querySelectorAll('.err-e-nama,.err-e-jk').forEach(function(el){ el.classList.add('hidden'); });
+      if(!nama){ form.querySelector('.err-e-nama').classList.remove('hidden'); valid = false; }
+      if(!jk){ form.querySelector('.err-e-jk').classList.remove('hidden'); valid = false; }
+      if (hp && hp.replace(/[^0-9]/g,'').length < 9){
+        if (typeof WKToast === 'function') WKToast('Nomor HP tidak valid (minimal 9 digit)', 'error');
+        valid = false;
+      }
+      if(!valid) return;
+
+      const hadir = currentTr.getAttribute('data-hadir') || '0';
+      const wrap = document.createElement('tbody');
+      wrap.innerHTML = renderRow(currentTr.getAttribute('data-nis'), nama, jk, status, hp);
+      const newTr = wrap.firstElementChild;
+      if (newTr) {
+        newTr.setAttribute('data-hadir', hadir);
+        const hcell = newTr.querySelector('.hadir-cell');
+        if (hcell) hcell.textContent = hadir;
+        currentTr.replaceWith(newTr);
+        saveRoster();
+        updateStats();
+        if (typeof window.siswaRefreshPager === 'function') window.siswaRefreshPager();
+        currentTr = null;
+        editModal.classList.add('hidden');
+        if (typeof WKToast === 'function') WKToast('Data siswa diperbarui — klik Simpan Data Siswa untuk menyimpan permanen');
+      }
     });
   })();
 
