@@ -91,6 +91,7 @@
       }
     }
   </script>
+  <script src="../assets/theme.js" defer></script>
   <script src="../assets/app.js" defer></script>
   <script src="../assets/sync.js" defer></script>
 </head>
@@ -111,6 +112,9 @@
       <h1 id="pageTitleTop" class="text-base md:text-lg font-bold text-primary text-center truncate"></h1>
     </div>
     <div class="flex items-center pr-6">
+      <button data-theme-toggle title="Ganti tema warna" class="w-9 h-9 rounded-lg bg-neutral text-primary hover:bg-neutral/70 flex items-center justify-center transition mr-2">
+        <i class="fa-solid fa-palette text-sm"></i>
+      </button>
       <time data-today class="text-sm text-gray-500"></time>
     </div>
   </header>
@@ -191,9 +195,14 @@
             <span class="block text-xs text-white/60">Wali Kelas</span>
           </div>
         </div>
-        <button data-close-drawer class="text-white/60 hover:text-white transition">
-          <i class="fa-solid fa-xmark text-xl"></i>
-        </button>
+        <div class="flex items-center gap-1">
+          <button data-theme-toggle title="Ganti tema warna" class="w-9 h-9 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition flex items-center justify-center">
+            <i class="fa-solid fa-palette text-sm"></i>
+          </button>
+          <button data-close-drawer class="text-white/60 hover:text-white transition">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
       </div>
 
       <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
