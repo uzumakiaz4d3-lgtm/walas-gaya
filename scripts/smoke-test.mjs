@@ -338,6 +338,17 @@ async function main() {
       `status=${res.status} n=${auditAdmin.entries && auditAdmin.entries.length}`
     );
 
+    res = await api("/api/kelas-data", {
+      method: "PUT",
+      headers: { cookie: cookieHeader() },
+      body: JSON.stringify({ kelas: "7A", key: "siswa", value: [{ nis: "X", nama: "Hack", jk: "L", status: "Aktif" }] }),
+    });
+    check(
+      "PUT /api/kelas-data oleh admin ditolak 403 (read-only)",
+      res.status === 403,
+      `status=${res.status}`
+    );
+
     res = await api("/api/users", {
       method: "POST",
       headers: { cookie: cookieHeader() },

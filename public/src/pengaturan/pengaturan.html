@@ -3,7 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pengaturan — WaliKelas</title>
+  <script>
+    (function () {
+      var role = localStorage.getItem("userRole");
+      if (role === "wali_kelas") return;
+      location.replace(role === "admin" ? "../admin/admin.html" : "../login.html");
+    })();
+  </script>
+  <title>Pengaturan â€” WaliKelas</title>
   <script>
     (function () {
       var role = localStorage.getItem("userRole");

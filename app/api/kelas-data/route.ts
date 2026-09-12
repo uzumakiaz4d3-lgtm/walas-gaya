@@ -53,6 +53,9 @@ export async function PUT(request: Request) {
     if (!kelas) return json({ success: false, error: "Parameter kelas wajib diisi" }, 400);
     const auth = await authorize(request, kelas);
     if (auth instanceof Response) return auth;
+    if (auth.session.role === "admin") {
+      return json({ success: false, error: "Administrator hanya dapat melihat data kelas, tidak boleh mengubah data" }, 403);
+    }
 
     const store = getStore();
     const record = await store.getAppData("kelas:" + kelas);

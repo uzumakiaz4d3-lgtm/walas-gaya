@@ -455,9 +455,60 @@
         }
       }
 
+      function setupViewOnly(vk) {
+        var mainEl = document.querySelector("main");
+        if (mainEl) {
+          var banner = document.createElement("div");
+          banner.className = "mb-5 rounded-xl border border-accent/40 bg-accent/10 px-4 py-3 text-sm text-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2";
+          banner.innerHTML = '<div><span class="font-semibold text-primary">Mode tampilan admin</span> &mdash; Kelas <b>' + escHtml(vk) + "</b> &middot; data hanya untuk dilihat.</div>" +
+            '<a href="../admin/admin.html" class="inline-flex items-center gap-2 bg-primary text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-primary/90 transition shrink-0"><i class="fa-solid fa-arrow-left"></i> Kembali ke Admin</a>';
+          mainEl.insertBefore(banner, mainEl.firstChild);
+        }
+
+        var adminLinks = [
+          ["../admin/admin.html", "Ringkasan", "fa-chart-pie"],
+          ["../admin/monitoring/monitoring.html", "Monitoring", "fa-eye"],
+          ["../admin/audit/audit.html", "Audit Log", "fa-clipboard-list"]
+        ];
+        function linkHtml() {
+          return adminLinks.map(function (l) {
+            return '<a href="' + l[0] + '" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/80 hover:bg-white/10 hover:text-white text-sm font-medium transition"><i class="fa-solid ' + l[2] + ' w-5 text-center"></i> ' + l[1] + "</a>";
+          }).join("");
+        }
+
+        var asideNav = document.querySelector("aside nav");
+        if (asideNav) asideNav.innerHTML = linkHtml();
+        var asideLogout = document.querySelector("aside .logout-btn");
+        if (asideLogout) {
+          asideLogout.outerHTML = '<a href="../admin/admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 text-white text-sm font-semibold transition"><i class="fa-solid fa-arrow-left w-5 text-center"></i> Kembali ke Admin</a>';
+        }
+
+        var bottom = document.querySelector("nav.md\\:hidden");
+        if (bottom) {
+          bottom.innerHTML = '<a href="../admin/admin.html" class="flex flex-col items-center gap-0.5 text-primary text-xs font-medium"><i class="fa-solid fa-chart-pie text-lg"></i> Ringkasan</a>' +
+            '<a href="../admin/monitoring/monitoring.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs"><i class="fa-solid fa-eye text-lg"></i> Monitoring</a>' +
+            '<a href="../admin/audit/audit.html" class="flex flex-col items-center gap-0.5 text-gray-400 text-xs"><i class="fa-solid fa-clipboard-list text-lg"></i> Audit</a>';
+        }
+
+        var drawerNav = document.querySelector("#drawer nav");
+        if (drawerNav) drawerNav.innerHTML = linkHtml();
+        var drawerLogout = document.querySelector("#drawer .logout-btn");
+        if (drawerLogout) {
+          drawerLogout.outerHTML = '<a href="../admin/admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 text-white text-sm font-semibold transition"><i class="fa-solid fa-arrow-left w-5 text-center"></i> Kembali ke Admin</a>';
+        }
+
+        var aksi = null;
+        document.querySelectorAll("main .bg-white").forEach(function (card) {
+          var h = card.querySelector("h2");
+          if (h && h.textContent.trim() === "Aksi Cepat") aksi = card;
+        });
+        if (aksi) aksi.remove();
+      }
+
       var vk = viewKelas();
       if (vk) {
         /* Mode tampilan admin (melalui Monitoring/Ringkasan): baca langsung dari server */
+        setupViewOnly(vk);
         var fab = document.querySelector("[data-open-modal]");
         if (fab) fab.style.display = "none";
         var modalEl = document.getElementById("modal");
