@@ -7,19 +7,222 @@
     (function () {
       var role = localStorage.getItem("userRole");
       if (role === "wali_kelas") return;
-      location.replace(role === "admin" ? "../admin/admin.html" : "../login.html");
+      location.replace(role === "admin" ? "../admin/pengaturan/pengaturan.html" : "../login.html");
     })();
   </script>
-  <title>Pengaturan â€” WaliKelas</title>
+  <title>Pengaturan — WaliKelas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
   <script>
-    (function () {
-      var role = localStorage.getItem("userRole");
-      var dest = role === "admin" ? "../admin/pengaturan/pengaturan.html" : (role ? "../dashboard/dashboard.html" : "../login.html");
-      location.replace(dest);
-    })();
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1A3A5C',
+            secondary: '#2A7A6B',
+            accent: '#E89D3F',
+            neutral: '#F5F6F8',
+            danger: '#C23B22',
+            info: '#2B6CB0'
+          }
+        }
+      }
+    }
   </script>
+  <script src="../assets/theme.js" defer></script>
+  <script src="../assets/app.js" defer></script>
 </head>
-<body class="bg-neutral text-gray-500 flex items-center justify-center min-h-screen text-sm">
-  Mengalihkan ke halaman pengaturan...
+<body class="bg-neutral text-gray-800 min-h-screen">
+  <!-- Topbar (desktop) -->
+  <header id="topbar" class="hidden md:flex fixed top-0 left-0 right-0 z-30 h-16 bg-white border-b border-gray-200 md:pl-72">
+    <div class="flex items-center pl-4 pr-2 gap-3 flex-1">
+      <button id="btn-show-sidebar" class="hidden w-10 h-10 items-center justify-center rounded-full hover:bg-neutral text-gray-500"><i class="fa-solid fa-bars"></i></button>
+      <span class="text-sm font-medium text-gray-500">Pengaturan Akun</span>
+    </div>
+    <div class="flex items-center pr-5 gap-2">
+      <button class="data-theme-toggle w-10 h-10 rounded-full hover:bg-neutral text-gray-500" title="Mode tampilan"><i class="fa-solid fa-circle-half-stroke"></i></button>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="hidden md:flex fixed left-0 top-0 bottom-0 w-72 bg-primary text-white z-40 flex-col">
+    <div class="flex items-center gap-3 px-6 h-16 border-b border-white/10">
+      <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent text-primary font-bold text-lg">W</span>
+      <div>
+        <div class="font-bold text-lg leading-tight">WaliKelas</div>
+        <div class="text-xs text-white/50">Wali Kelas</div>
+      </div>
+    </div>
+    <div class="px-6 pt-4 pb-2 text-[10px] uppercase tracking-widest text-white/40">Menu</div>
+    <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+      <a href="../dashboard/dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition"><i class="fa-solid fa-gauge-high w-5 text-center"></i> Dashboard</a>
+      <a href="../absensi/absensi.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition"><i class="fa-solid fa-clipboard-check w-5 text-center"></i> Absensi</a>
+      <a href="../siswa/siswa.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition"><i class="fa-solid fa-users w-5 text-center"></i> Data Siswa</a>
+      <a href="../administrasi/administrasi.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition"><i class="fa-solid fa-briefcase w-5 text-center"></i> Administrasi</a>
+      <a href="../pembinaan/pembinaan.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition"><i class="fa-solid fa-graduation-cap w-5 text-center"></i> Pembinaan</a>
+      <a href="../komunikasi/komunikasi.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition"><i class="fa-solid fa-comments w-5 text-center"></i> Komunikasi</a>
+      <a href="../laporan/laporan.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition"><i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan</a>
+      <a href="pengaturan.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 font-semibold border-l-4 border-accent text-white text-sm font-medium transition"><i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan</a>
+    </nav>
+    <div class="px-4 py-4 border-t border-white/10 space-y-3">
+      <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
+        <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
+      </button>
+    </div>
+  </aside>
+
+  <!-- Topbar mobile -->
+  <header class="md:hidden sticky top-0 z-30 bg-primary text-white px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="flex items-center justify-center w-8 h-8 rounded-full bg-accent text-primary font-bold text-sm">W</span>
+      <span class="font-bold">Pengaturan</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="data-theme-toggle w-8 h-8 rounded-full hover:bg-white/10 text-white" title="Mode tampilan"><i class="fa-solid fa-circle-half-stroke"></i></button>
+      <button onclick="toggleDrawer()" class="p-2 rounded-lg hover:bg-white/10"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </header>
+
+  <!-- Drawer -->
+  <div id="drawer-overlay" class="hidden fixed inset-0 z-50 bg-black/40" onclick="toggleDrawer()"></div>
+  <div id="drawer" class="fixed top-0 left-0 h-full w-72 bg-primary z-50 transform -translate-x-full transition-transform duration-300 shadow-2xl">
+    <div class="flex items-center gap-3 px-6 h-16 border-b border-white/10">
+      <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent text-primary font-bold text-lg">W</span>
+      <div>
+        <div class="font-bold text-lg text-white leading-tight">WaliKelas</div>
+        <div class="text-xs text-white/50">Wali Kelas</div>
+      </div>
+    </div>
+    <nav class="px-3 py-3 space-y-1 overflow-y-auto">
+      <a href="../dashboard/dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10"><i class="fa-solid fa-gauge-high w-5 text-center text-xs"></i> Dashboard</a>
+      <a href="../absensi/absensi.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10"><i class="fa-solid fa-clipboard-check w-5 text-center text-xs"></i> Absensi</a>
+      <a href="../siswa/siswa.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10"><i class="fa-solid fa-users w-5 text-center text-xs"></i> Data Siswa</a>
+      <a href="../administrasi/administrasi.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10"><i class="fa-solid fa-briefcase w-5 text-center text-xs"></i> Administrasi</a>
+      <a href="../pembinaan/pembinaan.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10"><i class="fa-solid fa-graduation-cap w-5 text-center text-xs"></i> Pembinaan</a>
+      <a href="../komunikasi/komunikasi.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10"><i class="fa-solid fa-comments w-5 text-center text-xs"></i> Komunikasi</a>
+      <a href="../laporan/laporan.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10"><i class="fa-solid fa-chart-line w-5 text-center text-xs"></i> Laporan</a>
+      <a href="pengaturan.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 font-semibold text-white"><i class="fa-solid fa-gear w-5 text-center text-xs"></i> Pengaturan</a>
+    </nav>
+    <div class="absolute bottom-0 inset-x-0 px-6 py-4 border-t border-white/10">
+      <button class="logout-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/60 hover:bg-white/10 hover:text-white"><i class="fa-solid fa-right-from-bracket w-5 text-center text-xs"></i> Keluar</button>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <main class="md:pl-72 pt-16 md:pt-0">
+    <div class="p-4 md:p-8 max-w-3xl mx-auto">
+      <h1 class="text-2xl font-bold text-primary mb-1">Pengaturan Akun</h1>
+      <p class="text-sm text-gray-500 mb-6">Kelola privasi akun Anda. Kata sandi hanya dapat diubah dengan memasukkan kata sandi saat ini.</p>
+
+      <div class="bg-white rounded-xl shadow-sm p-5 md:p-6">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary"><i class="fa-solid fa-key"></i></span>
+          <div>
+            <h2 class="font-semibold text-gray-800">Ubah Kata Sandi</h2>
+            <p class="text-xs text-gray-400">Minimal 6 karakter. Disarankan mengganti kata sandi bawaan.</p>
+          </div>
+        </div>
+        <form id="form-password" class="space-y-4" autocomplete="off">
+          <div>
+            <label for="pw-lama" class="block text-sm font-medium text-gray-700 mb-1">Kata Sandi Saat Ini</label>
+            <div class="relative">
+              <input id="pw-lama" type="password" required placeholder="••••••••" class="w-full px-4 py-2.5 pr-11 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+              <button type="button" data-toggle-pw="pw-lama" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-eye"></i></button>
+            </div>
+          </div>
+          <div>
+            <label for="pw-baru" class="block text-sm font-medium text-gray-700 mb-1">Kata Sandi Baru</label>
+            <div class="relative">
+              <input id="pw-baru" type="password" required placeholder="Minimal 6 karakter" class="w-full px-4 py-2.5 pr-11 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+              <button type="button" data-toggle-pw="pw-baru" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-eye"></i></button>
+            </div>
+          </div>
+          <div>
+            <label for="pw-ulang" class="block text-sm font-medium text-gray-700 mb-1">Ulangi Kata Sandi Baru</label>
+            <div class="relative">
+              <input id="pw-ulang" type="password" required placeholder="Ulangi kata sandi baru" class="w-full px-4 py-2.5 pr-11 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
+              <button type="button" data-toggle-pw="pw-ulang" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-eye"></i></button>
+            </div>
+          </div>
+          <p id="pw-hint" class="hidden text-xs text-danger font-medium"><i class="fa-solid fa-circle-exclamation mr-1"></i>Ulangi kata sandi baru tidak sama dengan kata sandi baru.</p>
+          <div class="flex flex-col sm:flex-row sm:items-center gap-3 pt-2">
+            <button type="submit" id="btn-simpan" class="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition">
+              <i class="fa-solid fa-floppy-disk"></i> Simpan Kata Sandi
+            </button>
+            <a href="../dashboard/dashboard.html" class="inline-flex items-center justify-center gap-2 text-gray-500 hover:text-gray-700 text-sm font-medium"><i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard</a>
+          </div>
+        </form>
+      </div>
+
+      <p class="mt-6 text-xs text-gray-400 leading-relaxed">
+        <i class="fa-solid fa-shield-halved mr-1"></i> Untuk privasi, kata sandi tidak dibagikan kepada pihak lain. Admin hanya dapat mereset kata sandi bila diperlukan.
+      </p>
+    </div>
+  </main>
+
+  <script>
+    function toggleDrawer() {
+      const d = document.getElementById('drawer');
+      const o = document.getElementById('drawer-overlay');
+      if (!d) return;
+      const open = d.classList.contains('translate-x-0');
+      d.classList.toggle('translate-x-0', !open);
+      d.classList.toggle('-translate-x-full', open);
+      o.classList.toggle('hidden', open);
+    }
+    function toast(msg, type) {
+      const t = document.createElement('div');
+      t.className = 'fixed top-4 right-4 z-[60] bg-' + (type === 'error' ? 'danger' : 'primary') + ' text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium animate-[fadeIn_.2s]';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 3000);
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('[data-toggle-pw]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const input = document.getElementById(btn.getAttribute('data-toggle-pw'));
+          if (!input) return;
+          const show = input.type === 'password';
+          input.type = show ? 'text' : 'password';
+          btn.innerHTML = show ? '<i class="fa-solid fa-eye-slash"></i>' : '<i class="fa-solid fa-eye"></i>';
+        });
+      });
+      document.getElementById('form-password').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const lama = document.getElementById('pw-lama').value;
+        const baru = document.getElementById('pw-baru').value;
+        const ulang = document.getElementById('pw-ulang').value;
+        const hint = document.getElementById('pw-hint');
+        if (baru !== ulang) {
+          hint.classList.remove('hidden');
+          return;
+        }
+        hint.classList.add('hidden');
+        const btn = document.getElementById('btn-simpan');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+        try {
+          const res = await fetch('/api/me/password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ currentPassword: lama, newPassword: baru }),
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            toast(data.error || 'Gagal mengubah kata sandi', 'error');
+          } else {
+            toast('Kata sandi berhasil diubah');
+            document.getElementById('form-password').reset();
+          }
+        } catch (err) {
+          toast('Terjadi kesalahan jaringan', 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan Kata Sandi';
+        }
+      });
+    });
+  </script>
 </body>
 </html>

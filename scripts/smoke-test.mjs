@@ -211,6 +211,48 @@ async function main() {
       `status=${res.status}`
     );
 
+    /* ---- Ubah kata sandi sendiri (privasi wali_kelas) ---- */
+    res = await api("/api/me/password", {
+      method: "POST",
+      headers: { cookie: cookieHeader() },
+      body: JSON.stringify({ currentPassword: "salah-lama", newPassword: "rahasia7" }),
+    });
+    check("POST /api/me/password kata sandi saat ini salah ditolak 400", res.status === 400, `status=${res.status}`);
+
+    res = await api("/api/me/password", {
+      method: "POST",
+      headers: { cookie: cookieHeader() },
+      body: JSON.stringify({ currentPassword: "wali123", newPassword: "abc" }),
+    });
+    check("POST /api/me/password kata sandi baru terlalu pendek ditolak 400", res.status === 400, `status=${res.status}`);
+
+    res = await api("/api/me/password", {
+      method: "POST",
+      headers: { cookie: cookieHeader() },
+      body: JSON.stringify({ currentPassword: "wali123", newPassword: "wali123" }),
+    });
+    check("POST /api/me/password kata sandi baru sama dengan lama ditolak 400", res.status === 400, `status=${res.status}`);
+
+    res = await api("/api/me/password", {
+      method: "POST",
+      headers: { cookie: cookieHeader() },
+      body: JSON.stringify({ currentPassword: "wali123", newPassword: "rahasia7" }),
+    });
+    check("POST /api/me/password berhasil mengubah kata sandi", res.status === 200, `status=${res.status}`);
+
+    res = await login("ahmad@walikelas.sch.id", "rahasia7");
+    check("login wali dengan kata sandi baru sukses", res.status === 200, `status=${res.status}`);
+    res = await login("ahmad@walikelas.sch.id", "wali123");
+    check("login wali dengan kata sandi lama ditolak 401", res.status === 401, `status=${res.status}`);
+
+    res = await login("ahmad@walikelas.sch.id", "rahasia7");
+    res = await api("/api/me/password", {
+      method: "POST",
+      headers: { cookie: cookieHeader() },
+      body: JSON.stringify({ currentPassword: "rahasia7", newPassword: "wali123" }),
+    });
+    check("POST /api/me/password memulihkan kata sandi bawaan", res.status === 200, `status=${res.status}`);
+
     /* ---- Sync data kelas & settings ---- */
     res = await api("/api/kelas-data?kelas=7A", { headers: { cookie: cookieHeader() } });
     let sync0 = await res.json().catch(() => ({}));
