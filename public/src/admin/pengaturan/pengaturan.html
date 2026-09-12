@@ -96,11 +96,18 @@
         </form>
       </section>
 
-      <!-- Tema Aplikasi -->
+      <!-- Mode Tampilan -->
       <section class="bg-white rounded-xl shadow-sm p-4 md:p-6 mb-6">
-        <h2 class="text-sm font-semibold text-gray-600 mb-1"><i class="fa-solid fa-palette mr-2 text-gray-400"></i>Tema Aplikasi</h2>
-        <p class="text-xs text-gray-400 mb-4">Pilih warna tampilan untuk role <b>Admin</b> (tersimpan khusus untuk akun Anda). Tema wali kelas diatur mandiri lewat tombol palet di pojok atas halaman wali kelas.</p>
-        <div id="theme-picker" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+        <h2 class="text-sm font-semibold text-gray-600 mb-1"><i class="fa-solid fa-circle-half-stroke mr-2 text-gray-400"></i>Mode Tampilan</h2>
+        <p class="text-xs text-gray-400 mb-4">Pilih <b>Terang</b> atau <b>Gelap</b> untuk role <b>Admin</b> (berlaku di semua halaman, tersimpan khusus untuk akun Anda). Mode wali kelas diatur mandiri lewat tombol mode di pojok atas halaman wali kelas.</p>
+        <div class="grid grid-cols-2 gap-3 max-w-md">
+          <button type="button" data-set-theme="light" class="flex items-center justify-center gap-2 p-3 rounded-xl border border-gray-200 bg-white text-gray-700 hover:border-accent transition font-medium">
+            <i class="fa-solid fa-sun text-accent"></i> Terang
+          </button>
+          <button type="button" data-set-theme="dark" class="flex items-center justify-center gap-2 p-3 rounded-xl border border-gray-200 bg-white text-gray-700 hover:border-accent transition font-medium">
+            <i class="fa-solid fa-moon text-primary"></i> Gelap
+          </button>
+        </div>
       </section>
 
       <!-- Ringkasan Wali Kelas -->
@@ -197,26 +204,9 @@
       });
     })();
 
-    /* ---- Tema admin ---- */
+    /* ---- Mode tampilan ---- */
     (function () {
-      var wrap = document.getElementById("theme-picker");
-      if (!wrap || !window.WKTheme) return;
-      var th = window.WKTheme.THEMES;
-      Object.keys(th).forEach(function (id) {
-        var t = th[id];
-        var b = document.createElement("button");
-        b.type = "button";
-        b.setAttribute("data-theme-set", id);
-        b.className = "relative flex items-center gap-3 p-3 rounded-xl border border-gray-200 hover:border-accent transition bg-white text-left";
-        b.innerHTML =
-          '<span class="flex gap-1.5 shrink-0">' +
-          '<span class="w-4 h-4 rounded-full" style="background:' + t.primary + '"></span>' +
-          '<span class="w-4 h-4 rounded-full" style="background:' + t.secondary + '"></span>' +
-          '<span class="w-4 h-4 rounded-full" style="background:' + t.accent + '"></span>' +
-          "</span>" +
-          '<span class="text-sm font-medium text-gray-700">' + t.label + "</span>";
-        wrap.appendChild(b);
-      });
+      if (!window.WKTheme) return;
       window.WKTheme.markActive(window.WKTheme.read());
     })();
 

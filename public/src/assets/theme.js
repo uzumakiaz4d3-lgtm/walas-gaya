@@ -1,21 +1,73 @@
 /* =====================================================================
-   WKTheme — toggle tema warna. Disimpan per role (wkTheme_<role>),
-   sehingga tema hanya terpampang di role yang mengaktifkannya.
-   Cara kerja: menuangkan palet tema ke tailwind.config (Play CDN
-   merebuild utility) + disinkronkan ke CSS variable di :root.
+   WKTheme — mode tampilan Gelap / Terang.
+   Disimpan per role (wkTheme_<role> di localStorage) sehingga mode
+   hanya berlaku untuk role yang mengaktifkannya.
+   Terang = default. Gelap = class .wk-dark di <html> + remap utility
+   netral (putih/abu/garis) via stylesheet override + CSS variable.
    ===================================================================== */
 (function () {
   if (window.WKTheme) return;
 
-  var THEMES = {
-    default: { label: "Original", primary: "#1A3A5C", secondary: "#2A7A6B", accent: "#E89D3F", neutral: "#F5F6F8", danger: "#C23B22", info: "#2B6CB0" },
-    ocean:   { label: "Samudra",  primary: "#0D3B66", secondary: "#0F8B8D", accent: "#F4A261", neutral: "#F4F7FA", danger: "#C23B22", info: "#2B6CB0" },
-    forest:  { label: "Hutan",    primary: "#1F3D2B", secondary: "#2E7D5B", accent: "#E8A33D", neutral: "#F4F6F5", danger: "#C23B22", info: "#2B6CB0" },
-    sunset:  { label: "Senja",    primary: "#4A1942", secondary: "#C65D7B", accent: "#E8A33D", neutral: "#F8F5F7", danger: "#C23B22", info: "#2B6CB0" },
-    slate:   { label: "Batu",     primary: "#334155", secondary: "#5D7590", accent: "#C9A227", neutral: "#F3F5F7", danger: "#C23B22", info: "#2B6CB0" }
+  var LIGHT = {
+    primary: "#1A3A5C", secondary: "#2A7A6B", accent: "#E89D3F",
+    neutral: "#F5F6F8", surface: "#FFFFFF", ink: "#1A1D23",
+    muted: "#6B7180", danger: "#C23B22", info: "#2B6CB0"
   };
-  var ORDER = ["default", "ocean", "forest", "sunset", "slate"];
-  var KEYS = ["primary", "secondary", "accent", "neutral", "danger", "info"];
+  var DARK = {
+    primary: "#1A3A5C", secondary: "#2A7A6B", accent: "#E89D3F",
+    neutral: "#0F172A", surface: "#1E293B", ink: "#E2E8F0",
+    muted: "#94A3B8", danger: "#E4573B", info: "#67A5E5"
+  };
+  var VARKEYS = ["primary", "secondary", "accent", "neutral", "surface", "ink", "muted", "danger", "info"];
+
+  /* Remap utility netral agar tampil sesuai mode gelap (pakai !important
+     biar selalu menang atas utility Tailwind apa pun urutannya). */
+  var DARK_CSS = [
+    "html.wk-dark{color-scheme:dark}",
+    "html.wk-dark body{background-color:#0F172A!important;color:#E2E8F0!important}",
+    "html.wk-dark .text-gray-50{color:#F8FAFC!important}",
+    "html.wk-dark .text-gray-100{color:#F1F5F9!important}",
+    "html.wk-dark .text-gray-200{color:#E2E8F0!important}",
+    "html.wk-dark .text-gray-300{color:#CBD5E1!important}",
+    "html.wk-dark .text-gray-400{color:#64748B!important}",
+    "html.wk-dark .text-gray-500{color:#94A3B8!important}",
+    "html.wk-dark .text-gray-600{color:#CBD5E1!important}",
+    "html.wk-dark .text-gray-700{color:#E2E8F0!important}",
+    "html.wk-dark .text-gray-800{color:#E2E8F0!important}",
+    "html.wk-dark .text-gray-900{color:#F8FAFC!important}",
+    "html.wk-dark .text-primary{color:#A5C4EA!important}",
+    "html.wk-dark .text-secondary{color:#6FD3B8!important}",
+    "html.wk-dark .text-accent{color:#F0B35C!important}",
+    "html.wk-dark .text-danger{color:#F28B82!important}",
+    "html.wk-dark .text-info{color:#67A5E5!important}",
+    "html.wk-dark .hover\\:text-gray-600:hover{color:#E2E8F0!important}",
+    "html.wk-dark .hover\\:text-gray-700:hover{color:#F8FAFC!important}",
+    "html.wk-dark .bg-white{background-color:#1E293B!important}",
+    "html.wk-dark .bg-neutral{background-color:#0F172A!important}",
+    "html.wk-dark .bg-gray-50{background-color:#1A2437!important}",
+    "html.wk-dark .bg-gray-50\\/50{background-color:rgba(26,36,55,.55)!important}",
+    "html.wk-dark .bg-gray-100{background-color:#1E293B!important}",
+    "html.wk-dark .bg-gray-200{background-color:#334155!important}",
+    "html.wk-dark .bg-gray-300{background-color:#475569!important}",
+    "html.wk-dark .bg-primary\\/10{background-color:rgba(26,58,92,.45)!important}",
+    "html.wk-dark .bg-secondary\\/10{background-color:rgba(42,122,107,.4)!important}",
+    "html.wk-dark .bg-accent\\/10{background-color:rgba(232,157,63,.3)!important}",
+    "html.wk-dark .bg-danger\\/10{background-color:rgba(228,87,59,.3)!important}",
+    "html.wk-dark .bg-info\\/10{background-color:rgba(103,165,229,.3)!important}",
+    "html.wk-dark .hover\\:bg-gray-50:hover{background-color:#223049!important}",
+    "html.wk-dark .hover\\:bg-gray-100:hover{background-color:#26354C!important}",
+    "html.wk-dark .hover\\:bg-gray-200:hover{background-color:#334155!important}",
+    "html.wk-dark .hover\\:bg-neutral\\/70:hover{background-color:rgba(250,250,250,.08)!important}",
+    "html.wk-dark .border-gray-50{border-color:#334155!important}",
+    "html.wk-dark .border-gray-100{border-color:#334155!important}",
+    "html.wk-dark .border-gray-200{border-color:#334155!important}",
+    "html.wk-dark .border-gray-300{border-color:#475569!important}",
+    "html.wk-dark .divide-gray-50{border-color:#334155!important}",
+    "html.wk-dark .divide-gray-100{border-color:#334155!important}",
+    "html.wk-dark .divide-gray-200{border-color:#334155!important}",
+    "html.wk-dark .ring-gray-100{border-color:#334155!important}",
+    "html.wk-dark .ring-gray-200{border-color:#334155!important}"
+  ].join("\n");
 
   function role() {
     return localStorage.getItem("userRole") || "";
@@ -24,84 +76,86 @@
     return "wkTheme_" + (role() || "anon");
   }
   function read() {
-    var t = localStorage.getItem(key());
-    return (t && THEMES[t]) ? t : "default";
+    var v = localStorage.getItem(key());
+    return v === "dark" ? "dark" : "light";
   }
-  function apply() {
-    var id = read();
-    var pal = THEMES[id] || THEMES.default;
-    try {
-      var tw = window.tailwind;
-      if (tw) {
-        tw.config = {
-          theme: {
-            extend: {
-              colors: {
-                primary: pal.primary,
-                secondary: pal.secondary,
-                accent: pal.accent,
-                neutral: pal.neutral,
-                danger: pal.danger,
-                info: pal.info
-              }
-            }
-          }
-        };
-        if (typeof tw.refresh === "function") tw.refresh();
-      }
-    } catch (e) {}
+  function setVars(pal) {
     try {
       var st = document.documentElement.style;
-      KEYS.forEach(function (k) { st.setProperty("--" + k, pal[k]); });
+      VARKEYS.forEach(function (k) { st.setProperty("--" + k, pal[k]); });
     } catch (e) {}
-    return id;
   }
-  function next() {
-    var cur = read();
-    var id = ORDER[(ORDER.indexOf(cur) + 1) % ORDER.length];
-    localStorage.setItem(key(), id);
-    apply();
-    markActive(id);
-    return id;
+  function ensureDarkStyle() {
+    if (document.getElementById("wk-dark-css")) return;
+    var el = document.createElement("style");
+    el.id = "wk-dark-css";
+    el.textContent = DARK_CSS;
+    document.head.appendChild(el);
   }
-  function set(id) {
-    if (!THEMES[id]) id = "default";
-    localStorage.setItem(key(), id);
-    apply();
-    markActive(id);
-    return id;
+  function removeDarkStyle() {
+    var el = document.getElementById("wk-dark-css");
+    if (el) el.remove();
   }
-  function markActive(id) {
-    document.querySelectorAll("[data-theme-set]").forEach(function (b) {
-      var active = b.getAttribute("data-theme-set") === id;
+  function apply(mode) {
+    mode = mode === "dark" ? "dark" : "light";
+    var root = document.documentElement;
+    if (mode === "dark") {
+      root.classList.add("wk-dark");
+      setVars(DARK);
+      ensureDarkStyle();
+    } else {
+      root.classList.remove("wk-dark");
+      setVars(LIGHT);
+      removeDarkStyle();
+    }
+    return mode;
+  }
+  function toggle() {
+    var mode = read() === "dark" ? "light" : "dark";
+    localStorage.setItem(key(), mode);
+    apply(mode);
+    markActive(mode);
+    return mode;
+  }
+  function set(mode) {
+    mode = mode === "dark" ? "dark" : "light";
+    localStorage.setItem(key(), mode);
+    apply(mode);
+    markActive(mode);
+    return mode;
+  }
+  function markActive(mode) {
+    document.querySelectorAll("[data-set-theme]").forEach(function (b) {
+      var active = b.getAttribute("data-set-theme") === mode;
       b.classList.toggle("ring-2", active);
       b.classList.toggle("ring-offset-2", active);
     });
   }
-  function toast(msg) {
-    if (typeof WKToast === "function") WKToast(msg);
+  function toast(label) {
+    if (typeof WKToast === "function") WKToast(label);
   }
 
   window.WKTheme = {
-    THEMES: THEMES,
     read: read,
     apply: apply,
-    next: next,
+    toggle: toggle,
     set: set,
     markActive: markActive
   };
 
   document.addEventListener("DOMContentLoaded", function () {
     if (!role()) return;
-    apply();
+    apply(read());
     document.querySelectorAll("[data-theme-toggle]").forEach(function (b) {
       b.addEventListener("click", function () {
-        toast("Tema: " + THEMES[next()].label);
+        var mode = toggle();
+        toast(mode === "dark" ? "Mode gelap aktif" : "Mode terang aktif");
       });
     });
-    document.querySelectorAll("[data-theme-set]").forEach(function (b) {
+    document.querySelectorAll("[data-set-theme]").forEach(function (b) {
       b.addEventListener("click", function () {
-        toast("Tema: " + THEMES[set(b.getAttribute("data-theme-set"))].label);
+        var mode = set(b.getAttribute("data-set-theme"));
+        toast(mode === "dark" ? "Mode gelap aktif" : "Mode terang aktif");
       });
     });
     markActive(read());
