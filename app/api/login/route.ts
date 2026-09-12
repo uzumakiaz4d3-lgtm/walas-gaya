@@ -1,5 +1,6 @@
 import { getStore, publicUser } from "../../../lib/store";
 import { verifyPassword, signSession, buildSessionCookie, json } from "../../../lib/auth";
+import { appendAudit } from "../../../lib/audit";
 
 export async function POST(request: Request) {
   try {
@@ -24,6 +25,15 @@ export async function POST(request: Request) {
 
     const token = signSession(user);
     const redirect = user.role === "admin" ? "/src/admin/admin.html" : "/src/dashboard/dashboard.html";
+
+    appendAudit({
+      user: user.name,
+      role: user.role,
+      aksi: "Login",
+      detail: "Login berhasil",
+      kelas: user.kelas,
+      sumber: "server",
+    }).catch(() => undefined);
 
     return new Response(
       JSON.stringify({ success: true, user: publicUser(user), redirect }),

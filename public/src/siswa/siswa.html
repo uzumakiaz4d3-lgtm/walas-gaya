@@ -428,6 +428,7 @@
     });
     localStorage.setItem(rosterKey(), JSON.stringify(rows));
     if (window.WKSync) WKSync.push(currentKelas(), 'siswa', rows);
+    if (window.WKSync && WKSync.auditLog) WKSync.auditLog("Perbarui data siswa", rows.length + " siswa", currentKelas());
   }
   function updateStats(){
     var rows = document.querySelectorAll('#tbody-siswa tr[data-nis]');

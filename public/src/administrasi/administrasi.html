@@ -500,6 +500,7 @@
       }
       localStorage.setItem("admData_" + currentKelas(), JSON.stringify(cur));
       if (window.WKSync) WKSync.push(currentKelas(), 'admData', cur);
+      if (window.WKSync && WKSync.auditLog) WKSync.auditLog("Perbarui administrasi kelas", "piket/agenda/ekskul/jadwal/struktur/inventaris", currentKelas());
     }
 
     var admKey = null;

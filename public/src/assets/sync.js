@@ -68,6 +68,16 @@
       .then(function (r) { return !!(r && r.success); });
   }
 
+  /* Mencatat aktivitas ke audit log (dipakai walas & admin) */
+  function auditLog(aksi, detail, kelas) {
+    return api("/api/audit", "POST", {
+      aksi: aksi,
+      detail: detail || "",
+      kelas: kelas || null,
+      sumber: "web"
+    }).then(function (r) { return !!(r && r.success); });
+  }
+
   /* ===== Dipanggil saat login walas =====
      - Server punya data  -> isi localStorage (server otoritatif)
      - Server kosong & sudah pernah sync -> admin telah reset, bersihkan lokal
@@ -146,6 +156,7 @@
     refresh: refresh,
     syncSettings: syncSettings,
     saveSettings: saveSettings,
+    auditLog: auditLog,
     readLocal: readLocal,
     writeLocal: writeLocal,
     clearLocal: clearLocal

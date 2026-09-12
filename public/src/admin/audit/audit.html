@@ -66,12 +66,19 @@
         <button onclick="exportAuditCsv()" class="inline-flex items-center gap-2 bg-secondary hover:bg-secondary/90 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition"><i class="fas fa-file-csv"></i> Export CSV</button>
       </div>
 
-      <!-- Search -->
-      <div class="mb-4">
-        <div class="relative max-w-sm">
+<!-- Search & Filter -->
+      <div class="mb-4 flex flex-col sm:flex-row sm:items-center gap-3">
+        <div class="relative max-w-sm flex-1">
           <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
           <input id="qlog" type="text" placeholder="Cari log aktivitas..." oninput="filterLog()" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent">
         </div>
+        <div class="relative">
+          <select id="flog" onchange="filterLog()" class="pl-4 pr-9 py-2.5 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent appearance-none">
+            <option value="">Semua kelas</option>
+          </select>
+          <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+        </div>
+        <span id="logcount" class="text-xs text-gray-400"></span>
       </div>
 
       <!-- Table -->
@@ -82,7 +89,7 @@
               <th class="text-left px-6 py-3">Waktu</th><th class="text-left px-6 py-3">Pengguna</th><th class="text-left px-6 py-3">Aksi</th><th class="text-left px-6 py-3">Target</th><th class="text-left px-6 py-3">Sumber</th>
             </tr></thead>
 <tbody class="divide-y divide-gray-50">
-              <tr><td colspan="5" class="px-6 py-12 text-center text-gray-400">Belum ada aktivitas tercatat — data kosong mulai dari nol.</td></tr>
+              <tr><td colspan="5" class="px-6 py-12 text-center text-gray-400">Memuat log aktivitas…</td></tr>
             </tbody>
           </table>
         </div>
@@ -141,11 +148,71 @@
       document.body.appendChild(t);
       setTimeout(() => t.remove(), 2500);
     }
+function escHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; });
+  }
+  var ALL_ROWS = [];
+  function fmtWaktu(w) {
+    var t = String(w || "");
+    if (t.indexOf("T") !== -1) t = t.split(".")[0].split("T").join(" ");
+    return t.slice(0, 16);
+  }
+  function loadAudit() {
+    fetch("/api/audit").then(function (r) { return r.json(); }).then(function (res) {
+      ALL_ROWS = (res && Array.isArray(res.entries)) ? res.entries : [];
+      var sel = document.getElementById("flog");
+      if (sel) {
+        var set = [];
+        var cur = sel.value;
+        ALL_ROWS.forEach(function (e) { if (e.kelas && set.indexOf(e.kelas) === -1) set.push(e.kelas); });
+        set.sort(function (a, b) { return String(a).localeCompare(String(b), "id"); });
+        if (sel.options.length !== set.length + 1) {
+          sel.innerHTML = '<option value="">Semua kelas</option>' + set.map(function (k) {
+            return '<option value="' + escHtml(k) + '">Kelas ' + escHtml(k) + "</option>";
+          }).join("");
+          if (set.indexOf(cur) !== -1) sel.value = cur;
+        }
+      }
+      renderLog(ALL_ROWS);
+    }).catch(function () {
+      renderLog([]);
+    });
+  }
+  function renderLog(rows) {
+    var tb = document.querySelector("#tbl-log tbody");
+    if (!tb) return;
+    var show = rows.filter(function (e) {
+      var q = (document.getElementById("qlog") ? document.getElementById("qlog").value : "").toLowerCase();
+      var fk = document.getElementById("flog") ? document.getElementById("flog").value : "";
+      if (fk && (e.kelas || "") !== fk) return false;
+      if (!q) return true;
+      var hay = [e.waktu, e.user, e.role, e.aksi, e.detail, e.kelas, e.sumber].join(" ").toLowerCase();
+      return hay.indexOf(q) !== -1;
+    });
+    var cnt = document.getElementById("logcount");
+    if (cnt) cnt.textContent = show.length + " aktivitas";
+    if (!show.length) {
+      tb.innerHTML = '<tr><td colspan="5" class="px-6 py-12 text-center text-gray-400">Belum ada data sesuai filter — log akan terisi saat ada aktivitas (login, simpan data, dll).</td></tr>';
+      return;
+    }
+    tb.innerHTML = show.map(function (e) {
+      var roleBadge = e.role === "admin"
+        ? '<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-accent/15 text-yellow-700">Admin</span>'
+        : '<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-100 text-blue-600">Wali Kelas</span>';
+      var kelasChip = e.kelas
+        ? ' <span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500">Kelas ' + escHtml(e.kelas) + "</span>"
+        : "";
+      return "<tr>" +
+        '<td class="px-6 py-3 text-gray-400 whitespace-nowrap text-xs">' + escHtml(fmtWaktu(e.waktu)) + "</td>" +
+        '<td class="px-6 py-3"><div class="font-medium text-gray-800">' + escHtml(e.user) + "</div><div class='mt-0.5'>" + roleBadge + "</div></td>" +
+        '<td class="px-6 py-3 font-medium text-gray-800">' + escHtml(e.aksi) + "</td>" +
+        '<td class="px-6 py-3"><span class="text-gray-600">' + escHtml(e.detail) + "</span>" + kelasChip + "</td>" +
+        '<td class="px-6 py-3 text-gray-400 text-xs">' + escHtml(e.sumber) + "</td>" +
+        "</tr>";
+    }).join("");
+  }
 function filterLog() {
-      const q = document.getElementById('qlog').value.toLowerCase();
-      document.querySelectorAll('#tbl-log tbody tr').forEach(r => {
-        r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
-      });
+      renderLog(ALL_ROWS);
     }
     function exportAuditCsv() {
       var tbl = document.getElementById('tbl-log');
@@ -165,7 +232,9 @@ function filterLog() {
       document.body.appendChild(a); a.click();
       setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 400);
       toast('CSV log aktivitas berhasil diexport');
-    }
+}
+    loadAudit();
+    setInterval(loadAudit, 15000);
   </script>
 </body>
 </html>

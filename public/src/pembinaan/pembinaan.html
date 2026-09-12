@@ -378,6 +378,7 @@
     function saveRecords(arr) {
       localStorage.setItem("pembinaan_" + currentKelas(), JSON.stringify(Array.isArray(arr) ? arr : []));
       if (window.WKSync) WKSync.push(currentKelas(), 'pembinaan', Array.isArray(arr) ? arr : []);
+      if (window.WKSync && WKSync.auditLog) WKSync.auditLog("Simpan pembinaan", (Array.isArray(arr) ? arr.length : 0) + " catatan pembinaan", currentKelas());
     }
     function loadAdmData() {
       try { return JSON.parse(localStorage.getItem("admData_" + currentKelas()) || "{}") || {}; } catch (e) { return {}; }

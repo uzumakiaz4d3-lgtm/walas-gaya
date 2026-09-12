@@ -286,6 +286,21 @@ async function main() {
       `status=${res.status}`
     );
 
+    res = await api("/api/audit", {
+      method: "POST",
+      headers: { cookie: cookieHeader() },
+      body: JSON.stringify({ aksi: "Simpan absensi", detail: "Absensi tanggal 2026-09-11", kelas: "7A" }),
+    });
+    const auditPost = await res.json().catch(() => ({}));
+    check(
+      "POST /api/audit (wali_kelas) mencatat aktivitas",
+      res.status === 200 && auditPost.success === true,
+      `status=${res.status}`
+    );
+
+    res = await api("/api/audit", { headers: { cookie: cookieHeader() } });
+    check("GET /api/audit (wali_kelas) ditolak 403", res.status === 403, `status=${res.status}`);
+
     res = await api("/api/users");
     check("GET /api/users tanpa cookie ditolak (401)", res.status === 401, `status=${res.status}`);
 
@@ -308,6 +323,19 @@ async function main() {
       "GET /api/users (admin) sukses — 5 pengguna default",
       res.status === 200 && usersAdmin.success === true && usersAdmin.users.length === 5,
       `status=${res.status} users=${usersAdmin.users && usersAdmin.users.length}`
+    );
+
+    res = await api("/api/audit", { headers: { cookie: cookieHeader() } });
+    const auditAdmin = await res.json().catch(() => ({}));
+    check(
+      "GET /api/audit (admin) berisi aktivitas yang dicatat",
+      res.status === 200 &&
+        auditAdmin.success === true &&
+        Array.isArray(auditAdmin.entries) &&
+        auditAdmin.entries.length > 0 &&
+        auditAdmin.entries.some((e) => e.aksi === "Simpan absensi" && e.kelas === "7A") &&
+        auditAdmin.entries.some((e) => e.aksi === "Login"),
+      `status=${res.status} n=${auditAdmin.entries && auditAdmin.entries.length}`
     );
 
     res = await api("/api/users", {

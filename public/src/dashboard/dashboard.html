@@ -476,6 +476,9 @@
             sett || getSettings(),
             vk
           );
+          if (window.WKSync && WKSync.auditLog) {
+            WKSync.auditLog("Lihat data kelas", "Administrator melihat data kelas " + vk, vk);
+          }
         });
       } else {
         renderDashboard(getRoster(), getAbsensiAll(), getSettings(), currentKelas());
@@ -495,6 +498,7 @@
             localStorage.setItem("catatanTerakhir", JSON.stringify({ siswa: s.value, isi: t.value.trim(), waktu: new Date().toLocaleString("id-ID") }));
           } catch (e) {}
           if (window.WKSync) WKSync.push(currentKelas(), 'catatan', { siswa: s.value, isi: t.value.trim(), waktu: new Date().toLocaleString("id-ID") });
+          if (window.WKSync && WKSync.auditLog) WKSync.auditLog("Tambah catatan", "Catatan untuk " + s.value, currentKelas());
           document.getElementById("modal").classList.remove("show");
           formCatatan.reset();
           if (typeof WKToast === "function") WKToast("Catatan untuk " + s.value + " tersimpan");

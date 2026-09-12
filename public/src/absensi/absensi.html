@@ -286,6 +286,7 @@
   function saveAbsenAll(obj) {
     localStorage.setItem("absensi_" + currentKelas(), JSON.stringify(obj));
     if (window.WKSync) WKSync.push(currentKelas(), 'absensi', obj);
+    if (window.WKSync && WKSync.auditLog) WKSync.auditLog("Simpan absensi", "Absensi tanggal " + chosenDate(), currentKelas());
   }
   function chosenDate() {
     var el = document.getElementById("absen-date");
