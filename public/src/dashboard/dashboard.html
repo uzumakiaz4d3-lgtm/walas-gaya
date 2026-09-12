@@ -76,9 +76,7 @@
       <a href="../laporan/laporan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
         <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
       </a>
-      <a href="../pengaturan/pengaturan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
-        <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
-      </a>
+      
     </nav>
 
     <div class="px-4 py-4 border-t border-white/10 space-y-3">
@@ -148,9 +146,6 @@
         </a>
         <a href="../laporan/laporan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
           <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
-        </a>
-        <a href="../pengaturan/pengaturan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
-          <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
         </a>
       </nav>
 
@@ -229,11 +224,11 @@
           </span>
           <span class="text-xs text-gray-600 font-medium">Komunikasi</span>
         </a>
-        <a href="../pengaturan/pengaturan.html" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-neutral transition">
-          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-400/10 text-gray-500">
-            <i class="fa-solid fa-gear"></i>
+        <a href="../laporan/laporan.html" class="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-neutral transition">
+          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500/10 text-blue-500">
+            <i class="fa-solid fa-chart-line"></i>
           </span>
-          <span class="text-xs text-gray-600 font-medium">Pengaturan</span>
+          <span class="text-xs text-gray-600 font-medium">Laporan</span>
         </a>
       </div>
     </div>
@@ -244,7 +239,9 @@
       <!-- Perlu Ditindaklanjuti -->
       <div class="bg-white rounded-xl shadow-sm p-4 md:p-5">
         <h2 class="text-sm font-semibold text-gray-600 mb-3">Perlu Ditindaklanjuti</h2>
-        <p class="text-sm text-gray-400 py-6 text-center">Belum ada hal yang perlu ditindaklanjuti — data kosong mulai dari nol.</p>
+        <div id="perhatian-list" class="space-y-3">
+          <p class="text-sm text-gray-400 py-6 text-center">Memuat data...</p>
+        </div>
       </div>
 
       <!-- Tren Kehadiran 5 Hari -->
@@ -284,7 +281,7 @@
     <!-- Rekap Minggu Ini -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 mb-6 overflow-x-auto">
       <h2 class="text-sm font-semibold text-gray-600 mb-3">Rekap Minggu Ini</h2>
-      <table class="w-full text-sm min-w-[560px]">
+      <table id="tbl-rekap" class="w-full text-sm min-w-[560px]">
         <thead>
           <tr class="text-left text-xs text-gray-400 border-b border-gray-100">
             <th class="pb-2 font-medium">Nama</th>
@@ -295,39 +292,8 @@
             <th class="pb-2 font-medium text-center">Jum</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-50">
-          <tr>
-            <td class="py-2.5 font-medium text-gray-700">Andi Pratama</td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-600">A</span></td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-600">A</span></td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-600">A</span></td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">—</span></td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">—</span></td>
-          </tr>
-          <tr>
-            <td class="py-2.5 font-medium text-gray-700">Rina Sari</td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-600">H</span></td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-600">H</span></td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-600">S</span></td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">—</span></td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">—</span></td>
-          </tr>
-          <tr>
-            <td class="py-2.5 font-medium text-gray-700">Yoga Ramadhan</td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-600">H</span></td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-600">A</span></td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-600">H</span></td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">—</span></td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">—</span></td>
-          </tr>
-          <tr>
-            <td class="py-2.5 font-medium text-gray-700">Dewi Lestari</td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-600">I</span></td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-600">H</span></td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-600">H</span></td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">—</span></td>
-            <td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">—</span></td>
-          </tr>
+        <tbody id="tbody-rekap" class="divide-y divide-gray-50">
+          <tr><td colspan="7" class="py-10 text-center text-gray-400 text-sm">Memuat data...</td></tr>
         </tbody>
       </table>
     </div>
@@ -370,48 +336,116 @@
 <script>
     (function () {
       "use strict";
-      var CLASS_DATA = {
-        "7A": { siswa: 0, hadir: 0, persen: "0%", perhatian: 0, izin: 0, bars: [0, 0, 0, 0, 0], rata: 0, info: "0 siswa aktif" },
-        "7B": { siswa: 0, hadir: 0, persen: "0%", perhatian: 0, izin: 0, bars: [0, 0, 0, 0, 0], rata: 0, info: "0 siswa aktif" },
-        "8A": { siswa: 0, hadir: 0, persen: "0%", perhatian: 0, izin: 0, bars: [0, 0, 0, 0, 0], rata: 0, info: "0 siswa aktif" },
-        "8B": { siswa: 0, hadir: 0, persen: "0%", perhatian: 0, izin: 0, bars: [0, 0, 0, 0, 0], rata: 0, info: "0 siswa aktif" }
-      };
+      var HARI_SHORT = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+
       function currentKelas() {
         var params = new URLSearchParams(window.location.search);
         if (params.get("kelas")) return params.get("kelas");
-        var stored = localStorage.getItem("userKelas");
-        if (stored) return stored;
-        return "7A";
+        return localStorage.getItem("userKelas") || "";
+      }
+      function getRoster() {
+        try { var a = JSON.parse(localStorage.getItem("siswa_" + currentKelas()) || "null"); return Array.isArray(a) ? a : []; } catch (e) { return []; }
+      }
+      function getAbsensiAll() {
+        try { return JSON.parse(localStorage.getItem("absensi_" + currentKelas()) || "{}") || {}; } catch (e) { return {}; }
+      }
+      function getSettings() {
+        try { return JSON.parse(localStorage.getItem("wkSettings") || "{}") || {}; } catch (e) { return {}; }
+      }
+      function escHtml(s) {
+        return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; });
       }
 
-      function applyKelas(key) {
-        var d = CLASS_DATA[key];
-        if (!d) return;
-        document.getElementById("kelasTitle").textContent = "Dashboard Kelas " + key;
-        document.getElementById("kelasSub").textContent = "2026/2027 Ganjil · " + d.info;
-        document.getElementById("k-siswa").textContent = d.siswa;
-        document.getElementById("k-hadir").innerHTML = d.hadir + ' <span class="text-sm font-normal text-gray-400">/ ' + d.persen + "</span>";
-        document.getElementById("k-perhatian").textContent = d.perhatian;
-        document.getElementById("k-izin").textContent = d.izin;
+      function buildDashboard() {
+        var kls = currentKelas();
+        var roster = getRoster();
+        var allAbs = getAbsensiAll();
+        var settings = getSettings();
+        var today = new Date().toISOString().slice(0, 10);
+        var todayRecs = allAbs[today] || [];
+
+        var totalSiswa = roster.length;
+        var perhatianCount = roster.filter(function (s) { return s.status === "Perhatian" || s.status === "Izin"; }).length;
+        var hadirHariIni = todayRecs.filter(function (r) { return r.status === "H" || r.status === "T"; }).length;
+        var izinHariIni = todayRecs.filter(function (r) { return r.status === "I"; }).length;
+        var persen = totalSiswa ? Math.round(hadirHariIni / totalSiswa * 1000) / 10 : 0;
+
+        var el = function (id) { return document.getElementById(id); };
+        if (el("k-siswa")) el("k-siswa").textContent = totalSiswa;
+        if (el("k-hadir")) el("k-hadir").innerHTML = hadirHariIni + ' <span class="text-sm font-normal text-gray-400">/ ' + persen + "%</span>";
+        if (el("k-perhatian")) el("k-perhatian").textContent = perhatianCount;
+        if (el("k-izin")) el("k-izin").textContent = izinHariIni;
+
+        var tahun = settings.tahun || "2026/2027";
+        if (el("kelasTitle")) el("kelasTitle").textContent = "Dashboard Kelas " + kls;
+        if (el("kelasSub")) el("kelasSub").textContent = tahun + " Ganjil · " + totalSiswa + " siswa aktif";
+        document.querySelectorAll(".kelasInfo").forEach(function (x) { x.textContent = "Kelas " + kls; });
+        document.querySelectorAll(".kelasInfoRest").forEach(function (x) { x.textContent = " · " + tahun + " Ganjil · " + totalSiswa + " siswa aktif"; });
+
+        /* Trend 5 hari terakhir */
+        var dates = Object.keys(allAbs).sort().slice(-5);
+        var days = dates.map(function (d) {
+          var dt = new Date(d + "T00:00:00");
+          return { date: d, day: HARI_SHORT[dt.getDay()], hadir: (allAbs[d] || []).filter(function (r) { return r.status === "H" || r.status === "T"; }).length };
+        });
         document.querySelectorAll("[data-bar]").forEach(function (bar, i) {
-          if (d.bars[i]) {
-            bar.setAttribute("data-bar", d.bars[i]);
-            bar.style.height = d.bars[i] + "px";
+          var v = (days[i] || {}).hadir || 0;
+          bar.setAttribute("data-bar", v);
+          bar.style.height = v + "px";
+          var num = bar.previousElementSibling;
+          if (num) num.textContent = v;
+          var label = bar.parentElement.querySelector(".text-\\[10px\\]");
+          if (label) label.textContent = (days[i] || {}).day || "—";
+        });
+        var avg = days.length ? Math.round(days.reduce(function (s, d) { return s + d.hadir; }, 0) / days.length * 10) / 10 : 0;
+        if (el("rataRata")) el("rataRata").textContent = days.length ? "Rata-rata " + avg + " siswa hadir per hari" : "Belum ada data absensi 5 hari terakhir";
+
+        /* Perlu Ditindaklanjuti */
+        var pendingSection = el("perhatian-list");
+        if (pendingSection) {
+          var pending = roster.filter(function (s) { return s.status === "Perhatian" || s.status === "Izin"; });
+          pendingSection.innerHTML = pending.length
+            ? pending.map(function (s) {
+                var tag = s.status === "Perhatian"
+                  ? '<span class="px-2 py-0.5 rounded text-[10px] font-medium bg-red-100 text-red-600">Perhatian</span>'
+                  : '<span class="px-2 py-0.5 rounded text-[10px] font-medium bg-yellow-100 text-yellow-700">Izin</span>';
+                return '<div class="flex items-center gap-3 p-3 bg-neutral rounded-xl">' +
+                  '<span class="flex items-center justify-center w-8 h-8 rounded-full bg-red-100 text-red-500 flex-shrink-0 text-xs font-bold">' + escHtml(s.nama.charAt(0)) + "</span>" +
+                  '<div><p class="text-sm font-medium text-gray-800">' + escHtml(s.nama) + "</p><p class='text-[11px] text-gray-400'>" + tag + "</p></div></div>";
+              }).join("")
+            : '<p class="text-sm text-gray-400 py-6 text-center">Semua siswa dalam kondisi baik</p>';
+        }
+
+        /* Rekap Minggu Ini (5 hari terakhir) */
+        var rekapTbody = el("tbody-rekap");
+        if (rekapTbody) {
+          if (!dates.length) {
+            rekapTbody.innerHTML = '<tr><td colspan="7" class="py-10 text-center text-gray-400 text-sm">Belum ada data absensi. Silakan isi absensi di halaman Absensi.</td></tr>';
+          } else {
+            var statusTypes = { "H": "bg-green-100 text-green-600", "S": "bg-yellow-100 text-yellow-600", "I": "bg-blue-100 text-blue-600", "A": "bg-red-100 text-red-600", "D": "bg-purple-100 text-purple-600", "T": "bg-green-100 text-green-600" };
+            rekapTbody.innerHTML = roster.map(function (s) {
+              var cells = dates.map(function (d) {
+                var rec = null;
+                (allAbs[d] || []).forEach(function (r) { if (r.nama === s.nama) rec = r; });
+                var st = rec ? rec.status : "—";
+                var cls = st === "—" ? "bg-gray-100 text-gray-400" : (statusTypes[st] || "bg-gray-100 text-gray-400");
+                return '<td class="py-2.5 text-center"><span class="inline-block px-2 py-0.5 rounded text-xs font-medium ' + cls + '">' + st + "</span></td>";
+              }).join("");
+              return "<tr><td class='py-2.5 font-medium text-gray-700'>" + escHtml(s.nama) + "</td>" + cells + "</tr>";
+            }).join("");
           }
-        });
-        document.querySelectorAll(".bar-num").forEach(function (num, i) {
-          if (d.bars[i]) num.textContent = d.bars[i];
-        });
-        document.getElementById("rataRata").textContent = "Rata-rata " + d.rata + " siswa hadir per hari";
-        document.querySelectorAll(".kelasInfo").forEach(function (el) {
-          el.textContent = "Kelas " + key;
-        });
-        document.querySelectorAll(".kelasInfoRest").forEach(function (el) {
-          el.textContent = " · 2026/2027 Ganjil · " + d.info;
-        });
+        }
+
+        /* dropdown siswa pada modal catatan */
+        var sel = el("dash-cat-s");
+        if (sel) {
+          sel.innerHTML = '<option value="">— Pilih siswa —</option>' + roster.map(function (s) {
+            return '<option value="' + escHtml(s.nama) + '">' + escHtml(s.nama) + "</option>";
+          }).join("");
+        }
       }
 
-      applyKelas(currentKelas());
+      buildDashboard();
 
       var catForm = document.getElementById("form-catatan");
       if (catForm) {

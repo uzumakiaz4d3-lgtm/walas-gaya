@@ -79,14 +79,12 @@
       <a href="../laporan/laporan.html" class="navlink active flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
         <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
       </a>
-      <a href="../pengaturan/pengaturan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
-        <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
-      </a>
+      
     </nav>
 
     <div class="px-4 py-4 border-t border-white/10 space-y-3">
       <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
-        <span class="text-white/90 font-medium">Kelas 7A</span> · 2026/2027 Ganjil · 0 siswa aktif
+        <span class="text-white/90 font-medium" id="lbl-kelas-foot">Kelas 7A</span> · <span id="lbl-tahun-foot">2026/2027 Ganjil</span> · <span id="lbl-siswa-foot">0 siswa aktif</span>
       </div>
       <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
         <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
@@ -152,21 +150,18 @@
         <a href="../laporan/laporan.html" class="navlink active flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
           <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
         </a>
-        <a href="../pengaturan/pengaturan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
-          <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
-        </a>
       </nav>
 
       <div class="px-4 py-4 border-t border-white/10 space-y-3">
-        <div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
-          <span class="text-white/90 font-medium">Kelas 7A</span> · 2026/2027 Ganjil · 0 siswa aktif
-        </div>
-        <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
-          <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
-        </button>
+<div class="bg-white/5 rounded-lg p-3 text-xs text-white/60 leading-relaxed">
+        <span class="text-white/90 font-medium" id="lbl-kelas-foot-drawer">Kelas 7A</span> · <span id="lbl-tahun-foot-drawer">2026/2027 Ganjil</span> · <span id="lbl-siswa-foot-drawer">0 siswa aktif</span>
       </div>
+      <button class="logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/10 hover:text-white text-sm font-medium transition w-full">
+        <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
+      </button>
     </div>
   </div>
+</div>
 
   <!-- Main Content -->
   <main class="p-4 pb-28 md:px-8 md:pb-8 md:pl-72 md:pt-24">
@@ -188,19 +183,19 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
       <div class="bg-white rounded-xl shadow-sm p-4">
         <p class="text-xs text-gray-500 mb-1">Hadir Rata-rata</p>
-        <p class="text-2xl font-bold text-secondary">91%</p>
+        <p class="text-2xl font-bold text-secondary" id="st-rata">—</p>
       </div>
       <div class="bg-white rounded-xl shadow-sm p-4">
         <p class="text-xs text-gray-500 mb-1">Izin/Sakit</p>
-        <p class="text-2xl font-bold text-accent">23</p>
+        <p class="text-2xl font-bold text-accent" id="st-is">0</p>
       </div>
       <div class="bg-white rounded-xl shadow-sm p-4">
         <p class="text-xs text-gray-500 mb-1">Alpa/Telat</p>
-        <p class="text-2xl font-bold text-danger">15</p>
+        <p class="text-2xl font-bold text-danger" id="st-at">0</p>
       </div>
       <div class="bg-white rounded-xl shadow-sm p-4">
         <p class="text-xs text-gray-500 mb-1">Prestasi</p>
-        <p class="text-2xl font-bold text-info">6</p>
+        <p class="text-2xl font-bold text-info" id="st-prestasi">0</p>
       </div>
     </div>
 
@@ -361,6 +356,14 @@
         var eks = (loadEkskul().ekskul || []);
         el("ekskul-count").textContent = eks.length ? eks.length + " data ekskul — Kelas " + kelas : "Data pencapaian dan ekstrakurikuler";
       }
+      /* stat cards real */
+      var prest = 0;
+      try { var p = JSON.parse(localStorage.getItem("pembinaan_" + kelas) || "null"); prest = (Array.isArray(p) ? p : []).filter(function (x) { return (x.jenis || "").toLowerCase() === "prestasi"; }).length; } catch (e) {}
+      var st = function (id, n) { var e = document.getElementById(id); if (e) e.textContent = n; };
+      st("st-rata", r.totalDays ? r.avgHadirPct + "%" : "—");
+      st("st-is", r.totalS + r.totalI);
+      st("st-at", r.totalA + r.totalT);
+      st("st-prestasi", prest);
     }
 
     /* ===== Export Rekap Absensi — Multi-sheet XLS ===== */
@@ -464,6 +467,22 @@
 
     /* ===== Init ===== */
     renderLaporanTable();
+    (function () {
+      var k = currentKelas();
+      var stText = function (id, val) { var e = document.getElementById(id); if (e) e.textContent = val; };
+      stText("lbl-kelas-foot", "Kelas " + k);
+      stText("lbl-kelas-foot-drawer", "Kelas " + k);
+      try {
+        var s = JSON.parse(localStorage.getItem("wkSettings") || "{}") || {};
+        stText("lbl-tahun-foot", (s.tahun || "2026/2027") + " Ganjil");
+        stText("lbl-tahun-foot-drawer", (s.tahun || "2026/2027") + " Ganjil");
+        var roster = [];
+        var a = JSON.parse(localStorage.getItem("siswa_" + k) || "null");
+        if (Array.isArray(a)) roster = a;
+        stText("lbl-siswa-foot", roster.length + " siswa aktif");
+        stText("lbl-siswa-foot-drawer", roster.length + " siswa aktif");
+      } catch (e) {}
+    })();
   </script>
 
 </body>

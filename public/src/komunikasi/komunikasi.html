@@ -78,9 +78,7 @@
       <a href="../laporan/laporan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
         <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
       </a>
-      <a href="../pengaturan/pengaturan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
-        <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
-      </a>
+      
     </nav>
 
     <div class="px-4 py-4 border-t border-white/10 space-y-3">
@@ -151,9 +149,6 @@
         <a href="../laporan/laporan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
           <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
         </a>
-        <a href="../pengaturan/pengaturan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
-          <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
-        </a>
       </nav>
 
       <div class="px-4 py-4 border-t border-white/10 space-y-3">
@@ -182,19 +177,19 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
       <div class="bg-white rounded-xl shadow-sm p-4">
         <p class="text-xs text-gray-500 mb-1">Bulan Ini</p>
-        <p class="text-2xl font-bold text-primary">8</p>
+        <p class="text-2xl font-bold text-primary" id="st-bulan">0</p>
       </div>
       <div class="bg-white rounded-xl shadow-sm p-4">
         <p class="text-xs text-gray-500 mb-1">WhatsApp</p>
-        <p class="text-2xl font-bold text-secondary">4</p>
+        <p class="text-2xl font-bold text-secondary" id="st-wa">0</p>
       </div>
       <div class="bg-white rounded-xl shadow-sm p-4">
         <p class="text-xs text-gray-500 mb-1">Telepon</p>
-        <p class="text-2xl font-bold text-info">3</p>
+        <p class="text-2xl font-bold text-info" id="st-telp">0</p>
       </div>
       <div class="bg-white rounded-xl shadow-sm p-4">
         <p class="text-xs text-gray-500 mb-1">Tatap Muka</p>
-        <p class="text-2xl font-bold text-accent">1</p>
+        <p class="text-2xl font-bold text-accent" id="st-temu">0</p>
       </div>
     </div>
 
@@ -202,16 +197,7 @@
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-5">
       <h2 class="text-sm font-semibold text-gray-600 mb-3"><i class="fa-solid fa-clock-rotate-left mr-2 text-gray-400"></i>Riwayat Komunikasi</h2>
       <div id="riwayat-kom" class="space-y-3">
-        <div class="flex flex-wrap items-start gap-2 p-3 bg-neutral rounded-xl">
-          <span class="text-xs text-gray-400 whitespace-nowrap pt-0.5">07-09-2026</span>
-          <span class="inline-block bg-secondary/10 text-secondary text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap">WhatsApp</span>
-          <p class="text-sm text-gray-600 flex-1 min-w-[200px]">Komunikasi dengan orang tua Budi Santoso mengenai alpa. Tindak lanjut: catat pembinaan.</p>
-        </div>
-        <div class="flex flex-wrap items-start gap-2 p-3 bg-neutral rounded-xl">
-          <span class="text-xs text-gray-400 whitespace-nowrap pt-0.5">06-09-2026</span>
-          <span class="inline-block bg-info/10 text-info text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap">Telepon</span>
-          <p class="text-sm text-gray-600 flex-1 min-w-[200px]">Telepon ke orang tua Siti Aminah. Topik: jadwal piket minggu depan.</p>
-        </div>
+        <p class="text-sm text-gray-400 text-center py-8 bg-white rounded-xl">Belum ada riwayat komunikasi.</p>
       </div>
     </div>
 
@@ -258,6 +244,68 @@
   </div>
 
 <script>
+    function currentKelas() {
+      var p = new URLSearchParams(location.search).get("kelas");
+      if (p) return p;
+      return localStorage.getItem("userKelas") || "";
+    }
+    function getRoster() {
+      try { var a = JSON.parse(localStorage.getItem("siswa_" + currentKelas()) || "null"); return Array.isArray(a) ? a : []; } catch (e) { return []; }
+    }
+    function escHtml(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; });
+    }
+    function loadKom() {
+      try { var a = JSON.parse(localStorage.getItem("komunikasi_" + currentKelas()) || "null"); return Array.isArray(a) ? a : []; } catch (e) { return []; }
+    }
+    function saveKom(arr) {
+      localStorage.setItem("komunikasi_" + currentKelas(), JSON.stringify(Array.isArray(arr) ? arr : []));
+    }
+    function fillSelect() {
+      var sel = document.getElementById("kom-siswa");
+      if (!sel) return;
+      sel.innerHTML = '<option value="">Pilih siswa</option>' + getRoster().map(function (s) {
+        return '<option value="' + escHtml(s.nama) + '"' + (s.hp ? ' data-hp="' + escHtml(s.hp) + '"' : "") + ">" + escHtml(s.nama) + (s.hp ? " — " + escHtml(s.hp) : " (no HP belum diisi)") + "</option>";
+      }).join("");
+    }
+    function updateStats() {
+      var arr = loadKom();
+      var now = new Date();
+      var thisMonth = now.getFullYear() + "-" + ("0" + (now.getMonth() + 1)).slice(-2);
+      var bulanIni = arr.filter(function (r) { return (r.tgl || "").indexOf(thisMonth) === 0; }).length;
+      var wa = arr.filter(function (r) { return r.media === "WhatsApp"; }).length;
+      var telp = arr.filter(function (r) { return r.media === "Telepon"; }).length;
+      var temu = arr.filter(function (r) { return r.media === "Pertemuan" || r.media === "Surat"; }).length;
+      var setNum = function (id, n) { var e = document.getElementById(id); if (e) e.textContent = n; };
+      setNum("st-bulan", bulanIni);
+      setNum("st-wa", wa);
+      setNum("st-telp", telp);
+      setNum("st-temu", temu);
+    }
+    function renderRiwayat() {
+      var wrap = document.getElementById("riwayat-kom");
+      if (!wrap) return;
+      var arr = loadKom().slice().reverse();
+      if (!arr.length) {
+        wrap.innerHTML = '<p class="text-sm text-gray-400 text-center py-8 bg-white rounded-xl">Belum ada riwayat komunikasi.</p>';
+        return;
+      }
+      var colors = { "Telepon": "info", "WhatsApp": "secondary", "Pertemuan": "primary", "Surat": "accent" };
+      wrap.innerHTML = arr.map(function (r) {
+        var col = colors[r.media] || "secondary";
+        var hp = r.hp ? " — " + escHtml(r.hp) : "";
+        var link = r.hp ? '<a href="https://wa.me/' + r.hp.replace(/[^0-9]/g, "") + '" target="_blank" class="ml-1 text-[11px] text-secondary hover:underline"><i class="fa-brands fa-whatsapp"></i></a>' : "";
+        return '<div class="flex flex-wrap items-start gap-2 p-3 bg-white rounded-xl">' +
+          '<span class="text-xs text-gray-400 whitespace-nowrap pt-0.5">' + escHtml(r.tgl) + "</span>" +
+          '<span class="inline-block bg-' + col + "/10 text-" + col + ' text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap">' + escHtml(r.media) + "</span>" +
+          '<p class="text-sm text-gray-600 flex-1 min-w-[200px]">' + escHtml(r.ringkas) + ' <span class="text-gray-400">(' + escHtml(r.siswa) + hp + ")</span>" + link + "</p></div>";
+      }).join("");
+    }
+
+    fillSelect();
+    renderRiwayat();
+    updateStats();
+
     (function () {
       var form = document.getElementById("kom-form");
       if (!form) return;
@@ -270,17 +318,14 @@
           if (typeof WKToast === "function") WKToast("Lengkapi siswa, media & ringkasan");
           return;
         }
+        var hp = s.options[s.selectedIndex] ? s.options[s.selectedIndex].getAttribute("data-hp") || "" : "";
         var now = new Date();
-        var tgl = ("0" + now.getDate()).slice(-2) + "-" + ("0" + (now.getMonth() + 1)).slice(-2) + "-" + now.getFullYear();
-        var colors = { "Telepon": "info", "WhatsApp": "secondary", "Pertemuan": "primary", "Surat": "accent" };
-        var col = colors[m.value] || "secondary";
-        var box = document.createElement("div");
-        box.className = "flex flex-wrap items-start gap-2 p-3 bg-neutral rounded-xl";
-        box.innerHTML =
-          '<span class="text-xs text-gray-400 whitespace-nowrap pt-0.5">' + tgl + "</span>" +
-          '<span class="inline-block bg-' + col + '/10 text-' + col + ' text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap">' + m.value + "</span>" +
-          '<p class="text-sm text-gray-600 flex-1 min-w-[200px]">' + r.value.trim() + ' <span class="text-gray-400">(' + s.value + ")</span></p>";
-        document.getElementById("riwayat-kom").insertBefore(box, document.getElementById("riwayat-kom").firstChild);
+        var tgl = now.getFullYear() + "-" + ("0" + (now.getMonth() + 1)).slice(-2) + "-" + ("0" + now.getDate()).slice(-2);
+        var arr = loadKom();
+        arr.push({ siswa: s.value, hp: hp, media: m.value, ringkas: r.value.trim(), tgl: tgl, waktu: now.toLocaleString("id-ID") });
+        saveKom(arr);
+        renderRiwayat();
+        updateStats();
         form.reset();
         document.getElementById("kom-modal").classList.remove("show");
         if (typeof WKToast === "function") WKToast("Komunikasi dicatat");

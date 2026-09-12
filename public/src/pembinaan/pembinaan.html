@@ -78,9 +78,7 @@
       <a href="../laporan/laporan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
         <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
       </a>
-      <a href="../pengaturan/pengaturan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
-        <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
-      </a>
+      
     </nav>
 
     <div class="px-4 py-4 border-t border-white/10 space-y-3">
@@ -151,9 +149,6 @@
         <a href="../laporan/laporan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
           <i class="fa-solid fa-chart-line w-5 text-center"></i> Laporan
         </a>
-        <a href="../pengaturan/pengaturan.html" class="navlink flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white text-sm font-medium transition">
-          <i class="fa-solid fa-gear w-5 text-center"></i> Pengaturan
-        </a>
       </nav>
 
       <div class="px-4 py-4 border-t border-white/10 space-y-3">
@@ -194,8 +189,8 @@
             <i class="fa-solid fa-spinner"></i>
           </span>
           <div>
-            <p class="text-xs text-gray-500">Berjalan</p>
-            <p class="text-2xl font-bold text-accent">5</p>
+            <p class="text-xs text-gray-500">Pembinaan</p>
+            <p class="text-2xl font-bold text-accent" id="st-pembinaan">0</p>
           </div>
         </div>
       </div>
@@ -205,8 +200,8 @@
             <i class="fa-solid fa-circle-check"></i>
           </span>
           <div>
-            <p class="text-xs text-gray-500">Selesai</p>
-            <p class="text-2xl font-bold text-secondary">12</p>
+            <p class="text-xs text-gray-500">Perlu Perhatian</p>
+            <p class="text-2xl font-bold text-secondary" id="st-perhatian">0</p>
           </div>
         </div>
       </div>
@@ -217,7 +212,7 @@
           </span>
           <div>
             <p class="text-xs text-gray-500">Prestasi</p>
-            <p class="text-2xl font-bold text-accent">6</p>
+            <p class="text-2xl font-bold text-accent" id="st-prestasi">0</p>
           </div>
         </div>
       </div>
@@ -228,7 +223,7 @@
           </span>
           <div>
             <p class="text-xs text-gray-500">Ekskul Aktif</p>
-            <p class="text-2xl font-bold text-primary">4</p>
+            <p class="text-2xl font-bold text-primary" id="st-ekskul">0</p>
           </div>
         </div>
       </div>
@@ -240,42 +235,7 @@
       <div class="bg-white rounded-xl shadow-sm p-4 md:p-5">
         <h2 class="text-sm font-semibold text-gray-600 mb-3">Riwayat Terbaru</h2>
         <ul id="riwayat-list" class="space-y-3">
-          <li class="flex items-start gap-3">
-            <span class="flex items-center justify-center w-8 h-8 rounded-full bg-secondary/15 text-secondary flex-shrink-0 mt-0.5">
-              <i class="fa-solid fa-user text-xs"></i>
-            </span>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 flex-wrap">
-                <p class="text-sm font-medium text-gray-800">Ahmad Fauzan</p>
-                <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-secondary/15 text-secondary">Berjalan</span>
-              </div>
-              <p class="text-xs text-gray-500 mt-0.5">Kedisiplinan hadir</p>
-            </div>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="flex items-center justify-center w-8 h-8 rounded-full bg-info/15 text-info flex-shrink-0 mt-0.5">
-              <i class="fa-solid fa-user text-xs"></i>
-            </span>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 flex-wrap">
-                <p class="text-sm font-medium text-gray-800">Budi Santoso</p>
-                <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-info/15 text-info">Koordinasi BK</span>
-              </div>
-              <p class="text-xs text-gray-500 mt-0.5">Koordinasi BK tentang alpa</p>
-            </div>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="flex items-center justify-center w-8 h-8 rounded-full bg-accent/15 text-accent flex-shrink-0 mt-0.5">
-              <i class="fa-solid fa-user text-xs"></i>
-            </span>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 flex-wrap">
-                <p class="text-sm font-medium text-gray-800">Siti Aminah</p>
-                <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-accent/15 text-accent">Prestasi</span>
-              </div>
-              <p class="text-xs text-gray-500 mt-0.5">Penghargaan lomba karya tulis</p>
-            </div>
-          </li>
+          <li class="text-sm text-gray-400 text-center py-6">Belum ada catatan pembinaan.</li>
         </ul>
       </div>
 
@@ -317,43 +277,8 @@
     <!-- Ekstrakurikuler -->
     <div class="bg-white rounded-xl shadow-sm p-4 md:p-5 mb-6">
       <h2 class="text-sm font-semibold text-gray-600 mb-3">Ekstrakurikuler</h2>
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div class="flex items-center gap-3 p-3 rounded-lg bg-neutral">
-          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-secondary/10 text-secondary">
-            <i class="fa-solid fa-volleyball"></i>
-          </span>
-          <div>
-            <p class="text-sm font-semibold text-gray-800">Bola Voli</p>
-            <p class="text-xs text-gray-400">15 anggota</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-3 p-3 rounded-lg bg-neutral">
-          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-accent/10 text-accent">
-            <i class="fa-solid fa-basketball"></i>
-          </span>
-          <div>
-            <p class="text-sm font-semibold text-gray-800">Basket</p>
-            <p class="text-xs text-gray-400">12 anggota</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-3 p-3 rounded-lg bg-neutral">
-          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
-            <i class="fa-solid fa-campground"></i>
-          </span>
-          <div>
-            <p class="text-sm font-semibold text-gray-800">Pramuka</p>
-            <p class="text-xs text-gray-400">28 anggota</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-3 p-3 rounded-lg bg-neutral">
-          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-info/10 text-info">
-            <i class="fa-solid fa-palette"></i>
-          </span>
-          <div>
-            <p class="text-sm font-semibold text-gray-800">Seni Budaya</p>
-            <p class="text-xs text-gray-400">10 anggota</p>
-          </div>
-        </div>
+      <div id="ekskul-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <p class="text-sm text-gray-400 col-span-2 lg:col-span-4 text-center py-6 bg-white rounded-xl">Belum ada data ekskul. Isi lewat menu Administrasi → Ekstrakurikuler.</p>
       </div>
     </div>
 
@@ -426,26 +351,119 @@
   </div>
 
   <script>
-    function tambahRiwayat(siswa, label, deskripsi, icon, color) {
-      var li = document.createElement("li");
-      li.className = "flex items-start gap-3";
-      li.innerHTML =
-        '<span class="flex items-center justify-center w-8 h-8 rounded-full bg-' + color + '/15 text-' + color + ' flex-shrink-0 mt-0.5">' +
-        '<i class="fa-solid ' + (icon || "fa-user") + ' text-xs"></i></span>' +
-        '<div class="flex-1 min-w-0">' +
-        '<div class="flex items-center gap-2 flex-wrap">' +
-        '<p class="text-sm font-medium text-gray-800">' + siswa + '</p>' +
-        '<span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-' + color + '/15 text-' + color + '">' + label + "</span></div>" +
-        '<p class="text-xs text-gray-500 mt-0.5">' + deskripsi + "</p></div>";
-      var list = document.getElementById("riwayat-list");
-      if (list) list.insertBefore(li, list.firstChild);
-      if (typeof WKToast === "function") WKToast("Pembinaan untuk " + siswa + " dicatat");
+    function currentKelas() {
+      var p = new URLSearchParams(location.search).get("kelas");
+      if (p) return p;
+      return localStorage.getItem("userKelas") || "";
     }
-
+    function getRoster() {
+      try { var a = JSON.parse(localStorage.getItem("siswa_" + currentKelas()) || "null"); return Array.isArray(a) ? a : []; } catch (e) { return []; }
+    }
+    function escHtml(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; });
+    }
+    function loadRecords() {
+      try { var a = JSON.parse(localStorage.getItem("pembinaan_" + currentKelas()) || "null"); return Array.isArray(a) ? a : []; } catch (e) { return []; }
+    }
+    function saveRecords(arr) {
+      localStorage.setItem("pembinaan_" + currentKelas(), JSON.stringify(Array.isArray(arr) ? arr : []));
+    }
+    function loadAdmData() {
+      try { return JSON.parse(localStorage.getItem("admData_" + currentKelas()) || "{}") || {}; } catch (e) { return {}; }
+    }
+    function jenisStyle(jenis) {
+      var low = String(jenis || "").toLowerCase();
+      if (low === "prestasi") return { color: "accent", icon: "fa-trophy" };
+      if (low === "pelanggaran") return { color: "danger", icon: "fa-triangle-exclamation" };
+      return { color: "info", icon: "fa-user" };
+    }
+    function updateStats() {
+      var recs = loadRecords();
+      var roster = getRoster();
+      var setNum = function (id, n) { var e = document.getElementById(id); if (e) e.textContent = n; };
+      setNum("st-pembinaan", recs.filter(function (r) { return (r.jenis || "").toLowerCase() !== "prestasi"; }).length);
+      setNum("st-perhatian", roster.filter(function (s) { return s.status === "Perhatian" || s.status === "Izin"; }).length);
+      setNum("st-prestasi", recs.filter(function (r) { return (r.jenis || "").toLowerCase() === "prestasi"; }).length);
+      setNum("st-ekskul", (loadAdmData().ekskul || []).length);
+    }
+    function renderRiwayat() {
+      var list = document.getElementById("riwayat-list");
+      if (!list) return;
+      var recs = loadRecords().slice().reverse();
+      if (!recs.length) {
+        list.innerHTML = '<li class="text-sm text-gray-400 text-center py-6">Belum ada catatan pembinaan.</li>';
+        return;
+      }
+      list.innerHTML = recs.map(function (r) {
+        var st = jenisStyle(r.jenis);
+        return '<li class="flex items-start gap-3">' +
+          '<span class="flex items-center justify-center w-8 h-8 rounded-full bg-' + st.color + '/15 text-' + st.color + ' flex-shrink-0 mt-0.5">' +
+          '<i class="fa-solid ' + st.icon + ' text-xs"></i></span>' +
+          '<div class="flex-1 min-w-0">' +
+          '<div class="flex items-center gap-2 flex-wrap">' +
+          '<p class="text-sm font-medium text-gray-800">' + escHtml(r.siswa) + "</p>" +
+          '<span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-' + st.color + '/15 text-' + st.color + '">' + escHtml(r.label) + "</span></div>" +
+          '<p class="text-xs text-gray-500 mt-0.5">' + escHtml(r.desk) + "</p>" +
+          (r.waktu ? '<p class="text-[10px] text-gray-400 mt-1">' + escHtml(r.waktu) + "</p>" : "") +
+          "</div></li>";
+      }).join("");
+    }
+    function renderEkskul() {
+      var grid = document.getElementById("ekskul-grid");
+      if (!grid) return;
+      var rows = loadAdmData().ekskul || [];
+      var groups = {};
+      rows.forEach(function (x) {
+        var i = x.indexOf(":");
+        var rest = i >= 0 ? x.slice(i + 1).trim() : x.trim();
+        var j = rest.indexOf(" — ");
+        var eks = j >= 0 ? rest.slice(0, j).trim() : rest;
+        if (!eks) return;
+        groups[eks] = (groups[eks] || 0) + 1;
+      });
+      var names = Object.keys(groups);
+      if (!names.length) {
+        grid.innerHTML = '<p class="text-sm text-gray-400 col-span-2 lg:col-span-4 text-center py-6 bg-white rounded-xl">Belum ada data ekskul. Isi lewat menu Administrasi → Ekstrakurikuler.</p>';
+        return;
+      }
+      var icons = { "Pramuka": "fa-campground", "Futsal": "fa-futbol", "Basket": "fa-basketball", "Voli": "fa-volleyball", "Badminton": "fa-table-tennis-paddle-ball", "Seni Tari": "fa-masks-theater", "Seni Musik": "fa-music", "PMR": "fa-kit-medical", "KIR": "fa-flask", "Rohis": "fa-moon", "Paskibra": "fa-flag" };
+      var colors = ["secondary", "accent", "primary", "info", "danger"];
+      grid.innerHTML = names.map(function (n, idx) {
+        var c = colors[idx % colors.length];
+        return '<div class="flex items-center gap-3 p-3 rounded-lg bg-neutral">' +
+          '<span class="flex items-center justify-center w-10 h-10 rounded-full bg-' + c + '/10 text-' + c + '">' +
+          '<i class="fa-solid ' + (icons[n] || "fa-star") + '"></i></span>' +
+          '<div><p class="text-sm font-semibold text-gray-800">' + escHtml(n) + '</p>' +
+          '<p class="text-xs text-gray-400">' + groups[n] + " anggota</p></div></div>";
+      }).join("");
+    }
+    function fillStudentSelects() {
+      var roster = getRoster();
+      var opts = '<option value="">— Pilih siswa —</option>' + roster.map(function (s) {
+        return '<option value="' + escHtml(s.nama) + '">' + escHtml(s.nama) + (s.hp ? " (" + escHtml(s.hp) + ")" : "") + "</option>";
+      }).join("");
+      ["pbin-s", "pb-s", "pr-s"].forEach(function (id) {
+        var sel = document.getElementById(id);
+        if (sel) sel.innerHTML = opts;
+      });
+      document.querySelectorAll("#kelas-label-side, #kelas-label-drawer").forEach(function (el) { el.textContent = "Kelas " + currentKelas(); });
+    }
+    function addRecord(siswa, label, desk, jenis) {
+      var recs = loadRecords();
+      recs.push({ siswa: siswa, label: label, desk: desk, jenis: jenis, waktu: new Date().toLocaleString("id-ID") });
+      saveRecords(recs);
+      renderRiwayat();
+      updateStats();
+    }
     function closeModalEl(id) {
       var m = document.getElementById(id);
       if (m) m.classList.remove("show");
     }
+
+    fillStudentSelects();
+    renderRiwayat();
+    renderEkskul();
+    updateStats();
 
     (function () {
       var f1 = document.getElementById("form-pb-inline");
@@ -458,7 +476,7 @@
           if (typeof WKToast === "function") WKToast("Lengkapi siswa, kategori & deskripsi");
           return;
         }
-        tambahRiwayat(s.value, k.value, d.value.trim(), "fa-user", "secondary");
+        addRecord(s.value, k.value, d.value.trim(), k.value);
         f1.reset();
       });
 
@@ -468,7 +486,7 @@
         var s = document.getElementById("pb-s");
         var d = document.getElementById("pb-d");
         if (!s.value || !d.value.trim()) return;
-        tambahRiwayat(s.value, "Pembinaan", d.value.trim(), "fa-user", "info");
+        addRecord(s.value, "Pembinaan", d.value.trim(), "pembinaan");
         closeModalEl("pb-modal");
         f2.reset();
       });
@@ -480,7 +498,7 @@
         var j = document.getElementById("pr-j");
         var d = document.getElementById("pr-d");
         if (!s.value || !j.value.trim()) return;
-        tambahRiwayat(s.value, "Prestasi", j.value.trim() + (d.value.trim() ? " — " + d.value.trim() : ""), "fa-trophy", "accent");
+        addRecord(s.value, "Prestasi", j.value.trim() + (d.value.trim() ? " — " + d.value.trim() : ""), "prestasi");
         closeModalEl("prestasi-modal");
         f3.reset();
       });
