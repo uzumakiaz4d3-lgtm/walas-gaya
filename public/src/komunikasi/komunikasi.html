@@ -24,6 +24,7 @@
     }
   </script>
   <script src="../assets/app.js" defer></script>
+  <script src="../assets/sync.js" defer></script>
 </head>
 <body class="bg-neutral text-gray-800 min-h-screen">
 <!-- Topbar (desktop) -->
@@ -260,6 +261,7 @@
     }
     function saveKom(arr) {
       localStorage.setItem("komunikasi_" + currentKelas(), JSON.stringify(Array.isArray(arr) ? arr : []));
+      if (window.WKSync) WKSync.push(currentKelas(), 'komunikasi', Array.isArray(arr) ? arr : []);
     }
     function fillSelect() {
       var sel = document.getElementById("kom-siswa");

@@ -24,6 +24,7 @@
     }
   </script>
   <script src="../assets/app.js" defer></script>
+  <script src="../assets/sync.js" defer></script>
 </head>
 <body class="bg-neutral text-gray-800 min-h-screen">
 <!-- Topbar (desktop) -->
@@ -367,6 +368,7 @@
     }
     function saveRecords(arr) {
       localStorage.setItem("pembinaan_" + currentKelas(), JSON.stringify(Array.isArray(arr) ? arr : []));
+      if (window.WKSync) WKSync.push(currentKelas(), 'pembinaan', Array.isArray(arr) ? arr : []);
     }
     function loadAdmData() {
       try { return JSON.parse(localStorage.getItem("admData_" + currentKelas()) || "{}") || {}; } catch (e) { return {}; }

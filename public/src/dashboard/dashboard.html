@@ -22,6 +22,7 @@
     }
   </script>
   <script src="../assets/app.js" defer></script>
+  <script src="../assets/sync.js" defer></script>
 </head>
 <body class="bg-neutral text-gray-800 min-h-screen">
 <!-- Topbar (desktop) -->
@@ -460,6 +461,7 @@
           try {
             localStorage.setItem("catatanTerakhir", JSON.stringify({ siswa: s.value, isi: t.value.trim(), waktu: new Date().toLocaleString("id-ID") }));
           } catch (e) {}
+          if (window.WKSync) WKSync.push(currentKelas(), 'catatan', { siswa: s.value, isi: t.value.trim(), waktu: new Date().toLocaleString("id-ID") });
           document.getElementById("modal").classList.remove("show");
           catForm.reset();
           if (typeof WKToast === "function") WKToast("Catatan untuk " + s.value + " tersimpan");

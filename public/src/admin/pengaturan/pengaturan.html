@@ -141,6 +141,7 @@
   </div>
 
   <script src="../../assets/app.js"></script>
+  <script src="../../assets/sync.js"></script>
   <script>
     function getSettings() {
       try { return JSON.parse(localStorage.getItem("wkSettings") || "{}") || {}; } catch (e) { return {}; }
@@ -176,12 +177,14 @@
 
       document.getElementById("form-profil").addEventListener("submit", function (e) {
         e.preventDefault();
-        saveSettings({
+        var profil = {
           sekolah: document.getElementById("f-sekolah").value.trim(),
           npsn: document.getElementById("f-npsn").value.trim(),
           kepala: document.getElementById("f-kepala").value.trim(),
           tahun: document.getElementById("f-tahun").value.trim()
-        });
+        };
+        saveSettings(profil);
+        if (window.WKSync) WKSync.saveSettings(profil);
         toast("Profil sekolah tersimpan");
       });
     })();

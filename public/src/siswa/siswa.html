@@ -22,6 +22,7 @@
     }
   </script>
   <script src="../assets/app.js" defer></script>
+  <script src="../assets/sync.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body class="bg-neutral text-gray-800 min-h-screen">
@@ -368,6 +369,7 @@
       });
     });
     localStorage.setItem(rosterKey(), JSON.stringify(rows));
+    if (window.WKSync) WKSync.push(currentKelas(), 'siswa', rows);
   }
   function updateStats(){
     var rows = document.querySelectorAll('#tbody-siswa tr[data-nis]');

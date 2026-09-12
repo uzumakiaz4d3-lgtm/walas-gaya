@@ -211,6 +211,81 @@ async function main() {
       `status=${res.status}`
     );
 
+    /* ---- Sync data kelas & settings ---- */
+    res = await api("/api/kelas-data?kelas=7A", { headers: { cookie: cookieHeader() } });
+    let sync0 = await res.json().catch(() => ({}));
+    check(
+      "GET /api/kelas-data 7A (wali) sukses & masih kosong",
+      res.status === 200 && sync0.success === true && Object.keys(sync0.data || {}).length === 0,
+      `status=${res.status}`
+    );
+
+    res = await api("/api/kelas-data", {
+      method: "PUT",
+      headers: { cookie: cookieHeader() },
+      body: JSON.stringify({ kelas: "7A", key: "siswa", value: [{ nis: "001", nama: "Tes Sync", jk: "L", status: "Aktif", hp: "08123456789" }] }),
+    });
+    const putSync = await res.json().catch(() => ({}));
+    check(
+      "PUT /api/kelas-data 7A (wali) key=siswa sukses",
+      res.status === 200 && putSync.success === true,
+      `status=${res.status}`
+    );
+
+    res = await api("/api/kelas-data?kelas=7A", { headers: { cookie: cookieHeader() } });
+    const sync1 = await res.json().catch(() => ({}));
+    check(
+      "GET /api/kelas-data 7A kembali berisi data siswa",
+      res.status === 200 && sync1.success === true &&
+        Array.isArray(sync1.data.siswa) && sync1.data.siswa[0].nama === "Tes Sync",
+      `status=${res.status}`
+    );
+
+    res = await api("/api/kelas-data?kelas=8B", { headers: { cookie: cookieHeader() } });
+    check("GET /api/kelas-data kelas lain (8B) oleh walas 7A ditolak 403", res.status === 403, `status=${res.status}`);
+    res = await api("/api/kelas-data", {
+      method: "PUT",
+      headers: { cookie: cookieHeader() },
+      body: JSON.stringify({ kelas: "8B", key: "siswa", value: [] }),
+    });
+    check("PUT /api/kelas-data kelas lain (8B) oleh walas 7A ditolak 403", res.status === 403, `status=${res.status}`);
+
+    res = await api("/api/settings", {
+      method: "PUT",
+      headers: { cookie: cookieHeader() },
+      body: JSON.stringify({ data: { sekolah: "SMP Uji" } }),
+    });
+    check("PUT /api/settings oleh walas ditolak 403", res.status === 403, `status=${res.status}`);
+
+    res = await login("admin@sekolah.id", "wali123");
+    res = await api("/api/settings", {
+      method: "PUT",
+      headers: { cookie: cookieHeader() },
+      body: JSON.stringify({ data: { sekolah: "SMP Negeri 1 Uji", npsn: "12345678", kepala: "Kepala Uji", tahun: "2026/2027" } }),
+    });
+    const setPut = await res.json().catch(() => ({}));
+    check(
+      "PUT /api/settings oleh admin sukses",
+      res.status === 200 && setPut.success === true,
+      `status=${res.status}`
+    );
+
+    res = await login("ahmad@walikelas.sch.id", "wali123");
+    res = await api("/api/settings", { headers: { cookie: cookieHeader() } });
+    const setGet = await res.json().catch(() => ({}));
+    check(
+      "GET /api/settings oleh walas terbaca",
+      res.status === 200 && setGet.success === true && setGet.data.sekolah === "SMP Negeri 1 Uji",
+      `status=${res.status} sekolah=${setGet.data && setGet.data.sekolah}`
+    );
+    res = await api("/api/kelas-data?kelas=7A", { headers: { cookie: cookieHeader() } });
+    const syncAdmin = await res.json().catch(() => ({}));
+    check(
+      "GET /api/kelas-data 7A oleh admin diperbolehkan",
+      res.status === 200 && syncAdmin.success === true && Array.isArray(syncAdmin.data.siswa),
+      `status=${res.status}`
+    );
+
     res = await api("/api/users");
     check("GET /api/users tanpa cookie ditolak (401)", res.status === 401, `status=${res.status}`);
 
@@ -376,6 +451,21 @@ async function main() {
     check(
       "GET /api/dashboard (sesi) sukses",
       res.status === 200 && dash.success === true && dash.data.role === "admin",
+      `status=${res.status}`
+    );
+
+    res = await api("/api/settings", { headers: { cookie: cookieHeader() } });
+    const setReset = await res.json().catch(() => ({}));
+    check(
+      "GET /api/settings setelah reset → kosong",
+      res.status === 200 && setReset.success === true && Object.keys(setReset.data || {}).length === 0,
+      `status=${res.status}`
+    );
+    res = await api("/api/kelas-data?kelas=7A", { headers: { cookie: cookieHeader() } });
+    const kdReset = await res.json().catch(() => ({}));
+    check(
+      "GET /api/kelas-data 7A setelah reset → kosong",
+      res.status === 200 && kdReset.success === true && Object.keys(kdReset.data || {}).length === 0,
       `status=${res.status}`
     );
   }

@@ -24,6 +24,7 @@
     }
   </script>
   <script src="../assets/app.js" defer></script>
+  <script src="../assets/sync.js" defer></script>
 </head>
 <body class="bg-neutral text-gray-800 min-h-screen">
 <!-- Topbar (desktop) -->
@@ -464,6 +465,7 @@
         Object.keys(data).forEach(function (k) { cur[k] = data[k]; });
       }
       localStorage.setItem("admData_" + currentKelas(), JSON.stringify(cur));
+      if (window.WKSync) WKSync.push(currentKelas(), 'admData', cur);
     }
 
     var admKey = null;

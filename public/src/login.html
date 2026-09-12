@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="assets/styles.css">
+  <script src="assets/sync.js" defer></script>
   <script>
     tailwind.config = {
       theme: {
@@ -126,7 +127,20 @@
               }
               localStorage.setItem("wkLastUserId", newUser);
 
-              window.location.href = result.redirect || "/src/dashboard/dashboard.html";
+              var go = function () {
+                window.location.href = result.redirect || "/src/dashboard/dashboard.html";
+              };
+              if (window.WKSync) {
+                if (result.user.role === "wali_kelas") {
+                  WKSync.firstSync(result.user.kelas).then(function () {
+                    WKSync.syncSettings().then(go, go);
+                  }, go);
+                } else {
+                  WKSync.syncSettings().then(go, go);
+                }
+              } else {
+                go();
+              }
               return;
             }
             showErr(result.error || "Login gagal");

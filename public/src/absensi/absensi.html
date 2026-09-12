@@ -22,6 +22,7 @@
     }
   </script>
   <script src="../assets/app.js" defer></script>
+  <script src="../assets/sync.js" defer></script>
 </head>
 <body class="bg-neutral text-gray-800 min-h-screen">
 <!-- Topbar (desktop) -->
@@ -275,6 +276,7 @@
   }
   function saveAbsenAll(obj) {
     localStorage.setItem("absensi_" + currentKelas(), JSON.stringify(obj));
+    if (window.WKSync) WKSync.push(currentKelas(), 'absensi', obj);
   }
   function chosenDate() {
     var el = document.getElementById("absen-date");

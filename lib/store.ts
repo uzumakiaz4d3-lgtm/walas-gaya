@@ -71,6 +71,8 @@ export interface Store {
   findRombelByNama(nama: string): Promise<RombelRow | null>;
   createRombel(nama: string): Promise<RombelRow>;
   deleteRombel(id: string): Promise<boolean>;
+  getAppData(key: string): Promise<{ data: Record<string, unknown>; updatedAt: string | null } | null>;
+  setAppData(key: string, data: Record<string, unknown>): Promise<void>;
   resetAll(): Promise<void>;
   close(): Promise<void>;
 }
@@ -162,6 +164,7 @@ class MemoryStore implements Store {
   private rows = new Map<string, UserRow>();
   private walasRows = new Map<string, WalasRow>();
   private rombelRows = new Map<string, RombelRow>();
+  private appData = new Map<string, { data: Record<string, unknown>; updatedAt: string }>();
   private ready = false;
 
   async ensureReady(): Promise<void> {
@@ -266,10 +269,20 @@ class MemoryStore implements Store {
     return this.rombelRows.delete(id);
   }
 
+  async getAppData(key: string): Promise<{ data: Record<string, unknown>; updatedAt: string | null } | null> {
+    const v = this.appData.get(String(key));
+    return v ? { data: v.data, updatedAt: v.updatedAt } : null;
+  }
+
+  async setAppData(key: string, data: Record<string, unknown>): Promise<void> {
+    this.appData.set(String(key), { data, updatedAt: new Date().toISOString() });
+  }
+
   async resetAll(): Promise<void> {
     this.rows.clear();
     this.walasRows.clear();
     this.rombelRows.clear();
+    this.appData.clear();
     await seedAdmin(this);
   }
 
@@ -277,6 +290,7 @@ class MemoryStore implements Store {
     this.rows.clear();
     this.walasRows.clear();
     this.rombelRows.clear();
+    this.appData.clear();
   }
 }
 
@@ -324,6 +338,11 @@ class PostgresStore implements Store {
       status TEXT NOT NULL DEFAULT 'aktif'
     )`);
     await this.pool.query(`CREATE UNIQUE INDEX IF NOT EXISTS rombel_nama_lower ON rombel (LOWER(nama))`);
+    await this.pool.query(`CREATE TABLE IF NOT EXISTS app_data (
+      key TEXT PRIMARY KEY,
+      data JSONB NOT NULL,
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    )`);
   }
 
   private rowToUser(r: any): UserRow {
@@ -467,10 +486,29 @@ class PostgresStore implements Store {
     return (res.rowCount || 0) > 0;
   }
 
+  async getAppData(key: string): Promise<{ data: Record<string, unknown>; updatedAt: string | null } | null> {
+    const res = await this.pool.query(`SELECT data, updated_at FROM app_data WHERE key = $1 LIMIT 1`, [String(key)]);
+    if (!res.rows.length) return null;
+    const updated = res.rows[0].updated_at;
+    return {
+      data: (res.rows[0].data as Record<string, unknown>) || {},
+      updatedAt: updated ? new Date(updated).toISOString() : null,
+    };
+  }
+
+  async setAppData(key: string, data: Record<string, unknown>): Promise<void> {
+    await this.pool.query(
+      `INSERT INTO app_data (key, data) VALUES ($1, $2::jsonb)
+       ON CONFLICT (key) DO UPDATE SET data = EXCLUDED.data, updated_at = now()`,
+      [String(key), JSON.stringify(data || {})]
+    );
+  }
+
   async resetAll(): Promise<void> {
     await this.pool.query(`DELETE FROM users`);
     await this.pool.query(`DELETE FROM walas`);
     await this.pool.query(`DELETE FROM rombel`);
+    await this.pool.query(`DELETE FROM app_data`);
     await seedAdmin(this);
   }
 
