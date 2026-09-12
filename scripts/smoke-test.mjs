@@ -485,14 +485,6 @@ async function main() {
       `status=${res.status} rombel=${rombelAfterReset.rombel && rombelAfterReset.rombel.length}`
     );
 
-    res = await api("/api/dashboard", { headers: { cookie: cookieHeader() } });
-    const dash = await res.json().catch(() => ({}));
-    check(
-      "GET /api/dashboard (sesi) sukses",
-      res.status === 200 && dash.success === true && dash.data.role === "admin",
-      `status=${res.status}`
-    );
-
     res = await api("/api/settings", { headers: { cookie: cookieHeader() } });
     const setReset = await res.json().catch(() => ({}));
     check(

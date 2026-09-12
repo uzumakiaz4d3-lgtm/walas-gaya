@@ -17,7 +17,7 @@ COPY package.json package-lock.json ./
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Variabel NEXT_PUBLIC_* dibangun ke bundle → via ARG (default dari .env.example)
+# Variabel NEXT_PUBLIC_* dibangun ke bundle via ARG (default dari .env.example)
 ARG NEXT_PUBLIC_APP_NAME="WaliKelas"
 ARG NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ENV NEXT_PUBLIC_APP_NAME=$NEXT_PUBLIC_APP_NAME \
