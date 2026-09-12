@@ -353,6 +353,10 @@
         if (params.get("kelas")) return params.get("kelas");
         return localStorage.getItem("userKelas") || "";
       }
+      function viewKelas() {
+        var k = new URLSearchParams(window.location.search).get("kelas");
+        return k ? k : null;
+      }
       function getRoster() {
         try { var a = JSON.parse(localStorage.getItem("siswa_" + currentKelas()) || "null"); return Array.isArray(a) ? a : []; } catch (e) { return []; }
       }
@@ -366,11 +370,7 @@
         return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; });
       }
 
-      function buildDashboard() {
-        var kls = currentKelas();
-        var roster = getRoster();
-        var allAbs = getAbsensiAll();
-        var settings = getSettings();
+      function renderDashboard(roster, allAbs, settings, kls) {
         var today = new Date().toISOString().slice(0, 10);
         var todayRecs = allAbs[today] || [];
 
@@ -455,11 +455,35 @@
         }
       }
 
-      buildDashboard();
+      var vk = viewKelas();
+      if (vk) {
+        /* Mode tampilan admin (melalui Monitoring/Ringkasan): baca langsung dari server */
+        var fab = document.querySelector("[data-open-modal]");
+        if (fab) fab.style.display = "none";
+        var modalEl = document.getElementById("modal");
+        if (modalEl) modalEl.classList.add("hidden");
+        var catForm = document.getElementById("form-catatan");
+        if (catForm) catForm.style.display = "none";
+        Promise.all([
+          fetch("/api/kelas-data?kelas=" + encodeURIComponent(vk)).then(function (r) { return r.json(); }).catch(function () { return {}; }),
+          fetch("/api/settings").then(function (r) { return r.json(); }).catch(function () { return {}; })
+        ]).then(function (res) {
+          var doc = (res[0] && res[0].success) ? (res[0].data || {}) : {};
+          var sett = (res[1] && res[1].success) ? (res[1].data || {}) : {};
+          renderDashboard(
+            Array.isArray(doc.siswa) ? doc.siswa : [],
+            (doc.absensi && typeof doc.absensi === "object") ? doc.absensi : {},
+            sett || getSettings(),
+            vk
+          );
+        });
+      } else {
+        renderDashboard(getRoster(), getAbsensiAll(), getSettings(), currentKelas());
+      }
 
-      var catForm = document.getElementById("form-catatan");
-      if (catForm) {
-        catForm.addEventListener("submit", function (e) {
+      var formCatatan = document.getElementById("form-catatan");
+      if (formCatatan && !vk) {
+        formCatatan.addEventListener("submit", function (e) {
           e.preventDefault();
           var s = document.getElementById("dash-cat-s");
           var t = document.getElementById("dash-cat-t");
@@ -472,7 +496,7 @@
           } catch (e) {}
           if (window.WKSync) WKSync.push(currentKelas(), 'catatan', { siswa: s.value, isi: t.value.trim(), waktu: new Date().toLocaleString("id-ID") });
           document.getElementById("modal").classList.remove("show");
-          catForm.reset();
+          formCatatan.reset();
           if (typeof WKToast === "function") WKToast("Catatan untuk " + s.value + " tersimpan");
         });
       }
